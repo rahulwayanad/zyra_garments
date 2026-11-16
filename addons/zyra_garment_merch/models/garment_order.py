@@ -268,9 +268,11 @@ class GarmentOrder(models.Model):
 
     @api.onchange("colour_ids", "size_ids")
     def _onchange_grid_axes(self):
+        colour_ids = set(self.colour_ids._origin.ids)
+        size_ids = set(self.size_ids._origin.ids)
         keep = self.line_ids.filtered(
-            lambda l: l.colour_id in self.colour_ids and l.size_id in self.size_ids)
-        existing = {(l.colour_id.id, l.size_id.id) for l in keep}
+            lambda l: l.colour_id._origin.id in colour_ids and l.size_id._origin.id in size_ids)
+        existing = {(l.colour_id._origin.id, l.size_id._origin.id) for l in keep}
         new_lines = self.env["garment.order.line"]
         for vals in self._grid_missing_vals(existing):
             new_lines |= new_lines.new(vals)
@@ -279,8 +281,8 @@ class GarmentOrder(models.Model):
     def _grid_missing_vals(self, existing):
         """Values of the grid cells (colour × size) not yet in ``existing`` {(colour_id, size_id)}."""
         vals_list = []
-        sizes = self.size_ids.sorted(lambda s: (s.sequence, s.id))
-        for c_index, colour in enumerate(self.colour_ids.sorted(lambda c: c.id)):
+        sizes = self.size_ids._origin.sorted(lambda s: (s.sequence, s.id))
+        for c_index, colour in enumerate(self.colour_ids._origin.sorted("id")):
             for size in sizes:
                 if (colour.id, size.id) not in existing:
                     vals_list.append({
