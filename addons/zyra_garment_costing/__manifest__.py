@@ -21,6 +21,7 @@
         "views/menus.xml",
     ],
     "demo": [
+        "demo/garment_costing_demo.xml",
     ],
     "installable": True,
 }
