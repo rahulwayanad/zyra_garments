@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_sample_ticket">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="border: 2px solid #1d1b2c; padding: 16px; max-width: 420px;">
+                        <h4 class="mb-1"><t t-esc="o.name"/></h4>
+                        <div class="fw-bold"><t t-esc="o.style_id.display_name"/></div>
+                        <div><span t-field="o.sample_type"/> · round <t t-esc="o.round"/></div>
+                        <hr/>
+                        <div><strong>Buyer:</strong> <t t-esc="o.buyer_id.name or ''"/></div>
+                        <div><strong>Colourway:</strong> <t t-esc="o.colour_id.name or ''"/></div>
+                        <div><strong>Sizes:</strong> <t t-esc="o.size_names or ''"/></div>
+                        <div><strong>Pieces:</strong> <t t-esc="o.pieces"/></div>
+                        <div><strong>Required by:</strong> <span t-field="o.required_date"/></div>
+                        <div t-if="o.order_id"><strong>Production order:</strong> <t t-esc="o.order_id.name"/></div>
+                        <div t-if="o.courier"><strong>Courier:</strong> <t t-esc="o.courier"/> <t t-esc="o.tracking_ref or ''"/></div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_sample_fit">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h3>Fit comments · <t t-esc="o.name"/></h3>
+                        <div class="mb-2">
+                            <strong><t t-esc="o.style_id.display_name"/></strong> ·
+                            <span t-field="o.sample_type"/> · round <t t-esc="o.round"/> ·
+                            size measured <t t-esc="o.size_measured_id.name or '—'"/>
+                        </div>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Round</th>
+                                    <th>Point of measure</th>
+                                    <th>Size</th>
+                                    <th class="text-end">Spec</th>
+                                    <th class="text-end">Tol +</th>
+                                    <th class="text-end">Tol −</th>
+                                    <th class="text-end">Measured</th>
+                                    <th class="text-end">Deviation</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.measurement_ids" t-as="m">
+                                    <td><t t-esc="m.round"/></td>
+                                    <td><t t-esc="m.pom_id.display_name"/></td>
+                                    <td><t t-esc="m.size_id.name or ''"/></td>
+                                    <td class="text-end"><t t-esc="'%.2f' % m.spec"/></td>
+                                    <td class="text-end"><t t-esc="'%.2f' % m.tol_plus"/></td>
+                                    <td class="text-end"><t t-esc="'%.2f' % m.tol_minus"/></td>
+                                    <td class="text-end"><t t-esc="'%.2f' % m.measured if m.is_measured else ''"/></td>
+                                    <td class="text-end"><t t-esc="'%+.2f' % m.deviation if m.is_measured else ''"/></td>
+                                    <td><span t-field="m.result"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h5>Buyer comments</h5>
+                        <p t-esc="o.buyer_comments or ''" style="white-space: pre-wrap;"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

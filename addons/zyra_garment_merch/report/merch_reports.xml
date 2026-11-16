@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_order_breakdown" model="ir.actions.report">
+        <field name="name">Order Breakdown</field>
+        <field name="model">garment.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_merch.report_order_breakdown</field>
+        <field name="report_file">zyra_garment_merch.report_order_breakdown</field>
+        <field name="print_report_name">'Breakdown - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_order"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_report_sample_ticket" model="ir.actions.report">
+        <field name="name">Sample Ticket</field>
+        <field name="model">garment.sample</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_merch.report_sample_ticket</field>
+        <field name="report_file">zyra_garment_merch.report_sample_ticket</field>
+        <field name="print_report_name">'Sample ticket - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_sample"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_report_sample_fit" model="ir.actions.report">
+        <field name="name">Fit Comments Sheet</field>
+        <field name="model">garment.sample</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_merch.report_sample_fit</field>
+        <field name="report_file">zyra_garment_merch.report_sample_fit</field>
+        <field name="print_report_name">'Fit comments - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_sample"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_report_approval_card" model="ir.actions.report">
+        <field name="name">Approval Card</field>
+        <field name="model">garment.approval</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_merch.report_approval_card</field>
+        <field name="report_file">zyra_garment_merch.report_approval_card</field>
+        <field name="print_report_name">'Approval card - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_approval"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

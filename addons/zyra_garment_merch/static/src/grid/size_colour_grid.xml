@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_merch.SizeColourGrid">
+        <div class="o_zyra_grid">
+            <t t-set="g" t-value="grid"/>
+            <div class="o_zyra_grid_legend">
+                <span><i class="o_zyra_dot o_zyra_dot_cut"/>Cut</span>
+                <span><i class="o_zyra_dot o_zyra_dot_sewn"/>Sewn</span>
+                <span><i class="o_zyra_dot o_zyra_dot_packed"/>Packed</span>
+            </div>
+            <div t-if="!g.rows.length" class="text-muted p-3">
+                Choose the style, colourways and sizes: the grid appears here.
+            </div>
+            <table t-else="" class="table o_zyra_grid_table">
+                <thead>
+                    <tr>
+                        <th>Colourway</th>
+                        <th t-foreach="g.sizes" t-as="size" t-key="size.id" class="text-center" t-esc="size.name"/>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="g.rows" t-as="row" t-key="row.id">
+                        <td class="o_zyra_grid_colour">
+                            <span class="o_zyra_swatch_sm" t-attf-style="background: {{ row.hex or '#d9d6e6' }}"/>
+                            <span t-esc="row.name"/>
+                        </td>
+                        <td t-foreach="row.cells" t-as="cell" t-key="cell.key" class="o_zyra_grid_cell">
+                            <t t-if="cell.rec">
+                                <input t-if="editable" type="number" min="0" class="o_input o_zyra_grid_input"
+                                       t-att-value="cell.rec.data.qty_ordered"
+                                       t-on-change="(ev) => this.onChange(cell.rec, ev)"/>
+                                <div t-else="" class="o_zyra_grid_qty" t-esc="fmt(cell.rec.data.qty_ordered)"/>
+                                <div class="o_zyra_grid_bars">
+                                    <div class="o_zyra_bar"><span class="o_zyra_bar_cut" t-attf-style="width: {{ pct(cell.rec, 'qty_cut') }}%"/></div>
+                                    <div class="o_zyra_bar"><span class="o_zyra_bar_sewn" t-attf-style="width: {{ pct(cell.rec, 'qty_sewn') }}%"/></div>
+                                    <div class="o_zyra_bar"><span class="o_zyra_bar_packed" t-attf-style="width: {{ pct(cell.rec, 'qty_packed') }}%"/></div>
+                                </div>
+                            </t>
+                            <span t-else="" class="text-muted">–</span>
+                        </td>
+                        <td class="text-end o_zyra_grid_total" t-esc="fmt(row.total)"/>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="o_zyra_grid_foot">
+                        <td>Total</td>
+                        <td t-foreach="g.sizes" t-as="size" t-key="size.id" class="text-center" t-esc="fmt(size.total)"/>
+                        <td class="text-end" t-esc="fmt(g.total)"/>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </t>
+</templates>

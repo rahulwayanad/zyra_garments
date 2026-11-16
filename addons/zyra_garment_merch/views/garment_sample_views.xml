@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sample room board (screen 26) -->
+    <record id="garment_sample_view_kanban" model="ir.ui.view">
+        <field name="name">garment.sample.kanban</field>
+        <field name="model">garment.sample</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_zyra_sample_kanban" quick_create="false" sample="1"
+                    group_create="false" group_delete="false" group_edit="false" records_draggable="1">
+                <field name="sample_type"/>
+                <field name="is_overdue"/>
+                <field name="round"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <field name="name" class="o_zyra_card_ref"/>
+                            <span t-if="record.sample_type.raw_value == 'pp'" class="badge rounded-pill text-bg-light o_zyra_card_badge">
+                                <field name="sample_type_short"/>
+                            </span>
+                        </div>
+                        <field name="style_id" class="fw-bold"/>
+                        <field name="sample_type" class="text-muted small"/>
+                        <field name="buyer_id" class="text-muted small"/>
+                        <div class="text-muted small">
+                            <i class="fa fa-calendar me-1" title="Required by"/>
+                            <field name="required_date" widget="date"/>
+                            <span t-if="record.round.raw_value &gt; 1"> · round <t t-esc="record.round.raw_value"/></span>
+                            <span t-if="record.is_overdue.raw_value" class="text-danger fw-bold"> · OVERDUE</span>
+                        </div>
+                        <footer class="pt-2">
+                            <span t-if="record.colour_id.raw_value" class="badge rounded-pill text-bg-light">
+                                <field name="colour_id"/>
+                            </span>
+                            <field name="merchandiser_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="garment_sample_view_list" model="ir.ui.view">
+        <field name="name">garment.sample.list</field>
+        <field name="model">garment.sample</field>
+        <field name="arch" type="xml">
+            <list string="Samples" decoration-danger="is_overdue">
+                <field name="is_overdue" column_invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="sample_type"/>
+                <field name="buyer_id"/>
+                <field name="order_id" optional="show"/>
+                <field name="colour_id"/>
+                <field name="round"/>
+                <field name="required_date"/>
+                <field name="sent_date" optional="hide"/>
+                <field name="decision_date" optional="hide"/>
+                <field name="cost" sum="Total" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'" decoration-info="state == 'with_buyer'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_sample_view_search" model="ir.ui.view">
+        <field name="name">garment.sample.search</field>
+        <field name="model">garment.sample</field>
+        <field name="arch" type="xml">
+            <search string="Samples">
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="buyer_id"/>
+                <field name="order_id"/>
+                <filter name="open" string="Open" domain="[('state', '!=', 'approved')]"/>
+                <filter name="overdue" string="Overdue" domain="[('is_overdue', '=', True)]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <separator/>
+                <filter name="type_pp" string="Pre-production" domain="[('sample_type', '=', 'pp')]"/>
+                <filter name="type_fit" string="Fit and size set" domain="[('sample_type', 'in', ('fit', 'size_set'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="Sample Type" context="{'group_by': 'sample_type'}"/>
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Sample (screens 27–28) -->
+    <record id="garment_sample_view_form" model="ir.ui.view">
+        <field name="name">garment.sample.form</field>
+        <field name="model">garment.sample</field>
+        <field name="arch" type="xml">
+            <form string="Sample">
+                <header>
+                    <button name="action_invoice_cost" type="object" string="Invoice Sample Cost"
+                            invisible="not charge_to_buyer or invoice_id"/>
+                    <button name="%(zyra_garment_merch.action_report_sample_ticket)d" type="action" string="Print Ticket"/>
+                    <button name="%(zyra_garment_merch.action_report_sample_fit)d" type="action" string="Fit Comments Sheet"/>
+                    <button name="action_start" type="object" string="To Sample Room" class="btn-primary"
+                            invisible="state != 'requested'"/>
+                    <button name="action_remake" type="object" string="Remake (Next Round)" class="btn-primary"
+                            invisible="state != 'rejected'"/>
+                    <button name="action_send_to_buyer" type="object" string="Send to Buyer" class="btn-primary"
+                            invisible="state not in ('requested', 'in_progress')"/>
+                    <button name="action_approve" type="object" string="Approved" class="btn-primary"
+                            invisible="state != 'with_buyer'"/>
+                    <button name="action_reject" type="object" string="Rejected" invisible="state != 'with_buyer'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="requested,in_progress,with_buyer,approved"/>
+                </header>
+                <sheet>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="invoice_id" invisible="1"/>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_good" invisible="state != 'approved'">
+                            <span class="o_zyra_kpi_label">Status</span>
+                            <span class="o_zyra_kpi_value"><field name="state" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_bad" invisible="state != 'rejected'">
+                            <span class="o_zyra_kpi_label">Status</span>
+                            <span class="o_zyra_kpi_value"><field name="state" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text" invisible="state in ('approved', 'rejected')">
+                            <span class="o_zyra_kpi_label">Status</span>
+                            <span class="o_zyra_kpi_value"><field name="state" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Round</span>
+                            <span class="o_zyra_kpi_value"><field name="round" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Points measured</span>
+                            <span class="o_zyra_kpi_value"><field name="points_measured"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="points_out">
+                            <span class="o_zyra_kpi_label">Out of tolerance</span>
+                            <span class="o_zyra_kpi_value"><field name="points_out"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not points_out">
+                            <span class="o_zyra_kpi_label">Out of tolerance</span>
+                            <span class="o_zyra_kpi_value"><field name="points_out"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Sample cost</span>
+                            <span class="o_zyra_kpi_value"><field name="cost" readonly="1" widget="monetary"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text">
+                            <span class="o_zyra_kpi_label">Charge to buyer</span>
+                            <span class="o_zyra_kpi_value"><field name="charge_label"/></span>
+                        </div>
+                    </div>
+                    <field name="image_128" widget="image" class="oe_avatar" readonly="1"/>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="style_id" placeholder="Style" options="{'no_create': True}"/></h1>
+                    </div>
+                    <group>
+                        <group string="Request" name="request">
+                            <field name="sample_type"/>
+                            <field name="order_id" options="{'no_create': True}"/>
+                            <field name="buyer_id"/>
+                            <field name="colour_id"/>
+                            <field name="size_ids" widget="many2many_tags" string="Sizes"/>
+                            <field name="pieces"/>
+                            <field name="size_measured_id"/>
+                        </group>
+                        <group string="Dates" name="dates">
+                            <field name="request_date"/>
+                            <field name="required_date"/>
+                            <field name="sent_date"/>
+                            <field name="decision_date"/>
+                            <field name="round" string="Round No."/>
+                            <field name="courier"/>
+                            <field name="tracking_ref"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Buyer Comments" name="comments">
+                            <field name="buyer_comments" nolabel="1" placeholder="What the buyer said about this round…"/>
+                        </page>
+                        <page string="Measurements" name="measurements">
+                            <button name="action_load_spec" type="object" string="Load spec for the size measured"
+                                    class="btn-link ps-0" icon="fa-download"/>
+                            <field name="measurement_ids" nolabel="1">
+                                <list editable="bottom" decoration-danger="result == 'fail'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="round" string="Round"/>
+                                    <field name="pom_id"/>
+                                    <field name="size_id"/>
+                                    <field name="spec"/>
+                                    <field name="tol_plus"/>
+                                    <field name="tol_minus"/>
+                                    <field name="measured"/>
+                                    <field name="deviation"/>
+                                    <field name="result" widget="badge" decoration-success="result == 'pass'"
+                                           decoration-danger="result == 'fail'" decoration-muted="result == 'pending'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Rounds" name="rounds">
+                            <field name="round_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="round"/>
+                                    <field name="sent_date"/>
+                                    <field name="decision_date"/>
+                                    <field name="decision" widget="badge" decoration-success="decision == 'approved'"
+                                           decoration-danger="decision == 'rejected'"/>
+                                    <field name="points_measured"/>
+                                    <field name="points_out"/>
+                                    <field name="comments"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cost" name="cost">
+                            <group>
+                                <group>
+                                    <field name="cost"/>
+                                    <field name="charge_to_buyer"/>
+                                    <field name="invoice_id" readonly="1" invisible="not invoice_id"/>
+                                    <field name="merchandiser_id"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_sample" model="ir.actions.act_window">
+        <field name="name">Samples</field>
+        <field name="res_model">garment.sample</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="garment_sample_view_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Request a sample</p>
+            <p>Proto, fit, size set, pre-production and shipment samples move across the sample room board.</p>
+        </field>
+    </record>
+</odoo>

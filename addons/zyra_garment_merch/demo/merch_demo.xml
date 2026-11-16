@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sewing lines (work centres; zyra_garment_sewing builds on them) -->
+    <record id="workcenter_line_1" model="mrp.workcenter">
+        <field name="name">Line 1 · Knit</field>
+        <field name="code">L1</field>
+    </record>
+    <record id="workcenter_line_2" model="mrp.workcenter">
+        <field name="name">Line 2 · Knit</field>
+        <field name="code">L2</field>
+    </record>
+    <record id="workcenter_line_3" model="mrp.workcenter">
+        <field name="name">Line 3 · Shirts</field>
+        <field name="code">L3</field>
+    </record>
+    <record id="workcenter_line_4" model="mrp.workcenter">
+        <field name="name">Line 4 · Bottoms</field>
+        <field name="code">L4</field>
+    </record>
+
+    <!-- Default owners of the bulk T&A template -->
+    <record id="tna_template_bulk_confirmed" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_anjali"/>
+    </record>
+    <record id="tna_template_bulk_labdips" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_anjali"/>
+    </record>
+    <record id="tna_template_bulk_fabric_booked" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_vivek"/>
+    </record>
+    <record id="tna_template_bulk_pp" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_anjali"/>
+    </record>
+    <record id="tna_template_bulk_fabric_in" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_vivek"/>
+    </record>
+    <record id="tna_template_bulk_cut" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_arjun"/>
+    </record>
+    <record id="tna_template_bulk_sew_start" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_arjun"/>
+    </record>
+    <record id="tna_template_bulk_sew_end" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_arjun"/>
+    </record>
+    <record id="tna_template_bulk_packed" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_priya"/>
+    </record>
+    <record id="tna_template_bulk_final" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_priya"/>
+    </record>
+    <record id="tna_template_bulk_handover" model="garment.tna.template.line">
+        <field name="owner_id" ref="zyra_garment_base.user_priya"/>
+    </record>
+
+    <!-- Orders, postings, samples, approval cards and T&A plans (see models/garment_merch_demo.py) -->
+    <function model="garment.merch.demo" name="_load_demo"/>
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="rule_garment_order_company" model="ir.rule">
+            <field name="name">Production orders: own companies</field>
+            <field name="model_id" ref="model_garment_order"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_order_line_company" model="ir.rule">
+            <field name="name">Production order grid: own companies</field>
+            <field name="model_id" ref="model_garment_order_line"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_order_progress_company" model="ir.rule">
+            <field name="name">Production postings: own companies</field>
+            <field name="model_id" ref="model_garment_order_progress"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_sample_company" model="ir.rule">
+            <field name="name">Samples: own companies</field>
+            <field name="model_id" ref="model_garment_sample"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_approval_company" model="ir.rule">
+            <field name="name">Approval cards: own companies</field>
+            <field name="model_id" ref="model_garment_approval"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_tna_template_company" model="ir.rule">
+            <field name="name">T&amp;A templates: shared or own companies</field>
+            <field name="model_id" ref="model_garment_tna_template"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_tna_milestone_company" model="ir.rule">
+            <field name="name">T&amp;A milestones: own companies</field>
+            <field name="model_id" ref="model_garment_tna_milestone"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+</odoo>
