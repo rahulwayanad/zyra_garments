@@ -20,7 +20,7 @@ halfway" prompt.
 |---|---|---|
 | 0 | repo, docs/screens, CLAUDE.md, theme installs | done (commit 7f9791c) |
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
-| 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | techpack merged; costing, merch running |
+| 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | techpack + costing merged; merch running |
 | 3 | materials, cutting, quality, shipping | – |
 | 4 | sewing, jobwork | – |
 | 5 | wages, pnl, cockpit, portal, connect | – |
@@ -33,3 +33,4 @@ halfway" prompt.
 - 02:40 base agent resumed from its transcript.
 - ~02:55 base merged to main (gate 31/31). Wave 2 contract written (contracts/wave2_techpack.md): techpack owns garment.style. Wave 2 started.
 - 03:14 techpack done (38/38 tests, contract met; BOM price_unit is Float not Monetary for sub-cent trims). Merged to main; wt-techpack kept until costing/merch finish (they test against it).
+- costing done (29/29; added `rejected` state from screen 31; overheads/commission/margin as % of FOB). Merged. Incident: shared scratch dir let costing run merch's script once (dropped zyra_merch; merch recreates it each run) → preamble now gives each agent its own scratch dir.

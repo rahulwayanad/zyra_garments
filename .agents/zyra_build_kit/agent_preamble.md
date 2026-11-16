@@ -3,6 +3,8 @@
 You are building ONE Odoo 18 Community module for the Zyra Garment ERP, unattended overnight. Rahul is asleep;
 do not ask questions — decide, write the decision in the module README under "Decisions", and continue.
 
+- Scratch files (scripts, logs): ONLY in `/tmp/claude-1000/zyra/<MODULE>/` (create it). Never run or edit
+  scripts in a shared scratch folder — other agents run in parallel.
 - Work ONLY in your worktree: `WT` (given below). Main repo: `/home/rahul/Personal/Garnaments` (read-only for you).
 - Read `WT/CLAUDE.md` first, then the kit prompt below, then the READMEs of the modules you depend on.
 - Odoo: `O=/home/rahul/Personal/Garnaments/odoo18` (source + venv, Python 3.12). Run Odoo from `WT`:
