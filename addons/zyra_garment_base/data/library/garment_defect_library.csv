@@ -1,0 +1,46 @@
+code,name,area,severity,department
+F01,Hole in fabric,fabric,critical,fabric_store
+F02,Slub,fabric,minor,fabric_store
+F03,Thick / thin yarn,fabric,minor,fabric_store
+F04,Missing yarn / broken end,fabric,major,fabric_store
+F05,Fabric stain,fabric,major,fabric_store
+F06,Crease mark,fabric,minor,fabric_store
+F07,Bowing / skew,fabric,major,fabric_store
+F08,Fabric barre,fabric,major,fabric_store
+S01,Shade variation within garment,shade,major,cutting
+S02,Shade variation garment to garment,shade,minor,cutting
+C01,Notch missing,measurement,minor,cutting
+C02,Cut panel off grain,measurement,major,cutting
+C03,Uneven cut edge,seam,minor,cutting
+W01,Broken stitch,stitching,major,sewing
+W02,Skip stitch,stitching,major,sewing
+W03,Loose tension,stitching,minor,sewing
+W04,Tight tension / puckering,stitching,major,sewing
+W05,Uneven stitch line,stitching,minor,sewing
+W06,Wrong SPI,stitching,minor,sewing
+W07,Open seam,seam,critical,sewing
+W08,Raw edge visible,seam,major,sewing
+W09,Seam twist,seam,major,sewing
+W10,Uneven hem,seam,minor,sewing
+W11,Pleat in seam,seam,minor,sewing
+W12,Mismatched stripes / checks,seam,major,sewing
+W13,Label wrong position,trims,minor,sewing
+W14,Needle mark / needle hole,stitching,major,sewing
+W15,Oil mark,finishing,major,sewing
+M01,Measurement out of tolerance,measurement,major,sewing
+M02,Left and right not symmetric,measurement,major,sewing
+T01,Button missing,trims,critical,finishing
+T02,Broken zipper,trims,critical,finishing
+T03,Wrong trim used,trims,major,finishing
+T04,Loose button,trims,major,finishing
+P01,Print crack / peel,print,major,jobwork
+P02,Print misaligned,print,major,jobwork
+P03,Embroidery thread loose,print,minor,jobwork
+D01,Wash shade out of standard,wash,major,jobwork
+D02,Uneven wash effect,wash,minor,jobwork
+D03,Untrimmed thread,finishing,minor,finishing
+D04,Pressing shine / burn mark,finishing,major,finishing
+D05,Dirty mark / stain,finishing,major,finishing
+K01,Wrong size label,packing,critical,packing
+K02,Wrong polybag / sticker,packing,minor,packing
+K03,Wrong carton assortment,packing,critical,packing

@@ -1,0 +1,34 @@
+code,name,used_on,how_to_measure,tolerance_cm
+T01,Chest 1/2,top,"Lay flat, measure straight across 2.5 cm below the armhole.",1.0
+T02,Waist 1/2 (top),top,"Measure straight across at the narrowest point of the body.",1.0
+T03,Bottom hem 1/2,top,"Measure straight across the bottom edge, hem relaxed.",1.0
+T04,Body length from HPS,top,"From the high point of the shoulder straight down to the hem.",1.0
+T05,Centre back length,top,"From the centre back neck seam down to the hem.",1.0
+T06,Across shoulder,top,"From shoulder point to shoulder point along the back.",0.5
+T07,Shoulder drop,top,"Vertical distance from HPS level down to the shoulder point.",0.3
+T08,Across front,top,"Straight across the front 12 cm below HPS, armhole seam to armhole seam.",0.5
+T09,Across back,top,"Straight across the back 12 cm below HPS, armhole seam to armhole seam.",0.5
+T10,Armhole straight,top,"From the shoulder point straight down to the underarm point.",0.5
+T11,Sleeve length from shoulder,top,"From the shoulder point along the top fold to the sleeve opening.",1.0
+T12,Sleeve length from CB,top,"From centre back neck over the shoulder point to the cuff edge.",1.0
+T13,Bicep 1/2,top,"Straight across the sleeve 2.5 cm below the underarm.",0.5
+T14,Elbow 1/2,top,"Straight across the sleeve at half the underarm length.",0.5
+T15,Sleeve opening 1/2,top,"Straight across the sleeve edge, relaxed.",0.5
+T16,Cuff height,top,"From the cuff seam to the cuff edge.",0.3
+T17,Neck width seam to seam,top,"Straight across from neck seam to neck seam at HPS.",0.5
+T18,Front neck drop,top,"From an imaginary line between HPS points down to the front neck seam.",0.5
+T19,Back neck drop,top,"From an imaginary line between HPS points down to the back neck seam.",0.3
+T20,Collar / rib height,top,"From the neck seam to the finished edge at centre back.",0.2
+T21,Placket length,top,"From the neck seam to the placket bottom along the placket.",0.5
+T22,Hem height,both,"From the finished edge to the hem stitch line.",0.2
+B01,Waist 1/2 (bottom),bottom,"Button closed, measure straight across the top of the waistband.",1.0
+B02,Hip 1/2,bottom,"Straight across 18 cm below the waistband top edge.",1.0
+B03,Front rise,bottom,"From the crotch seam to the top of the waistband at the front.",0.5
+B04,Back rise,bottom,"From the crotch seam to the top of the waistband at the back.",0.5
+B05,Thigh 1/2,bottom,"Straight across the leg 2.5 cm below the crotch.",0.5
+B06,Knee 1/2,bottom,"Straight across the leg at half the inseam.",0.5
+B07,Leg opening 1/2,bottom,"Straight across the leg at the hem.",0.5
+B08,Inseam,bottom,"From the crotch seam along the inside leg to the hem.",1.0
+B09,Outseam,bottom,"From the top of the waistband along the side seam to the hem.",1.0
+B10,Waistband height,bottom,"From the waistband seam to its top edge.",0.2
+B11,Fly length,bottom,"From the waistband seam to the bottom of the fly stitch.",0.3

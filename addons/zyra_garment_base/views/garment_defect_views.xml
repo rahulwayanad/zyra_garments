@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_defect_view_list" model="ir.ui.view">
+        <field name="name">garment.defect.list</field>
+        <field name="model">garment.defect</field>
+        <field name="arch" type="xml">
+            <list string="Defects">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="area"/>
+                <field name="severity" widget="badge" decoration-danger="severity == 'critical'" decoration-warning="severity == 'major'" decoration-muted="severity == 'minor'"/>
+                <field name="department"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_defect_view_form" model="ir.ui.view">
+        <field name="name">garment.defect.form</field>
+        <field name="model">garment.defect</field>
+        <field name="arch" type="xml">
+            <form string="Defects">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="area"/>
+                        <field name="severity" widget="radio" options="{'horizontal': true}"/>
+                        <field name="department"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_defect_view_search" model="ir.ui.view">
+        <field name="name">garment.defect.search</field>
+        <field name="model">garment.defect</field>
+        <field name="arch" type="xml">
+            <search string="Defects">
+                <field name="code"/>
+                <field name="name"/>
+                <filter string="Critical" name="critical" domain="[('severity', '=', 'critical')]"/>
+                <filter string="Major" name="major" domain="[('severity', '=', 'major')]"/>
+                <filter string="Minor" name="minor" domain="[('severity', '=', 'minor')]"/>
+                <group>
+                    <filter string="Department" name="group_department" context="{'group_by': 'department'}"/>
+                    <filter string="Area" name="group_area" context="{'group_by': 'area'}"/>
+                </group>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_garment_defect" model="ir.actions.act_window">
+        <field name="name">Defects</field>
+        <field name="res_model">garment.defect</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Load the shipped defect library from Factory Setup, or add your own defects.</p>
+        </field>
+    </record>
+</odoo>

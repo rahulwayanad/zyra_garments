@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="operation_tee_01" model="garment.operation">
+        <field name="code">TEE-01</field>
+        <field name="name">Join shoulders</field>
+        <field name="sequence">10</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">preparation</field>
+        <field name="machine_type_id" ref="machine_type_ol3"/>
+        <field name="default_sam">0.35</field>
+    </record>
+    <record id="operation_tee_02" model="garment.operation">
+        <field name="code">TEE-02</field>
+        <field name="name">Attach neck rib</field>
+        <field name="sequence">20</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">front</field>
+        <field name="machine_type_id" ref="machine_type_ol3"/>
+        <field name="default_sam">0.45</field>
+    </record>
+    <record id="operation_tee_03" model="garment.operation">
+        <field name="code">TEE-03</field>
+        <field name="name">Neck rib top stitch</field>
+        <field name="sequence">30</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">front</field>
+        <field name="machine_type_id" ref="machine_type_fl"/>
+        <field name="default_sam">0.4</field>
+    </record>
+    <record id="operation_tee_04" model="garment.operation">
+        <field name="code">TEE-04</field>
+        <field name="name">Back neck tape</field>
+        <field name="sequence">40</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">back</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.55</field>
+    </record>
+    <record id="operation_tee_05" model="garment.operation">
+        <field name="code">TEE-05</field>
+        <field name="name">Attach main label</field>
+        <field name="sequence">50</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">back</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.3</field>
+    </record>
+    <record id="operation_tee_06" model="garment.operation">
+        <field name="code">TEE-06</field>
+        <field name="name">Attach sleeves</field>
+        <field name="sequence">60</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">sleeve</field>
+        <field name="machine_type_id" ref="machine_type_ol3"/>
+        <field name="default_sam">0.8</field>
+    </record>
+    <record id="operation_tee_07" model="garment.operation">
+        <field name="code">TEE-07</field>
+        <field name="name">Sleeve hem</field>
+        <field name="sequence">70</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">sleeve</field>
+        <field name="machine_type_id" ref="machine_type_fl"/>
+        <field name="default_sam">0.6</field>
+    </record>
+    <record id="operation_tee_08" model="garment.operation">
+        <field name="code">TEE-08</field>
+        <field name="name">Side seam closing</field>
+        <field name="sequence">80</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_ol3"/>
+        <field name="default_sam">1.1</field>
+    </record>
+    <record id="operation_tee_09" model="garment.operation">
+        <field name="code">TEE-09</field>
+        <field name="name">Bottom hem</field>
+        <field name="sequence">90</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_fl"/>
+        <field name="default_sam">0.65</field>
+    </record>
+    <record id="operation_tee_10" model="garment.operation">
+        <field name="code">TEE-10</field>
+        <field name="name">Attach care label</field>
+        <field name="sequence">100</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.25</field>
+    </record>
+    <record id="operation_tee_11" model="garment.operation">
+        <field name="code">TEE-11</field>
+        <field name="name">Thread trimming</field>
+        <field name="sequence">110</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">finishing</field>
+        <field name="machine_type_id" ref="machine_type_manual"/>
+        <field name="default_sam">0.7</field>
+    </record>
+    <record id="operation_tee_12" model="garment.operation">
+        <field name="code">TEE-12</field>
+        <field name="name">Pressing</field>
+        <field name="sequence">120</field>
+        <field name="type_id" ref="garment_type_tshirt"/>
+        <field name="section">finishing</field>
+        <field name="machine_type_id" ref="machine_type_iron"/>
+        <field name="default_sam">0.8</field>
+    </record>
+    <record id="operation_jean_01" model="garment.operation">
+        <field name="code">JEAN-01</field>
+        <field name="name">Back pocket hem</field>
+        <field name="sequence">10</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">back</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.4</field>
+    </record>
+    <record id="operation_jean_02" model="garment.operation">
+        <field name="code">JEAN-02</field>
+        <field name="name">Back pocket decorative stitch</field>
+        <field name="sequence">20</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">back</field>
+        <field name="machine_type_id" ref="machine_type_dnls"/>
+        <field name="default_sam">0.9</field>
+    </record>
+    <record id="operation_jean_03" model="garment.operation">
+        <field name="code">JEAN-03</field>
+        <field name="name">Attach back pockets</field>
+        <field name="sequence">30</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">back</field>
+        <field name="machine_type_id" ref="machine_type_dnls"/>
+        <field name="default_sam">1.2</field>
+    </record>
+    <record id="operation_jean_04" model="garment.operation">
+        <field name="code">JEAN-04</field>
+        <field name="name">Attach yoke</field>
+        <field name="sequence">40</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">back</field>
+        <field name="machine_type_id" ref="machine_type_ol5"/>
+        <field name="default_sam">0.7</field>
+    </record>
+    <record id="operation_jean_05" model="garment.operation">
+        <field name="code">JEAN-05</field>
+        <field name="name">Join seat seam</field>
+        <field name="sequence">50</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">back</field>
+        <field name="machine_type_id" ref="machine_type_ol5"/>
+        <field name="default_sam">0.6</field>
+    </record>
+    <record id="operation_jean_06" model="garment.operation">
+        <field name="code">JEAN-06</field>
+        <field name="name">Coin pocket hem and attach</field>
+        <field name="sequence">60</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">front</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.55</field>
+    </record>
+    <record id="operation_jean_07" model="garment.operation">
+        <field name="code">JEAN-07</field>
+        <field name="name">Front pocket facing and bag</field>
+        <field name="sequence">70</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">front</field>
+        <field name="machine_type_id" ref="machine_type_ol3"/>
+        <field name="default_sam">1.1</field>
+    </record>
+    <record id="operation_jean_08" model="garment.operation">
+        <field name="code">JEAN-08</field>
+        <field name="name">Front pocket top stitch</field>
+        <field name="sequence">80</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">front</field>
+        <field name="machine_type_id" ref="machine_type_dnls"/>
+        <field name="default_sam">0.85</field>
+    </record>
+    <record id="operation_jean_09" model="garment.operation">
+        <field name="code">JEAN-09</field>
+        <field name="name">Fly and zip attach</field>
+        <field name="sequence">90</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">front</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">1.3</field>
+    </record>
+    <record id="operation_jean_10" model="garment.operation">
+        <field name="code">JEAN-10</field>
+        <field name="name">J-stitch on fly</field>
+        <field name="sequence">100</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">front</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.45</field>
+    </record>
+    <record id="operation_jean_11" model="garment.operation">
+        <field name="code">JEAN-11</field>
+        <field name="name">Crotch seam</field>
+        <field name="sequence">110</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_ol5"/>
+        <field name="default_sam">0.55</field>
+    </record>
+    <record id="operation_jean_12" model="garment.operation">
+        <field name="code">JEAN-12</field>
+        <field name="name">Inseam</field>
+        <field name="sequence">120</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">sleeve</field>
+        <field name="machine_type_id" ref="machine_type_fdoa"/>
+        <field name="default_sam">0.95</field>
+    </record>
+    <record id="operation_jean_13" model="garment.operation">
+        <field name="code">JEAN-13</field>
+        <field name="name">Outseam overlock</field>
+        <field name="sequence">130</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">sleeve</field>
+        <field name="machine_type_id" ref="machine_type_ol5"/>
+        <field name="default_sam">1.05</field>
+    </record>
+    <record id="operation_jean_14" model="garment.operation">
+        <field name="code">JEAN-14</field>
+        <field name="name">Outseam top stitch</field>
+        <field name="sequence">140</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">sleeve</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.7</field>
+    </record>
+    <record id="operation_jean_15" model="garment.operation">
+        <field name="code">JEAN-15</field>
+        <field name="name">Attach waistband</field>
+        <field name="sequence">150</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_fdoa"/>
+        <field name="default_sam">1.2</field>
+    </record>
+    <record id="operation_jean_16" model="garment.operation">
+        <field name="code">JEAN-16</field>
+        <field name="name">Waistband ends finish</field>
+        <field name="sequence">160</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.6</field>
+    </record>
+    <record id="operation_jean_17" model="garment.operation">
+        <field name="code">JEAN-17</field>
+        <field name="name">Belt loop making</field>
+        <field name="sequence">170</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">preparation</field>
+        <field name="machine_type_id" ref="machine_type_fl"/>
+        <field name="default_sam">0.35</field>
+    </record>
+    <record id="operation_jean_18" model="garment.operation">
+        <field name="code">JEAN-18</field>
+        <field name="name">Attach belt loops</field>
+        <field name="sequence">180</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_bt"/>
+        <field name="default_sam">0.7</field>
+    </record>
+    <record id="operation_jean_19" model="garment.operation">
+        <field name="code">JEAN-19</field>
+        <field name="name">Leg hem</field>
+        <field name="sequence">190</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">assembly</field>
+        <field name="machine_type_id" ref="machine_type_snls"/>
+        <field name="default_sam">0.75</field>
+    </record>
+    <record id="operation_jean_20" model="garment.operation">
+        <field name="code">JEAN-20</field>
+        <field name="name">Buttonhole</field>
+        <field name="sequence">200</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">finishing</field>
+        <field name="machine_type_id" ref="machine_type_bh"/>
+        <field name="default_sam">0.2</field>
+    </record>
+    <record id="operation_jean_21" model="garment.operation">
+        <field name="code">JEAN-21</field>
+        <field name="name">Bartacks</field>
+        <field name="sequence">210</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">finishing</field>
+        <field name="machine_type_id" ref="machine_type_bt"/>
+        <field name="default_sam">0.6</field>
+    </record>
+    <record id="operation_jean_22" model="garment.operation">
+        <field name="code">JEAN-22</field>
+        <field name="name">Rivets and button</field>
+        <field name="sequence">220</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">finishing</field>
+        <field name="machine_type_id" ref="machine_type_snap"/>
+        <field name="default_sam">0.5</field>
+    </record>
+    <record id="operation_jean_23" model="garment.operation">
+        <field name="code">JEAN-23</field>
+        <field name="name">Thread trimming</field>
+        <field name="sequence">230</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">finishing</field>
+        <field name="machine_type_id" ref="machine_type_manual"/>
+        <field name="default_sam">0.9</field>
+    </record>
+    <record id="operation_jean_24" model="garment.operation">
+        <field name="code">JEAN-24</field>
+        <field name="name">Pressing</field>
+        <field name="sequence">240</field>
+        <field name="type_id" ref="garment_type_jean"/>
+        <field name="section">finishing</field>
+        <field name="machine_type_id" ref="machine_type_iron"/>
+        <field name="default_sam">1.0</field>
+    </record>
+</odoo>

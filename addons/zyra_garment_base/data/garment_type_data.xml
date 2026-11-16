@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="garment_type_tshirt" model="garment.type">
+        <field name="name">T-shirt</field>
+        <field name="code">TEE</field>
+        <field name="sequence">10</field>
+        <field name="default_sam">9.5</field>
+    </record>
+    <record id="garment_type_polo" model="garment.type">
+        <field name="name">Polo shirt</field>
+        <field name="code">POLO</field>
+        <field name="sequence">20</field>
+        <field name="default_sam">16.0</field>
+    </record>
+    <record id="garment_type_shirt" model="garment.type">
+        <field name="name">Woven shirt</field>
+        <field name="code">SHIRT</field>
+        <field name="sequence">30</field>
+        <field name="default_sam">22.0</field>
+    </record>
+    <record id="garment_type_jean" model="garment.type">
+        <field name="name">5-pocket jean</field>
+        <field name="code">JEAN</field>
+        <field name="sequence">40</field>
+        <field name="default_sam">24.0</field>
+    </record>
+    <record id="garment_type_chino" model="garment.type">
+        <field name="name">Chino trouser</field>
+        <field name="code">CHINO</field>
+        <field name="sequence">50</field>
+        <field name="default_sam">26.0</field>
+    </record>
+    <record id="garment_type_hoodie" model="garment.type">
+        <field name="name">Hooded sweatshirt</field>
+        <field name="code">HOOD</field>
+        <field name="sequence">60</field>
+        <field name="default_sam">19.0</field>
+    </record>
+    <record id="garment_type_shorts" model="garment.type">
+        <field name="name">Shorts</field>
+        <field name="code">SHORT</field>
+        <field name="sequence">70</field>
+        <field name="default_sam">12.0</field>
+    </record>
+    <record id="garment_type_dress" model="garment.type">
+        <field name="name">Dress</field>
+        <field name="code">DRESS</field>
+        <field name="sequence">80</field>
+        <field name="default_sam">20.0</field>
+    </record>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="machine_type_snls" model="garment.machine.type">
+        <field name="name">Single needle lockstitch</field>
+        <field name="code">SNLS</field>
+        <field name="sequence">10</field>
+        <field name="stitch_class">301</field>
+    </record>
+    <record id="machine_type_dnls" model="garment.machine.type">
+        <field name="name">Double needle lockstitch</field>
+        <field name="code">DNLS</field>
+        <field name="sequence">20</field>
+        <field name="stitch_class">301</field>
+    </record>
+    <record id="machine_type_ol3" model="garment.machine.type">
+        <field name="name">3-thread overlock</field>
+        <field name="code">OL3</field>
+        <field name="sequence">30</field>
+        <field name="stitch_class">504</field>
+    </record>
+    <record id="machine_type_ol5" model="garment.machine.type">
+        <field name="name">5-thread safety stitch</field>
+        <field name="code">OL5</field>
+        <field name="sequence">40</field>
+        <field name="stitch_class">516</field>
+    </record>
+    <record id="machine_type_fl" model="garment.machine.type">
+        <field name="name">Flatlock / cover stitch</field>
+        <field name="code">FL</field>
+        <field name="sequence">50</field>
+        <field name="stitch_class">605</field>
+    </record>
+    <record id="machine_type_fdoa" model="garment.machine.type">
+        <field name="name">Feed-off-the-arm chainstitch</field>
+        <field name="code">FOA</field>
+        <field name="sequence">60</field>
+        <field name="stitch_class">401</field>
+    </record>
+    <record id="machine_type_bh" model="garment.machine.type">
+        <field name="name">Buttonhole machine</field>
+        <field name="code">BH</field>
+        <field name="sequence">70</field>
+        <field name="stitch_class">304</field>
+    </record>
+    <record id="machine_type_bs" model="garment.machine.type">
+        <field name="name">Button sew machine</field>
+        <field name="code">BS</field>
+        <field name="sequence">80</field>
+        <field name="stitch_class">107</field>
+    </record>
+    <record id="machine_type_bt" model="garment.machine.type">
+        <field name="name">Bartack machine</field>
+        <field name="code">BT</field>
+        <field name="sequence">90</field>
+        <field name="stitch_class">304</field>
+    </record>
+    <record id="machine_type_snap" model="garment.machine.type">
+        <field name="name">Rivet / snap press</field>
+        <field name="code">SNAP</field>
+        <field name="sequence">100</field>
+    </record>
+    <record id="machine_type_iron" model="garment.machine.type">
+        <field name="name">Steam iron</field>
+        <field name="code">IRON</field>
+        <field name="sequence">110</field>
+    </record>
+    <record id="machine_type_manual" model="garment.machine.type">
+        <field name="name">Manual / helper</field>
+        <field name="code">MAN</field>
+        <field name="sequence">120</field>
+    </record>
+</odoo>

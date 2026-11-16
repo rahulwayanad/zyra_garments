@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_operation_view_list" model="ir.ui.view">
+        <field name="name">garment.operation.list</field>
+        <field name="model">garment.operation</field>
+        <field name="arch" type="xml">
+            <list string="Operations">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="type_id"/>
+                <field name="section"/>
+                <field name="machine_type_id"/>
+                <field name="default_sam" sum="Total SAM"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_operation_view_form" model="ir.ui.view">
+        <field name="name">garment.operation.form</field>
+        <field name="model">garment.operation</field>
+        <field name="arch" type="xml">
+            <form string="Operations">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="type_id"/>
+                        <field name="section"/>
+                        <field name="machine_type_id"/>
+                        <field name="default_sam"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_operation_view_search" model="ir.ui.view">
+        <field name="name">garment.operation.search</field>
+        <field name="model">garment.operation</field>
+        <field name="arch" type="xml">
+            <search string="Operations">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="type_id"/>
+                <field name="machine_type_id"/>
+                <group>
+                    <filter string="Garment Type" name="group_type" context="{'group_by': 'type_id'}"/>
+                    <filter string="Section" name="group_section" context="{'group_by': 'section'}"/>
+                    <filter string="Machine Type" name="group_machine" context="{'group_by': 'machine_type_id'}"/>
+                </group>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_garment_operation" model="ir.actions.act_window">
+        <field name="name">Operations</field>
+        <field name="res_model">garment.operation</field>
+        <field name="context">{'search_default_group_type': 1}</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add the sewing operations of your styles.</p>
+        </field>
+    </record>
+    <record id="garment_machine_type_view_list" model="ir.ui.view">
+        <field name="name">garment.machine.type.list</field>
+        <field name="model">garment.machine.type</field>
+        <field name="arch" type="xml">
+            <list string="Machine Types">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="stitch_class"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_machine_type_view_form" model="ir.ui.view">
+        <field name="name">garment.machine.type.form</field>
+        <field name="model">garment.machine.type</field>
+        <field name="arch" type="xml">
+            <form string="Machine Types">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="stitch_class"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_machine_type_view_search" model="ir.ui.view">
+        <field name="name">garment.machine.type.search</field>
+        <field name="model">garment.machine.type</field>
+        <field name="arch" type="xml">
+            <search string="Machine Types">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_garment_machine_type" model="ir.actions.act_window">
+        <field name="name">Machine Types</field>
+        <field name="res_model">garment.machine.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add the machine types used on your lines.</p>
+        </field>
+    </record>
+</odoo>
