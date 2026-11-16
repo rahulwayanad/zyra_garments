@@ -1,0 +1,115 @@
+// Zyra light theme — design tokens.
+// Copy to zyra_garment_base/static/src/scss/zg_tokens.scss. Spec: .agents/docs/design/light-theme.md
+
+.o_zg, .o_zg_floor {
+    // Surfaces
+    --zg-ground: #F6F5FB;
+    --zg-surface: #FFFFFF;
+    --zg-surface-sunk: #F1EFF8;
+    --zg-border: #E3E0EE;
+    --zg-border-strong: #D6D2E4;
+
+    // Text
+    --zg-text: #1B1830;        // 16.9:1 on white
+    --zg-text-muted: #5B5670;  // 6.6:1
+    --zg-text-quiet: #4D4868;
+
+    // Accent
+    --zg-accent: #5B3FD0;
+    --zg-accent-hover: #43299F;
+    --zg-accent-soft: #EEE9FD;
+    --zg-accent-chart: #8B6CF0;
+
+    // Status: ink = text on white, soft = fill, chart = bars/dots, border, tile = KPI tile background
+    --zg-ok-ink: #0B7A53;   --zg-ok-soft: #E2F4EB;   --zg-ok-chart: #22B07D;   --zg-ok-border: #BFE6D2;   --zg-ok-tile: #F5FBF8;
+    --zg-warn-ink: #A35200; --zg-warn-soft: #FDF1DC; --zg-warn-chart: #F2A93B; --zg-warn-border: #F4D9A8; --zg-warn-tile: #FFFAF1;
+    --zg-bad-ink: #BE1E48;  --zg-bad-soft: #FCE7ED;  --zg-bad-chart: #EC5B7E;  --zg-bad-border: #F3C3D0;  --zg-bad-tile: #FFF6F8;
+    --zg-plan-ink: #4D4868; --zg-plan-soft: #EFEDF5; --zg-plan-chart: #C9C2E2; --zg-neutral-dot: #9A93B5;
+
+    // Type
+    --zg-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --zg-font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+    // Shape
+    --zg-radius-control: 10px;
+    --zg-radius-tile: 12px;
+    --zg-radius-panel: 16px;
+    --zg-shadow-float: 0 1px 2px rgba(27, 24, 48, .06);
+    --zg-touch: 44px;
+
+    font-family: var(--zg-font-sans);
+    color: var(--zg-text);
+}
+
+// ---- Shared components (move to zg_components.scss when implementing) ----
+
+.o_zg_mono { font-family: var(--zg-font-mono); font-variant-numeric: tabular-nums; }
+
+.o_zg_label {
+    font: 600 11px/1.3 var(--zg-font-mono);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--zg-text-muted);
+}
+
+.o_zg_dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--zg-neutral-dot); }
+
+.o_zg_kpi_rail { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+
+.o_zg_kpi {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 14px 16px;
+    background: var(--zg-surface);
+    border: 1px solid var(--zg-border);
+    border-radius: var(--zg-radius-tile);
+    &__label { @extend .o_zg_label; display: flex; align-items: center; gap: 8px; }
+    &__value { font: 500 26px/1.15 var(--zg-font-mono); font-variant-numeric: tabular-nums; }
+    @each $s in ok, warn, bad {
+        &--#{$s} {
+            background: var(--zg-#{$s}-tile);
+            border-color: var(--zg-#{$s}-border);
+            .o_zg_dot { background: var(--zg-#{$s}-chart); }
+            .o_zg_kpi__value { color: var(--zg-#{$s}-ink); }
+        }
+    }
+}
+
+.o_zg_pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font: 600 11px/1.3 var(--zg-font-mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: var(--zg-plan-soft);
+    color: var(--zg-plan-ink);
+    @each $s in ok, warn, bad {
+        &--#{$s} { background: var(--zg-#{$s}-soft); color: var(--zg-#{$s}-ink); }
+    }
+    &--accent { background: var(--zg-accent-soft); color: var(--zg-accent); }
+}
+
+.o_zg_card {
+    background: var(--zg-surface);
+    border: 1px solid var(--zg-border);
+    border-radius: var(--zg-radius-panel);
+    padding: 18px 20px;
+}
+
+.o_zg_headline {
+    font-size: 22px; line-height: 1.45; font-weight: 500;
+    .o_zg_bad { color: var(--zg-bad-ink); font-weight: 600; }
+}
+
+.o_zg_floor {
+    background: var(--zg-ground);
+    button, .btn, input, select { min-height: var(--zg-touch); }
+    .o_zg_scan_input {
+        height: 72px;
+        font: 500 28px var(--zg-font-mono);
+        border: 2px solid var(--zg-accent);
+        border-radius: 14px;
+        box-shadow: 0 0 0 4px var(--zg-accent-soft);
+        padding: 0 22px;
+    }
+}

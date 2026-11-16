@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zyra light theme tokens</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5B3FD0}a:hover{color:#43299F}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 1240px; background: #F6F5FB; color: #1B1830; font-family: Inter, system-ui, sans-serif; padding: 48px clamp(16px, 4vw, 56px); display: flex; flex-direction: column; gap: 40px">
+
+  <header style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; justify-content: space-between">
+    <div style="display: flex; gap: 16px; align-items: center">
+      <div style="width: 52px; height: 52px; border-radius: 14px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10l5-4 3 3 4-5 4 4v12z"></path><path d="M4 20h16"></path></svg>
+      </div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .18em; color: #5B3FD0; font-weight: 600">ZYRA GARMENT ERP · ODOO 18 CE</div>
+        <h1 style="margin: 4px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -.01em">Light theme</h1>
+      </div>
+    </div>
+    <p style="margin: 0; max-width: 520px; font-size: 14px; line-height: 1.55; color: #5B5670">Built for the office and the floor: white surfaces on a soft lavender ground, one violet accent, and status colours dark enough to read as text on white. Every number is set in a monospace face so columns line up.</p>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 600; color: #5B5670">SURFACES &amp; TEXT</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px">
+      <div style="border: 1px solid #E3E0EE; border-radius: 12px; overflow: hidden; background: #fff"><div style="height: 64px; background: #F6F5FB"></div><div style="padding: 10px 12px; font-size: 13px"><b>Ground</b><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5B5670">#F6F5FB</div></div></div>
+      <div style="border: 1px solid #E3E0EE; border-radius: 12px; overflow: hidden; background: #fff"><div style="height: 64px; background: #FFFFFF; border-bottom: 1px solid #E3E0EE"></div><div style="padding: 10px 12px; font-size: 13px"><b>Surface</b><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5B5670">#FFFFFF</div></div></div>
+      <div style="border: 1px solid #E3E0EE; border-radius: 12px; overflow: hidden; background: #fff"><div style="height: 64px; background: #F1EFF8"></div><div style="padding: 10px 12px; font-size: 13px"><b>Surface sunk</b><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5B5670">#F1EFF8</div></div></div>
+      <div style="border: 1px solid #E3E0EE; border-radius: 12px; overflow: hidden; background: #fff"><div style="height: 64px; background: #E3E0EE"></div><div style="padding: 10px 12px; font-size: 13px"><b>Border</b><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5B5670">#E3E0EE</div></div></div>
+      <div style="border: 1px solid #E3E0EE; border-radius: 12px; overflow: hidden; background: #fff"><div style="height: 64px; background: #1B1830"></div><div style="padding: 10px 12px; font-size: 13px"><b>Text</b><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5B5670">#1B1830 · 16.9:1</div></div></div>
+      <div style="border: 1px solid #E3E0EE; border-radius: 12px; overflow: hidden; background: #fff"><div style="height: 64px; background: #5B5670"></div><div style="padding: 10px 12px; font-size: 13px"><b>Text muted</b><div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5B5670">#5B5670 · 6.6:1</div></div></div>
+    </div>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 600; color: #5B5670">ACCENT &amp; STATUS — INK FOR TEXT, SOFT FOR FILLS, CHART FOR BARS</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px">
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+        <b style="font-size: 13px">Accent · violet</b>
+        <div style="display: flex; gap: 6px"><div style="flex: 1; height: 40px; border-radius: 8px; background: #5B3FD0"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #EEE9FD"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #8B6CF0"></div></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B5670">#5B3FD0 · #EEE9FD · #8B6CF0</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+        <b style="font-size: 13px">On target · green</b>
+        <div style="display: flex; gap: 6px"><div style="flex: 1; height: 40px; border-radius: 8px; background: #0B7A53"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #E2F4EB"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #22B07D"></div></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B5670">#0B7A53 · #E2F4EB · #22B07D</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+        <b style="font-size: 13px">Tight · amber</b>
+        <div style="display: flex; gap: 6px"><div style="flex: 1; height: 40px; border-radius: 8px; background: #A35200"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #FDF1DC"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #F2A93B"></div></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B5670">#A35200 · #FDF1DC · #F2A93B</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+        <b style="font-size: 13px">Late / failed · rose</b>
+        <div style="display: flex; gap: 6px"><div style="flex: 1; height: 40px; border-radius: 8px; background: #BE1E48"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #FCE7ED"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #EC5B7E"></div></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B5670">#BE1E48 · #FCE7ED · #EC5B7E</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+        <b style="font-size: 13px">Plan / target · lilac</b>
+        <div style="display: flex; gap: 6px"><div style="flex: 1; height: 40px; border-radius: 8px; background: #4D4868"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #EFEDF5"></div><div style="flex: 1; height: 40px; border-radius: 8px; background: #C9C2E2"></div></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B5670">#4D4868 · #EFEDF5 · #C9C2E2</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px">
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 600; color: #5B5670">TYPE</h2>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+        <div style="font-size: 28px; font-weight: 700; letter-spacing: -.01em">Page title · Inter 28/700</div>
+        <div style="font-size: 18px; font-weight: 600">Section title · Inter 18/600</div>
+        <div style="font-size: 14px; line-height: 1.5; color: #1B1830">Body · Inter 14/400. Order GO/2026/0031 is two days behind on Line 4.</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; font-weight: 600; color: #5B5670">FIELD LABEL · MONO 11/600 +10%</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 500">4,812 <span style="font-size: 16px; color: #5B5670">/ 5,000 pcs</span></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 600; color: #5B5670">BUTTONS &amp; STATUS PILLS</h2>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <button style="font: 600 14px Inter, sans-serif; color: #fff; background: {{accent}}; border: 0; border-radius: 10px; padding: 0 18px; height: 40px">Confirm order</button>
+          <button style="font: 600 14px Inter, sans-serif; color: #1B1830; background: #fff; border: 1px solid #D6D2E4; border-radius: 10px; padding: 0 18px; height: 40px">Propose cut plan</button>
+          <button style="font: 600 14px Inter, sans-serif; color: #5B3FD0; background: #EEE9FD; border: 0; border-radius: 10px; padding: 0 18px; height: 40px">Log note</button>
+          <button style="font: 600 14px Inter, sans-serif; color: #BE1E48; background: #fff; border: 1px solid #F3C3D0; border-radius: 10px; padding: 0 18px; height: 40px">Cancel</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+          <span style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .08em; padding: 5px 10px; border-radius: 999px; background: #EFEDF5; color: #4D4868">DRAFT</span>
+          <span style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .08em; padding: 5px 10px; border-radius: 999px; background: #EEE9FD; color: #5B3FD0">IN PRODUCTION</span>
+          <span style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .08em; padding: 5px 10px; border-radius: 999px; background: #E2F4EB; color: #0B7A53">PASSED</span>
+          <span style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .08em; padding: 5px 10px; border-radius: 999px; background: #FDF1DC; color: #A35200">TIGHT</span>
+          <span style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .08em; padding: 5px 10px; border-radius: 999px; background: #FCE7ED; color: #BE1E48">FAILED</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 600; color: #5B5670">KPI TILES — THE TILE TAKES ITS STATUS FROM THE NUMBER</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px">
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; gap: 8px; align-items: center; font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .1em; color: #5B5670"><span style="width: 7px; height: 7px; border-radius: 50%; background: #9A93B5"></span>ORDER VALUE</div>
+        <div style="font: 500 26px 'JetBrains Mono', monospace">41.2k <span style="font-size: 14px; color: #5B5670">USD</span></div>
+      </div>
+      <div style="background: #F5FBF8; border: 1px solid #BFE6D2; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; gap: 8px; align-items: center; font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .1em; color: #5B5670"><span style="width: 7px; height: 7px; border-radius: 50%; background: #22B07D"></span>FABRIC IN HOUSE</div>
+        <div style="font: 500 26px 'JetBrains Mono', monospace; color: #0B7A53">100%</div>
+      </div>
+      <div style="background: #FFFAF1; border: 1px solid #F4D9A8; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; gap: 8px; align-items: center; font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .1em; color: #5B5670"><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2A93B"></span>PACKED</div>
+        <div style="font: 500 26px 'JetBrains Mono', monospace; color: #A35200">2,140 <span style="font-size: 14px; color: #5B5670">/ 4,600</span></div>
+      </div>
+      <div style="background: #FFF6F8; border: 1px solid #F3C3D0; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; gap: 8px; align-items: center; font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .1em; color: #5B5670"><span style="width: 7px; height: 7px; border-radius: 50%; background: #EC5B7E"></span>EX-FACTORY IN</div>
+        <div style="font: 500 26px 'JetBrains Mono', monospace; color: #BE1E48">−2 d</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px">
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 600; color: #5B5670">FORM FIELDS</h2>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 14px; padding: 20px; display: grid; grid-template-columns: 140px 1fr; gap: 14px 16px; align-items: center">
+        <label for="f-buyer" style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .1em; color: #5B5670">BUYER</label>
+        <input id="f-buyer" value="Harbourline Outfitters" style="font: 14px Inter, sans-serif; color: #1B1830; border: 0; border-bottom: 1px solid #D6D2E4; padding: 8px 2px; background: transparent">
+        <label for="f-po" style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .1em; color: #5B5670">BUYER PO NO.</label>
+        <input id="f-po" value="HO-55120" style="font: 14px 'JetBrains Mono', monospace; color: #1B1830; border: 0; border-bottom: 2px solid #5B3FD0; padding: 8px 2px; background: transparent">
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 600; color: #5B5670">SHAPE</h2>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 14px; padding: 20px; font-size: 14px; line-height: 1.7; color: #1B1830">
+        Radius 10 for controls, 12 for tiles, 14–16 for panels · 1px borders do the work shadows did in the dark theme · one soft shadow, <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">0 1px 2px rgba(27,24,48,.06)</span>, on floating panels only · touch targets 44px on floor screens.
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#5B3FD0","options":["#5B3FD0","#2F5BD3","#0E7C86"]},"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#5B3FD0' };
+  }
+}
+</script>
+</body>
+</html>

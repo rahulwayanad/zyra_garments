@@ -1,0 +1,24 @@
+// Zyra garment light theme: Odoo variables (prepended, so these win over !default).
+
+$zyra-violet: #6d4ee8;
+$zyra-ink: #1d1b2c;
+$zyra-muted: #6b6880;
+$zyra-line: #e9e6f3;
+$zyra-page: #f6f5fb;
+
+$o-community-color: $zyra-violet;
+$o-brand-odoo: $zyra-violet;
+$o-brand-primary: $zyra-violet;
+
+// Light top bar instead of Odoo's coloured one.
+$o-navbar-background: #ffffff;
+$o-navbar-border-bottom: 1px solid $zyra-line;
+$o-navbar-entry-color: #3b3850;
+$o-navbar-entry-color--hover: $zyra-violet;
+$o-navbar-entry-bg--hover: #f3f0fd;
+$o-navbar-entry-color--active: $zyra-violet;
+$o-navbar-entry-bg--active: #efeafd;
+$o-navbar-brand-color: $zyra-ink;
+
+// Soft page behind the white cards.
+$o-webclient-background-color: $zyra-page;

@@ -1,0 +1,7 @@
+odoo18/
+__pycache__/
+*.pyc
+*.log
+.agents/docs/reference/reference-app-store-page.pdf
+.agents/docs/reference/screenshots/
+.agents/docs/design/screens/*.jpg

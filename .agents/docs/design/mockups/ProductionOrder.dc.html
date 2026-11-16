@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Production order</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5B3FD0}a:hover{color:#43299F}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 1180px; background: #F6F5FB; color: #1B1830; font-family: Inter, system-ui, sans-serif">
+
+  <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 12px clamp(16px, 2vw, 28px); background: #fff; border-bottom: 1px solid #E3E0EE">
+    <div style="display: flex; gap: 12px; align-items: center">
+      <button style="font: 600 13px Inter, sans-serif; height: 36px; padding: 0 14px; border-radius: 10px; border: 0; background: #5B3FD0; color: #fff">New</button>
+      <div><div style="font-size: 12px; color: #5B5670"><a href="#" style="color: #5B5670">Production Orders</a></div><div style="font: 600 15px 'JetBrains Mono', monospace">GO/2026/0031 · ST-0142</div></div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 6px">
+      <a href="#" style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .06em; color: #4D4868; text-decoration: none; border: 1px solid #E3E0EE; border-radius: 10px; padding: 6px 12px; background: #fff">BUNDLES<br><span style="font-size: 15px; color: #1B1830">96</span></a>
+      <a href="#" style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .06em; color: #4D4868; text-decoration: none; border: 1px solid #E3E0EE; border-radius: 10px; padding: 6px 12px; background: #fff">SAMPLES<br><span style="font-size: 15px; color: #1B1830">4</span></a>
+      <a href="#" style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .06em; color: #4D4868; text-decoration: none; border: 1px solid #E3E0EE; border-radius: 10px; padding: 6px 12px; background: #fff">COST SHEETS<br><span style="font-size: 15px; color: #1B1830">2</span></a>
+      <a href="#" style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .06em; color: #4D4868; text-decoration: none; border: 1px solid #E3E0EE; border-radius: 10px; padding: 6px 12px; background: #fff">MILESTONES<br><span style="font-size: 15px; color: #1B1830">14</span></a>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; padding: 16px clamp(16px, 2vw, 28px) 28px">
+    <main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <button style="font: 600 13px Inter, sans-serif; height: 40px; padding: 0 14px; border-radius: 10px; border: 0; background: #5B3FD0; color: #fff">Propose cut plan</button>
+          <button style="font: 600 13px Inter, sans-serif; height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #D6D2E4; background: #fff; color: #1B1830">Pack plan</button>
+          <button style="font: 600 13px Inter, sans-serif; height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #D6D2E4; background: #fff; color: #1B1830">Amend order</button>
+          <button style="font: 600 13px Inter, sans-serif; height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #F3C3D0; background: #fff; color: #BE1E48">Cancel</button>
+        </div>
+        <ol aria-label="Status" style="list-style: none; margin: 0; padding: 3px; display: flex; background: #fff; border: 1px solid #E3E0EE; border-radius: 999px; font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .08em">
+          <li style="padding: 7px 12px; color: #5B5670">CONFIRMED</li>
+          <li aria-current="step" style="padding: 7px 12px; border-radius: 999px; background: #EEE9FD; color: #5B3FD0">IN PRODUCTION</li>
+          <li style="padding: 7px 12px; color: #5B5670">COMPLETED</li>
+        </ol>
+      </div>
+
+      <section aria-label="Order health" style="background: #fff; border: 1px solid #E3E0EE; border-radius: 16px; padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px">
+        <sc-for list="{{tiles}}" as="t" hint-placeholder-count="12">
+          <a href="#" style="text-decoration: none; color: #1B1830; background: {{t.bg}}; border: 1px solid {{t.bd}}; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+            <span style="display: flex; gap: 7px; align-items: center; font: 600 10.5px 'JetBrains Mono', monospace; letter-spacing: .09em; color: #5B5670"><span style="width: 7px; height: 7px; border-radius: 50%; background: {{t.dot}}; flex: none"></span>{{t.label}}</span>
+            <span style="font: 500 19px 'JetBrains Mono', monospace; color: {{t.ink}}">{{t.value}}</span>
+          </a>
+        </sc-for>
+      </section>
+
+      <section style="background: #fff; border: 1px solid #E3E0EE; border-radius: 16px; padding: 24px clamp(16px, 2vw, 28px); display: flex; flex-direction: column; gap: 24px">
+        <div style="display: flex; justify-content: space-between; gap: 16px; align-items: flex-start">
+          <div>
+            <div style="font: 500 12px 'JetBrains Mono', monospace; color: #5B5670">GO/2026/0031</div>
+            <h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 700; color: #1B1830">[ST-0142] Five-pocket Chino</h1>
+          </div>
+          <div aria-label="Style sketch placeholder" style="width: 96px; height: 96px; border: 1px dashed #D6D2E4; border-radius: 12px; background: #F6F5FB; display: flex; align-items: center; justify-content: center; font: 500 11px 'JetBrains Mono', monospace; color: #5B5670; text-align: center">STYLE<br>SKETCH</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px 40px">
+          <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <h2 style="margin: 0 0 6px; padding-bottom: 8px; border-bottom: 1px solid #E3E0EE; font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .12em; color: #5B3FD0">{{g.title}}</h2>
+              <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="4">
+                <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid #F1EFF8">
+                  <span style="font: 600 11px 'JetBrains Mono', monospace; letter-spacing: .08em; color: #5B5670">{{r.k}}</span>
+                  <span style="font-size: 14px; color: {{r.c}}">{{r.v}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <h2 style="margin: 0; padding-bottom: 8px; border-bottom: 1px solid #E3E0EE; font: 600 12px 'JetBrains Mono', monospace; letter-spacing: .12em; color: #5B3FD0">SIZE &amp; COLOUR GRID</h2>
+          <div style="overflow-x: auto">
+            <table style="border-collapse: collapse; width: 100%; min-width: 560px; font: 14px 'JetBrains Mono', monospace">
+              <thead><tr style="color: #5B5670; font-size: 11px; letter-spacing: .08em"><th style="text-align: left; padding: 8px; font-weight: 600">COLOURWAY</th><th style="padding: 8px; text-align: right">28</th><th style="padding: 8px; text-align: right">30</th><th style="padding: 8px; text-align: right">32</th><th style="padding: 8px; text-align: right">34</th><th style="padding: 8px; text-align: right">36</th><th style="padding: 8px; text-align: right">TOTAL</th></tr></thead>
+              <tbody>
+                <tr style="border-top: 1px solid #EFEDF5"><td style="padding: 9px 8px; font-family: Inter, sans-serif">Khaki</td><td style="padding: 9px 8px; text-align: right">240</td><td style="padding: 9px 8px; text-align: right">520</td><td style="padding: 9px 8px; text-align: right">640</td><td style="padding: 9px 8px; text-align: right">480</td><td style="padding: 9px 8px; text-align: right">220</td><td style="padding: 9px 8px; text-align: right; font-weight: 600">2,100</td></tr>
+                <tr style="border-top: 1px solid #EFEDF5"><td style="padding: 9px 8px; font-family: Inter, sans-serif">Navy</td><td style="padding: 9px 8px; text-align: right">200</td><td style="padding: 9px 8px; text-align: right">460</td><td style="padding: 9px 8px; text-align: right">580</td><td style="padding: 9px 8px; text-align: right">420</td><td style="padding: 9px 8px; text-align: right">180</td><td style="padding: 9px 8px; text-align: right; font-weight: 600">1,840</td></tr>
+                <tr style="border-top: 1px solid #EFEDF5"><td style="padding: 9px 8px; font-family: Inter, sans-serif">Olive</td><td style="padding: 9px 8px; text-align: right">60</td><td style="padding: 9px 8px; text-align: right">140</td><td style="padding: 9px 8px; text-align: right">200</td><td style="padding: 9px 8px; text-align: right">160</td><td style="padding: 9px 8px; text-align: right">100</td><td style="padding: 9px 8px; text-align: right; font-weight: 600">660</td></tr>
+                <tr style="border-top: 2px solid #E3E0EE; background: #F6F5FB; font-weight: 600"><td style="padding: 9px 8px; font-family: Inter, sans-serif">Total</td><td style="padding: 9px 8px; text-align: right">500</td><td style="padding: 9px 8px; text-align: right">1,120</td><td style="padding: 9px 8px; text-align: right">1,420</td><td style="padding: 9px 8px; text-align: right">1,060</td><td style="padding: 9px 8px; text-align: right">500</td><td style="padding: 9px 8px; text-align: right">4,600</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside aria-label="Chatter" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <button style="font: 600 13px Inter, sans-serif; height: 40px; padding: 0 14px; border-radius: 10px; border: 0; background: #5B3FD0; color: #fff">Send message</button>
+        <button style="font: 600 13px Inter, sans-serif; height: 40px; padding: 0 14px; border-radius: 10px; border: 0; background: #EEE9FD; color: #5B3FD0">Log note</button>
+        <button style="font: 600 13px Inter, sans-serif; height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #D6D2E4; background: #fff; color: #1B1830">Activity</button>
+      </div>
+      <div style="background: #fff; border: 1px solid #E3E0EE; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 16px">
+        <div style="text-align: center; font-size: 12px; color: #5B5670">Today</div>
+        <sc-for list="{{log}}" as="m" hint-placeholder-count="4">
+          <div style="display: flex; gap: 10px">
+            <div style="width: 32px; height: 32px; flex: none; border-radius: 50%; background: {{m.bg}}; color: {{m.fg}}; display: flex; align-items: center; justify-content: center; font: 600 12px Inter, sans-serif">{{m.i}}</div>
+            <div style="font-size: 13px; line-height: 1.5"><b>{{m.who}}</b> <span style="color: #5B5670; font-size: 12px">{{m.at}}</span><div style="color: #1B1830">{{m.text}}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = {
+      ok:   { bg: '#F5FBF8', bd: '#BFE6D2', dot: '#22B07D', ink: '#0B7A53' },
+      warn: { bg: '#FFFAF1', bd: '#F4D9A8', dot: '#F2A93B', ink: '#A35200' },
+      bad:  { bg: '#FFF6F8', bd: '#F3C3D0', dot: '#EC5B7E', ink: '#BE1E48' },
+      info: { bg: '#FFFFFF', bd: '#E3E0EE', dot: '#9A93B5', ink: '#1B1830' }
+    };
+    const tiles = [
+      ['EX-FACTORY IN', '−2 d', 'bad'], ['CUT', '4,600 / 4,600', 'ok'], ['SEWN', '3,410 / 4,600', 'warn'],
+      ['PACKED', '2,140 / 4,600', 'warn'], ['ORDER VALUE', '41.2k USD', 'info'], ['PP SAMPLE', 'Approved', 'ok'],
+      ['TIME & ACTION', '11 / 14', 'warn'], ['PLANNED MARGIN', '9.6%', 'ok'], ['FABRIC IN HOUSE', '100%', 'ok'],
+      ['FABRIC UTILISATION', '87.2%', 'ok'], ['FINAL INSPECTION', 'Pending', 'info'], ['LABOUR EARNED', '$ 2,318.40', 'ok']
+    ].map(([label, value, s]) => ({ label, value, ...S[s] }));
+    const link = '#5B3FD0', txt = '#1B1830', red = '#BE1E48';
+    const groups = [
+      { title: 'BUYER', rows: [{ k: 'BUYER', v: 'Harbourline Outfitters', c: link }, { k: 'BUYER PO NO.', v: 'HO-55120', c: txt }, { k: 'BUSINESS MODEL', v: 'FOB / full package', c: txt }, { k: 'MERCHANDISER', v: 'Divya Menon', c: txt }] },
+      { title: 'DELIVERY', rows: [{ k: 'ORDER DATE', v: '02 Oct 2026', c: txt }, { k: 'EX-FACTORY DATE', v: '15 Nov 2026', c: txt }, { k: 'DAYS TO EX-FACTORY', v: '−2', c: red }, { k: 'SEWING LINE', v: 'Line 4 · Bottoms', c: txt }] },
+      { title: 'COMMERCIAL', rows: [{ k: 'PRICE / PC', v: '8.95 USD', c: txt }, { k: 'INCOTERM', v: 'FOB Kochi', c: txt }, { k: 'PAYMENT', v: 'LC at sight', c: txt }] },
+      { title: 'QUANTITIES', rows: [{ k: 'ORDER QTY', v: '4,600', c: txt }, { k: 'CUT ALLOWANCE', v: '3%', c: txt }, { k: 'SHIP TOLERANCE', v: '± 5%', c: txt }] }
+    ];
+    const log = [
+      { i: 'Z', bg: '#EEE9FD', fg: '#5B3FD0', who: 'Zyra', at: '10:42', text: 'Ex-factory date passed; 1,190 pieces still on Line 4.' },
+      { i: 'Z', bg: '#EEE9FD', fg: '#5B3FD0', who: 'Zyra', at: '09:15', text: 'Time and action: 3 milestones are now due after the ex-factory date.' },
+      { i: 'DM', bg: '#E2F4EB', fg: '#0B7A53', who: 'Divya Menon', at: '08:30', text: 'Buyer agreed to air-ship the last 600 pieces.' },
+      { i: 'Z', bg: '#EEE9FD', fg: '#5B3FD0', who: 'Zyra', at: 'Mon', text: 'Priced by cost sheet CS/2026/0031 v2: FOB 8.95, margin 9.6%.' }
+    ];
+    return { tiles, groups, log };
+  }
+}
+</script>
+</body>
+</html>
