@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Line lists shared by the style form and the tech pack form -->
+    <record id="zyra_techpack_bom_line_view_list" model="ir.ui.view">
+        <field name="name">zyra.techpack.bom.line.list</field>
+        <field name="model">zyra.techpack.bom.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="product_id" string="Material"/>
+                <field name="material_kind" string="Kind"/>
+                <field name="placement"/>
+                <field name="colour_id" string="Colourway" placeholder="All"
+                       options="{'no_create': True}"/>
+                <field name="size_id" optional="hide" placeholder="All" options="{'no_create': True}"/>
+                <field name="consumption"/>
+                <field name="uom_id" string="Unit" options="{'no_create': True}"/>
+                <field name="wastage_pct"/>
+                <field name="price_unit"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="cost_per_piece" sum="Total"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="zyra_techpack_operation_view_list" model="ir.ui.view">
+        <field name="name">zyra.techpack.operation.list</field>
+        <field name="model">zyra.techpack.operation</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="operation_id"/>
+                <field name="name"/>
+                <field name="section"/>
+                <field name="machine_type_id"/>
+                <field name="sam" sum="Style SAM"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="zyra_techpack_measurement_view_list" model="ir.ui.view">
+        <field name="name">zyra.techpack.measurement.list</field>
+        <field name="model">zyra.techpack.measurement</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="pom_id"/>
+                <field name="tol_plus"/>
+                <field name="tol_minus"/>
+                <field name="base_value"/>
+                <field name="grade_rule"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="zyra_techpack_construction_view_list" model="ir.ui.view">
+        <field name="name">zyra.techpack.construction.list</field>
+        <field name="model">zyra.techpack.construction</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="area"/>
+                <field name="stitch_class"/>
+                <field name="spi"/>
+                <field name="seam_type"/>
+                <field name="seam_allowance"/>
+                <field name="note"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Style -->
+    <record id="garment_style_view_kanban" model="ir.ui.view">
+        <field name="name">garment.style.kanban</field>
+        <field name="model">garment.style</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="type_id" class="o_zyra_style_kanban" sample="1">
+                <field name="id"/>
+                <field name="stage"/>
+                <field name="colour_count"/>
+                <field name="merchandiser_id"/>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="o_zyra_style_sketch me-2">
+                            <field name="image_128" widget="image" options="{'img_class': 'object-fit-contain'}"
+                                   invisible="not image_128"/>
+                            <i class="fa fa-2x fa-shirtsinbulk text-muted" invisible="image_128" title="Sketch"/>
+                        </aside>
+                        <main>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <field name="code" class="o_zyra_style_code"/>
+                                <span t-if="record.stage.raw_value == 'approved'"
+                                      class="badge rounded-pill text-bg-success">Approved</span>
+                                <span t-elif="record.stage.raw_value == 'development'"
+                                      class="badge rounded-pill text-bg-info">In development</span>
+                                <span t-else="" class="badge rounded-pill text-bg-light">Draft</span>
+                            </div>
+                            <field name="name" class="fw-bold"/>
+                            <field name="buyer_id" class="text-muted"/>
+                            <div class="text-muted small">
+                                <field name="type_id"/> · <t t-esc="record.colour_count.raw_value"/> colourways
+                                · SAM <field name="sam"/>
+                            </div>
+                        </main>
+                        <footer class="pt-0">
+                            <div class="ms-auto">
+                                <field name="merchandiser_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="garment_style_view_list" model="ir.ui.view">
+        <field name="name">garment.style.list</field>
+        <field name="model">garment.style</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="stage == 'draft'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="buyer_id"/>
+                <field name="buyer_style_ref" optional="hide"/>
+                <field name="season_id"/>
+                <field name="type_id"/>
+                <field name="colour_count" string="Colourways"/>
+                <field name="sam"/>
+                <field name="current_techpack_id" string="Tech Pack"/>
+                <field name="merchandiser_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="stage" widget="badge" decoration-success="stage == 'approved'"
+                       decoration-info="stage == 'development'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_style_view_search" model="ir.ui.view">
+        <field name="name">garment.style.search</field>
+        <field name="model">garment.style</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|', '|', ('name', 'ilike', self), ('code', 'ilike', self), ('buyer_style_ref', 'ilike', self)]"/>
+                <field name="buyer_id"/>
+                <field name="season_id"/>
+                <field name="type_id"/>
+                <field name="colour_ids"/>
+                <filter name="approved" string="Approved for Production" domain="[('approved_for_production', '=', True)]"/>
+                <filter name="development" string="In Development" domain="[('stage', '=', 'development')]"/>
+                <filter name="my_styles" string="My Styles" domain="[('merchandiser_id', '=', uid)]"/>
+                <separator/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_type" string="Garment Type" context="{'group_by': 'type_id'}"/>
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                    <filter name="group_season" string="Season" context="{'group_by': 'season_id'}"/>
+                    <filter name="group_stage" string="Status" context="{'group_by': 'stage'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="garment_style_view_form" model="ir.ui.view">
+        <field name="name">garment.style.form</field>
+        <field name="model">garment.style</field>
+        <field name="arch" type="xml">
+            <form string="Style">
+                <header>
+                    <button name="action_generate_variants_bom" type="object" string="Generate Variants &amp; BoM"
+                            invisible="not id"/>
+                    <button name="action_new_techpack" type="object" string="Create Tech Pack" class="btn-primary"
+                            invisible="not id or techpack_count"/>
+                    <button name="action_new_version" type="object" string="New Version"
+                            invisible="not id or not techpack_count or working_techpack_state in ('draft', 'submitted')"/>
+                    <button name="action_copy_techpack" type="object" string="Copy Tech Pack"
+                            invisible="not id or not techpack_count"/>
+                    <button name="action_print_techpack" type="object" string="Tech Pack PDF"
+                            invisible="not techpack_count"/>
+                    <field name="stage" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_variants" type="object" class="oe_stat_button" icon="fa-th"
+                                invisible="not product_tmpl_id">
+                            <field name="variant_count" string="Variants" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_techpacks" type="object" class="oe_stat_button"
+                                icon="fa-files-o">
+                            <field name="techpack_count" string="Versions" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <field name="working_techpack_id" invisible="1"/>
+                    <field name="working_techpack_state" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+
+                    <div class="o_zyra_kpis" name="style_kpis" invisible="not id">
+                        <div class="o_zyra_kpi" name="kpi_variants">
+                            <span class="o_zyra_kpi_label">Variants</span>
+                            <span class="o_zyra_kpi_value"><field name="variant_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" name="kpi_sam">
+                            <span class="o_zyra_kpi_label">SAM</span>
+                            <span class="o_zyra_kpi_value"><field name="sam"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" name="kpi_material">
+                            <span class="o_zyra_kpi_label">Material / pc</span>
+                            <span class="o_zyra_kpi_value"><field name="material_cost"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text" name="kpi_techpack">
+                            <span class="o_zyra_kpi_label">Tech pack</span>
+                            <span class="o_zyra_kpi_value">v<field name="working_revision"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text" name="kpi_approval"
+                             invisible="not approved_for_production">
+                            <span class="o_zyra_kpi_label">Production</span>
+                            <span class="o_zyra_kpi_value">Approved</span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_warn" name="kpi_not_approved"
+                             invisible="approved_for_production">
+                            <span class="o_zyra_kpi_label">Production</span>
+                            <span class="o_zyra_kpi_value">Not approved</span>
+                        </div>
+                        <field name="approved_for_production" invisible="1"/>
+                    </div>
+
+                    <field name="image_1920" widget="image" class="oe_avatar"
+                           options="{'preview_image': 'image_128'}"/>
+                    <div class="oe_title">
+                        <field name="code" class="text-muted" placeholder="ST-0001"/>
+                        <h1><field name="name" placeholder="e.g. Five-pocket Chino"/></h1>
+                    </div>
+                    <group>
+                        <group string="Style" name="style">
+                            <field name="buyer_id" options="{'no_create': True}"/>
+                            <field name="buyer_style_ref"/>
+                            <field name="season_id"/>
+                            <field name="collection"/>
+                            <field name="type_id"/>
+                            <field name="fabric_kind" widget="radio" options="{'horizontal': true}"/>
+                            <field name="merchandiser_id" widget="many2one_avatar_user"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Colours and Sizes" name="colours_sizes">
+                            <field name="size_range_id"/>
+                            <field name="size_names"/>
+                            <field name="base_size_id"/>
+                            <field name="colour_ids" widget="many2many_tags" options="{'color_field': False}"/>
+                            <field name="product_tmpl_id" string="Product" readonly="1"/>
+                            <field name="bom_id"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="status" invisible="not id or techpack_count">
+                        No tech pack yet: click <b>Create Tech Pack</b> to start revision 1.
+                    </div>
+                    <div class="alert alert-light" role="status"
+                         invisible="not techpack_count or working_techpack_state in ('draft', 'submitted')">
+                        Showing approved tech pack <field name="working_techpack_id" class="fw-bold" readonly="1"/>.
+                        Click <b>New Version</b> to change it.
+                    </div>
+                    <notebook invisible="not techpack_count">
+                        <page string="Materials" name="materials">
+                            <field name="bom_line_ids" readonly="working_techpack_state != 'draft'"/>
+                        </page>
+                        <page string="Operation Bulletins" name="operations">
+                            <field name="operation_ids" readonly="working_techpack_state != 'draft'"/>
+                        </page>
+                        <page string="Measurement Spec" name="measurements">
+                            <field name="measure_unit" widget="radio" options="{'horizontal': true}"
+                                   readonly="working_techpack_state != 'draft'"/>
+                            <field name="graded_chart_html" nolabel="1" readonly="1"/>
+                            <field name="measurement_ids" readonly="working_techpack_state != 'draft'"
+                                   invisible="working_techpack_state != 'draft'"/>
+                        </page>
+                        <page string="Construction" name="construction">
+                            <field name="construction_ids" readonly="working_techpack_state != 'draft'"/>
+                        </page>
+                        <page string="Artwork" name="artwork">
+                            <field name="artwork_note" readonly="working_techpack_state != 'draft'"/>
+                        </page>
+                        <page string="Labels" name="labels">
+                            <field name="label_note" readonly="working_techpack_state != 'draft'"/>
+                        </page>
+                        <page string="Packing" name="packing">
+                            <field name="packing_note" readonly="working_techpack_state != 'draft'"/>
+                        </page>
+                        <page string="Versions" name="versions">
+                            <field name="techpack_ids" readonly="1">
+                                <list>
+                                    <field name="revision" string="Version"/>
+                                    <field name="name"/>
+                                    <field name="change_note"/>
+                                    <field name="sam"/>
+                                    <field name="material_cost"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="approved_date"/>
+                                    <field name="approved_user_id"/>
+                                    <field name="state" widget="badge" decoration-success="state == 'approved'"
+                                           decoration-info="state == 'submitted'" decoration-muted="state == 'superseded'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_style" model="ir.actions.act_window">
+        <field name="name">Styles</field>
+        <field name="res_model">garment.style</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="garment_style_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first style</p>
+            <p>A style holds the sketch, buyer, colourways and size range; its tech pack revisions hold the
+                bill of materials, measurements, construction and operations.</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_styles" name="Styles" parent="zyra_garment_base.menu_garment_merch"
+              action="action_garment_style" sequence="10"/>
+    <menuitem id="menu_zyra_techpack" name="Tech Packs" parent="zyra_garment_base.menu_garment_merch"
+              action="action_zyra_techpack" sequence="20"/>
+</odoo>

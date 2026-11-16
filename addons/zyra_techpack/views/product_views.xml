@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_form_view_garment_style" model="ir.ui.view">
+        <field name="name">product.template.form.garment.style</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="garment_style_id" readonly="1" invisible="not garment_style_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_bom_form_view_techpack" model="ir.ui.view">
+        <field name="name">mrp.bom.form.techpack</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="techpack_id" invisible="not techpack_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

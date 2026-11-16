@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_techpack" model="ir.ui.view">
+        <field name="name">sale.order.form.techpack</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
+                <field name="garment_style_id" column_invisible="True"/>
+                <field name="techpack_id" optional="show" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_form_view_techpack" model="ir.ui.view">
+        <field name="name">mrp.production.form.techpack</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bom_id']" position="after">
+                <field name="garment_style_id" invisible="1"/>
+                <field name="techpack_id" invisible="not garment_style_id" readonly="state != 'draft'"
+                       options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_tree_view_techpack" model="ir.ui.view">
+        <field name="name">mrp.production.list.techpack</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="techpack_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,28 @@
+// Graded measurement chart: base size column in bold (screen 24)
+.o_zyra_graded_chart {
+    .o_zyra_base_size {
+        font-weight: 700;
+    }
+    table {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.o_zyra_style_kanban {
+    .o_zyra_style_sketch {
+        width: 44px;
+        height: 44px;
+        border: 1px solid var(--zyra-line, #e5e7eb);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .o_zyra_style_code {
+        font-family: var(--zyra-mono, monospace);
+        font-size: 0.75rem;
+        letter-spacing: 0.06em;
+        color: var(--zyra-violet, #6d4cf0);
+    }
+}

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="zyra_techpack_view_list" model="ir.ui.view">
+        <field name="name">zyra.techpack.list</field>
+        <field name="model">zyra.techpack</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'superseded'">
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="buyer_id"/>
+                <field name="type_id" optional="show"/>
+                <field name="revision" string="Version"/>
+                <field name="change_note" optional="hide"/>
+                <field name="sam"/>
+                <field name="material_cost"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="approved_date" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'"
+                       decoration-info="state == 'submitted'" decoration-muted="state == 'superseded'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="zyra_techpack_view_search" model="ir.ui.view">
+        <field name="name">zyra.techpack.search</field>
+        <field name="model">zyra.techpack</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="buyer_id"/>
+                <filter name="open" string="Open" domain="[('state', 'in', ('draft', 'submitted'))]"/>
+                <filter name="to_approve" string="To Approve" domain="[('state', '=', 'submitted')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="not_superseded" string="Not Superseded" domain="[('state', '!=', 'superseded')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_style" string="Style" context="{'group_by': 'style_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="zyra_techpack_view_form" model="ir.ui.view">
+        <field name="name">zyra.techpack.form</field>
+        <field name="model">zyra.techpack</field>
+        <field name="arch" type="xml">
+            <form string="Tech Pack">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary"
+                            invisible="state != 'draft'"
+                            groups="zyra_garment_base.group_garment_techpack_designer,zyra_garment_base.group_garment_merchandiser"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'submitted'" groups="zyra_garment_base.group_garment_factory_manager"/>
+                    <button name="action_reset_draft" type="object" string="Back to Draft"
+                            invisible="state != 'submitted'"
+                            groups="zyra_garment_base.group_garment_techpack_designer"/>
+                    <button name="action_new_revision" type="object" string="New Version"
+                            invisible="state not in ('approved', 'superseded')"/>
+                    <button name="action_print" type="object" string="Tech Pack PDF"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_bom" type="object" class="oe_stat_button" icon="fa-flask"
+                                invisible="not bom_id">
+                            <div class="o_stat_info"><span class="o_stat_text">Bill of Materials</span></div>
+                        </button>
+                        <button name="action_view_sale_orders" type="object" class="oe_stat_button"
+                                icon="fa-dollar" invisible="not sale_order_count">
+                            <field name="sale_order_count" string="Sale Orders" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_productions" type="object" class="oe_stat_button"
+                                icon="fa-wrench" invisible="not production_count">
+                            <field name="production_count" string="Manufacturing" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Superseded" bg_color="text-bg-secondary"
+                            invisible="state != 'superseded'"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="bom_id" invisible="1"/>
+                    <div class="o_zyra_kpis" name="techpack_kpis">
+                        <div class="o_zyra_kpi" name="kpi_sam">
+                            <span class="o_zyra_kpi_label">SAM</span>
+                            <span class="o_zyra_kpi_value"><field name="sam"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" name="kpi_material">
+                            <span class="o_zyra_kpi_label">Material / pc</span>
+                            <span class="o_zyra_kpi_value"><field name="material_cost"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text" name="kpi_version">
+                            <span class="o_zyra_kpi_label">Version</span>
+                            <span class="o_zyra_kpi_value">v<field name="revision"/></span>
+                        </div>
+                    </div>
+                    <field name="image_1920" widget="image" class="oe_avatar" readonly="1"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Style" name="style">
+                            <field name="style_id" readonly="id"/>
+                            <field name="buyer_id"/>
+                            <field name="season_id"/>
+                            <field name="type_id"/>
+                            <field name="change_note" readonly="state not in ('draft', 'submitted')"/>
+                        </group>
+                        <group string="Colours and Sizes" name="colours_sizes">
+                            <field name="size_range_id"/>
+                            <field name="base_size_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                            <field name="colour_ids" widget="many2many_tags"/>
+                            <field name="submitted_date" invisible="not submitted_date"/>
+                            <field name="approved_date" invisible="not approved_date"/>
+                            <field name="approved_user_id" invisible="not approved_user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Materials" name="materials">
+                            <field name="bom_line_ids" readonly="state != 'draft'"/>
+                        </page>
+                        <page string="Operation Bulletins" name="operations">
+                            <field name="operation_ids" readonly="state != 'draft'"/>
+                        </page>
+                        <page string="Measurement Spec" name="measurements">
+                            <field name="measure_unit" widget="radio" options="{'horizontal': true}"
+                                   readonly="state != 'draft'"/>
+                            <field name="measurement_ids" readonly="state != 'draft'"/>
+                            <field name="graded_chart_html" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="Construction" name="construction">
+                            <field name="construction_ids" readonly="state != 'draft'"/>
+                        </page>
+                        <page string="Artwork" name="artwork">
+                            <field name="artwork_note" readonly="state != 'draft'"/>
+                        </page>
+                        <page string="Labels" name="labels">
+                            <field name="label_note" readonly="state != 'draft'"/>
+                        </page>
+                        <page string="Packing" name="packing">
+                            <field name="packing_note" readonly="state != 'draft'"/>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_zyra_techpack" model="ir.actions.act_window">
+        <field name="name">Tech Packs</field>
+        <field name="res_model">zyra.techpack</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="zyra_techpack_view_search"/>
+        <field name="context">{'search_default_not_superseded': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No tech pack yet</p>
+            <p>Open a style and click Create Tech Pack. Each change after approval is a new version.</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_style_rule_company" model="ir.rule">
+        <field name="name">Garment style: multi-company</field>
+        <field name="model_id" ref="model_garment_style"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="zyra_techpack_rule_company" model="ir.rule">
+        <field name="name">Tech pack: multi-company</field>
+        <field name="model_id" ref="model_zyra_techpack"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

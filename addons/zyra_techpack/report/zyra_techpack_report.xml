@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_techpack" model="ir.actions.report">
+        <field name="name">Tech Pack</field>
+        <field name="model">zyra.techpack</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_techpack.report_techpack</field>
+        <field name="report_file">zyra_techpack.report_techpack</field>
+        <field name="print_report_name">'Tech Pack %s' % (object.name or '').replace(' · ', ' ')</field>
+        <field name="binding_model_id" ref="model_zyra_techpack"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_techpack_document">
+        <t t-call="web.external_layout">
+            <t t-set="style" t-value="doc.style_id"/>
+            <t t-set="sizes" t-value="doc._get_sizes()"/>
+            <t t-set="chart" t-value="doc.get_graded_chart()"/>
+            <div class="page o_zyra_techpack_report">
+                <h2 class="mb-0">Tech Pack <span t-field="style.code"/></h2>
+                <div class="text-muted mb-3" t-field="style.name"/>
+                <div class="row mb-4">
+                    <div class="col-3 text-center">
+                        <img t-if="style.image_1920" t-att-src="image_data_uri(style.image_1920)"
+                             style="max-height: 140px; max-width: 100%;" alt="Sketch"/>
+                    </div>
+                    <div class="col-9">
+                        <table class="table table-sm table-borderless border mb-0">
+                            <tr>
+                                <td><strong>Buyer:</strong> <span t-field="style.buyer_id.name"/></td>
+                                <td><strong>Sizes:</strong> <t t-esc="', '.join(sizes.mapped('name'))"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Buyer's style ref.:</strong> <span t-field="style.buyer_style_ref"/></td>
+                                <td><strong>Base size:</strong> <span t-field="doc.base_size_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Season:</strong> <span t-field="style.season_id.name"/></td>
+                                <td><strong>Colourways:</strong> <t t-esc="', '.join(style.colour_ids.mapped('name'))"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Garment type:</strong> <span t-field="style.type_id.name"/></td>
+                                <td><strong>SAM:</strong> <span t-esc="'%.2f' % doc.sam"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fabric:</strong> <span t-field="style.fabric_kind"/></td>
+                                <td><strong>Tech pack version:</strong> <span t-esc="doc.revision"/>
+                                    (<span t-field="doc.state"/>)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h5>Bill of materials</h5>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Material</th><th>Kind</th><th>Placement</th><th>Colourway</th>
+                            <th class="text-end">Consumption</th><th>Unit</th><th class="text-end">Wastage %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="doc.bom_line_ids" t-as="line">
+                            <td><span t-field="line.product_id.display_name"/></td>
+                            <td><span t-field="line.material_kind"/></td>
+                            <td><span t-field="line.placement"/></td>
+                            <td><span t-esc="line.colour_id.name or ''"/>
+                                <t t-if="line.size_id"> / <span t-esc="line.size_id.name"/></t></td>
+                            <td class="text-end"><span t-esc="'%.3f' % line.consumption"/></td>
+                            <td><span t-field="line.uom_id.name"/></td>
+                            <td class="text-end"><span t-esc="'%.1f' % line.wastage_pct"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <t t-if="doc.measurement_ids">
+                    <h5>Graded measurement spec <small class="text-muted">(<span t-field="doc.measure_unit"/>)</small></h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Code</th><th>Point of measure</th>
+                                <th class="text-end">Tol +</th><th class="text-end">Tol −</th>
+                                <th t-foreach="sizes" t-as="size" class="text-end">
+                                    <t t-esc="size.name"/><t t-if="size == doc.base_size_id"> *</t>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.measurement_ids" t-as="m">
+                                <td><span t-esc="m.pom_id.code"/></td>
+                                <td><span t-esc="m.pom_id.name"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % m.tol_plus"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % m.tol_minus"/></td>
+                                <td t-foreach="sizes" t-as="size" class="text-end"
+                                    t-att-style="'font-weight: bold;' if size == doc.base_size_id else None">
+                                    <span t-esc="'%.2f' % chart[m.pom_id.id][size.id]"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+
+                <t t-if="doc.construction_ids">
+                    <h5>Construction</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr><th>Garment area</th><th>Stitch class</th><th class="text-end">SPI</th>
+                                <th>Seam type</th><th class="text-end">Seam allowance</th><th>Sewing note</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.construction_ids" t-as="c">
+                                <td><span t-field="c.area"/></td>
+                                <td><span t-field="c.stitch_class"/></td>
+                                <td class="text-end"><span t-esc="c.spi"/></td>
+                                <td><span t-field="c.seam_type"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % c.seam_allowance"/></td>
+                                <td><span t-field="c.note"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+
+                <t t-if="doc.operation_ids">
+                    <h5>Operation bulletin</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr><th>#</th><th>Operation</th><th>Section</th><th>Machine</th>
+                                <th class="text-end">SAM</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.operation_ids" t-as="op">
+                                <td><span t-esc="op_index + 1"/></td>
+                                <td><span t-esc="op.operation_id.code"/> · <span t-field="op.name"/></td>
+                                <td><span t-field="op.section"/></td>
+                                <td><span t-field="op.machine_type_id.name"/></td>
+                                <td class="text-end"><span t-esc="'%.3f' % op.sam"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>Total SAM</strong></td>
+                                <td class="text-end"><strong t-esc="'%.2f' % doc.sam"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_techpack">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="zyra_techpack.report_techpack_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

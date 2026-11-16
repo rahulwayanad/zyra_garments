@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Materials used by the demo tech packs (invented names) -->
+    <record id="product_fabric_twill" model="product.product">
+        <field name="name">Cotton Twill 2/1 Stretch 240 gsm</field>
+        <field name="default_code">FAB-TWL-240</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">lot</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">3.4</field>
+    </record>
+    <record id="product_fabric_pocketing" model="product.product">
+        <field name="name">Pocketing Poplin 110 gsm</field>
+        <field name="default_code">FAB-PKT-110</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">lot</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">0.95</field>
+    </record>
+    <record id="product_trim_neck_rib" model="product.product">
+        <field name="name">1x1 Neck Rib 2 cm</field>
+        <field name="default_code">TRM-RIB-2</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">0.4</field>
+    </record>
+    <record id="product_trim_neck_tape" model="product.product">
+        <field name="name">Back Neck Tape 1 cm</field>
+        <field name="default_code">TRM-TAPE-1</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">0.08</field>
+    </record>
+    <record id="product_trim_thread" model="product.product">
+        <field name="name">Sewing Thread Tex 27 (5000 m cone)</field>
+        <field name="default_code">TRM-THREAD</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">1.1</field>
+    </record>
+    <record id="product_trim_main_label" model="product.product">
+        <field name="name">Woven Main Label</field>
+        <field name="default_code">TRM-MAIN</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.04</field>
+    </record>
+    <record id="product_trim_care_label" model="product.product">
+        <field name="name">Printed Care Label</field>
+        <field name="default_code">TRM-CARE</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.02</field>
+    </record>
+    <record id="product_trim_hangtag" model="product.product">
+        <field name="name">Hang Tag with String</field>
+        <field name="default_code">TRM-HANG</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.05</field>
+    </record>
+    <record id="product_trim_shank_button" model="product.product">
+        <field name="name">Shank Button 17 mm Antique Brass</field>
+        <field name="default_code">TRM-SHANK</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.09</field>
+    </record>
+    <record id="product_trim_rivet" model="product.product">
+        <field name="name">Rivet 9 mm Antique Brass</field>
+        <field name="default_code">TRM-RIVET</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.03</field>
+    </record>
+    <record id="product_trim_zip" model="product.product">
+        <field name="name">Brass Fly Zip 18 cm</field>
+        <field name="default_code">TRM-ZIP-18</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.22</field>
+    </record>
+    <record id="product_trim_shirt_button" model="product.product">
+        <field name="name">Shirt Button 18L 4-hole</field>
+        <field name="default_code">TRM-BTN-18L</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.015</field>
+    </record>
+    <record id="product_trim_interlining" model="product.product">
+        <field name="name">Fusible Interlining 40 gsm</field>
+        <field name="default_code">TRM-FUSE-40</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">0.6</field>
+    </record>
+    <record id="product_pack_polybag" model="product.product">
+        <field name="name">Polybag 30 x 40 cm</field>
+        <field name="default_code">PCK-POLY-3040</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.03</field>
+    </record>
+    <record id="product_pack_carton" model="product.product">
+        <field name="name">Export Carton 5-ply (share per piece)</field>
+        <field name="default_code">PCK-CTN-5P</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="True"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="standard_price">0.06</field>
+    </record>
+
+    <!-- Styles -->
+    <record id="style_crew_tee" model="garment.style">
+        <field name="code">ST-0101</field>
+        <field name="name">Crew Neck Tee</field>
+        <field name="buyer_id" ref="zyra_garment_base.partner_buyer_northwind"/>
+        <field name="buyer_style_ref">NW-24117</field>
+        <field name="season_id" ref="zyra_garment_base.season_ss27"/>
+        <field name="collection">SS27 · Everyday Basics</field>
+        <field name="type_id" ref="zyra_garment_base.garment_type_tshirt"/>
+        <field name="fabric_kind">knit</field>
+        <field name="size_range_id" ref="zyra_garment_base.size_range_s_xl"/>
+        <field name="colour_ids" eval="[Command.set([ref('zyra_garment_base.colour_navy'), ref('zyra_garment_base.colour_white'), ref('zyra_garment_base.colour_black')])]"/>
+        <field name="merchandiser_id" ref="zyra_garment_base.user_anjali"/>
+        <field name="image_1920" type="base64" file="zyra_techpack/static/img/sketch_tee.svg"/>
+    </record>
+    <record id="techpack_crew_tee_v1" model="zyra.techpack">
+        <field name="style_id" ref="style_crew_tee"/>
+        <field name="base_size_id" ref="zyra_garment_base.size_s_xl_m"/>
+        <field name="change_note">First issue.</field>
+    </record>
+    <record id="style_chino" model="garment.style">
+        <field name="code">ST-0102</field>
+        <field name="name">Five-pocket Chino</field>
+        <field name="buyer_id" ref="zyra_garment_base.partner_buyer_bluefin"/>
+        <field name="buyer_style_ref">BF-C-3302</field>
+        <field name="season_id" ref="zyra_garment_base.season_ss27"/>
+        <field name="collection">SS27 · Weekend Edit</field>
+        <field name="type_id" ref="zyra_garment_base.garment_type_chino"/>
+        <field name="fabric_kind">woven</field>
+        <field name="size_range_id" ref="zyra_garment_base.size_range_s_xl"/>
+        <field name="colour_ids" eval="[Command.set([ref('zyra_garment_base.colour_black'), ref('zyra_garment_base.colour_grey')])]"/>
+        <field name="merchandiser_id" ref="zyra_garment_base.user_anjali"/>
+        <field name="image_1920" type="base64" file="zyra_techpack/static/img/sketch_trouser.svg"/>
+    </record>
+    <record id="techpack_chino_v1" model="zyra.techpack">
+        <field name="style_id" ref="style_chino"/>
+        <field name="base_size_id" ref="zyra_garment_base.size_s_xl_m"/>
+        <field name="change_note">First issue.</field>
+    </record>
+    <record id="style_jean" model="garment.style">
+        <field name="code">ST-0103</field>
+        <field name="name">Straight Leg Jean</field>
+        <field name="buyer_id" ref="zyra_garment_base.partner_buyer_maple"/>
+        <field name="buyer_style_ref">MF-J-0871</field>
+        <field name="season_id" ref="zyra_garment_base.season_aw26"/>
+        <field name="collection">AW26 · Raw Denim</field>
+        <field name="type_id" ref="zyra_garment_base.garment_type_jean"/>
+        <field name="fabric_kind">woven</field>
+        <field name="size_range_id" ref="zyra_garment_base.size_range_s_xl"/>
+        <field name="colour_ids" eval="[Command.set([ref('zyra_garment_base.colour_indigo')])]"/>
+        <field name="merchandiser_id" ref="zyra_garment_base.user_anjali"/>
+        <field name="image_1920" type="base64" file="zyra_techpack/static/img/sketch_trouser.svg"/>
+    </record>
+    <record id="techpack_jean_v1" model="zyra.techpack">
+        <field name="style_id" ref="style_jean"/>
+        <field name="base_size_id" ref="zyra_garment_base.size_s_xl_m"/>
+        <field name="change_note">First issue.</field>
+    </record>
+    <record id="style_polo" model="garment.style">
+        <field name="code">ST-0104</field>
+        <field name="name">Classic Pique Polo</field>
+        <field name="buyer_id" ref="zyra_garment_base.partner_buyer_maple"/>
+        <field name="buyer_style_ref">MF-P-0412</field>
+        <field name="season_id" ref="zyra_garment_base.season_ss27"/>
+        <field name="collection">SS27 · Harbour Essentials</field>
+        <field name="type_id" ref="zyra_garment_base.garment_type_polo"/>
+        <field name="fabric_kind">knit</field>
+        <field name="size_range_id" ref="zyra_garment_base.size_range_xs_xxl"/>
+        <field name="colour_ids" eval="[Command.set([ref('zyra_garment_base.colour_navy'), ref('zyra_garment_base.colour_black')])]"/>
+        <field name="merchandiser_id" ref="zyra_garment_base.user_anjali"/>
+        <field name="image_1920" type="base64" file="zyra_techpack/static/img/sketch_polo.svg"/>
+    </record>
+    <record id="techpack_polo_v1" model="zyra.techpack">
+        <field name="style_id" ref="style_polo"/>
+        <field name="base_size_id" ref="zyra_garment_base.size_xs_xxl_xl"/>
+        <field name="change_note">First issue.</field>
+    </record>
+    <record id="style_oxford" model="garment.style">
+        <field name="code">ST-0105</field>
+        <field name="name">Oxford Button-down Shirt</field>
+        <field name="buyer_id" ref="zyra_garment_base.partner_buyer_northwind"/>
+        <field name="buyer_style_ref">NW-24190</field>
+        <field name="season_id" ref="zyra_garment_base.season_aw26"/>
+        <field name="collection">AW26 · Office Days</field>
+        <field name="type_id" ref="zyra_garment_base.garment_type_shirt"/>
+        <field name="fabric_kind">woven</field>
+        <field name="size_range_id" ref="zyra_garment_base.size_range_s_xl"/>
+        <field name="colour_ids" eval="[Command.set([ref('zyra_garment_base.colour_sky'), ref('zyra_garment_base.colour_white')])]"/>
+        <field name="merchandiser_id" ref="zyra_garment_base.user_anjali"/>
+        <field name="image_1920" type="base64" file="zyra_techpack/static/img/sketch_shirt.svg"/>
+    </record>
+    <record id="techpack_oxford_v1" model="zyra.techpack">
+        <field name="style_id" ref="style_oxford"/>
+        <field name="base_size_id" ref="zyra_garment_base.size_s_xl_l"/>
+        <field name="change_note">First issue.</field>
+    </record>
+
+    <!-- Lines, approvals and the second revisions are filled in Python (see models/techpack_demo.py) -->
+    <function model="zyra.techpack.demo" name="_load_demo"/>
+</odoo>
