@@ -11,6 +11,7 @@
                 <field name="is_overdue"/>
                 <field name="submission"/>
                 <field name="swatch_image"/>
+                <field name="decision_due"/>
                 <templates>
                     <t t-name="card" class="flex-row">
                         <aside class="me-2">
@@ -29,7 +30,7 @@
                             <field name="buyer_id" class="text-muted small"/>
                             <div class="text-muted small">
                                 <i class="fa fa-clock-o me-1" title="Decision due"/>
-                                <field name="decision_due" widget="date"/>
+                                <t t-esc="record.decision_due.value"/>
                                 <span t-if="record.submission.raw_value &gt; 1"> · <i class="fa fa-refresh" title="Submission"/> <t t-esc="record.submission.raw_value"/></span>
                                 <span t-if="record.is_overdue.raw_value"> · <span class="badge rounded-pill text-bg-danger">Overdue</span></span>
                             </div>

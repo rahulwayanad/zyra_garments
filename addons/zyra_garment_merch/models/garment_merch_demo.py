@@ -109,7 +109,8 @@ class GarmentMerchDemo(models.AbstractModel):
         else:
             self._xmlid(order_late, "order_tee_late")
             order_late.write({"date_order": today - timedelta(days=90), "ex_factory_date": today - timedelta(days=3),
-                              "sewing_line_id": line2.id})
+                              "sewing_line_id": line2.id,
+                              "merchandiser_id": (self._ref(B + "user_anjali") or self.env.user).id})
         order_late.action_start_production()
         self._post(order_late, {"cut": 1.03, "sewn": 1.01, "packed": 0.75, "shipped": 0.35}, "PO-TEE")
         self._tna_actuals(order_late, 7, {1: -1, 3: 1, 6: 1})

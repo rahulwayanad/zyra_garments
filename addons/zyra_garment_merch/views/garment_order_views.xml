@@ -124,7 +124,7 @@
                     <field name="planned_margin_low" invisible="1"/>
 
                     <!-- KPI strip (screen 2). Wave-3 modules add their tiles after the named ones. -->
-                    <div class="o_zyra_kpis" name="kpi_strip" invisible="state == 'draft'">
+                    <div class="o_zyra_kpis o_zyra_kpis_6" name="kpi_strip" invisible="state == 'draft'">
                         <div name="kpi_ex_factory" class="o_zyra_kpi o_zyra_kpi_bad" invisible="days_to_ex_factory &gt;= 0 or state in ('shipped', 'closed')">
                             <span class="o_zyra_kpi_label">Ex-factory in</span>
                             <span class="o_zyra_kpi_value"><field name="days_to_ex_factory"/> d</span>
@@ -203,7 +203,7 @@
                     <div class="oe_title">
                         <div class="text-muted"><field name="name" readonly="1"/></div>
                         <h1>
-                            <field name="style_id" placeholder="Style" options="{'no_create': True}"
+                            <field name="style_id" placeholder="Style" class="w-100" options="{'no_create': True, 'no_open': True}"
                                    readonly="state != 'draft'"/>
                         </h1>
                     </div>

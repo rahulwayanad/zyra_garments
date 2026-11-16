@@ -64,6 +64,9 @@
     }
 
     .o_zyra_grid_input {
+        border: 1px solid var(--zyra-line, #e9e6f3);
+        border-radius: 6px;
+        padding: 2px 4px;
         width: 72px;
         text-align: center;
         font-weight: 600;
@@ -98,5 +101,24 @@
         color: var(--zyra-violet, #6d4ee8);
         font-weight: 700;
         font-variant-numeric: tabular-nums;
+    }
+}
+
+.o_field_zyra_size_colour_grid {
+    width: 100%;
+}
+
+// Six KPI tiles per row on the production order so "5,388 / 5,396" fits.
+.o_zyra_kpis.o_zyra_kpis_6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+
+    .o_zyra_kpi_value {
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .o_zyra_kpis.o_zyra_kpis_6 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
