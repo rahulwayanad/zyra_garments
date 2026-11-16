@@ -3,6 +3,7 @@
     "version": "18.0.1.0.0",
     "summary": "Shared base of the Zyra garment ERP: roles, menus, setup wizard, sizes, colours, "
                "points of measure, defects, operations and fabric-roll fields",
+    "description": "Shared base of the Zyra garment ERP. See README.md for the contract other modules rely on.",
     "author": "Pearlsoft Technologies",
     "category": "Manufacturing/Garment",
     "license": "OPL-1",
@@ -29,6 +30,11 @@
     "demo": [
         "demo/garment_base_demo.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "zyra_garment_base/static/src/scss/garment_base.scss",
+        ],
+    },
     "application": True,
     "installable": True,
 }

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Libraries and size presets, as the Factory Setup would load them -->
+    <function model="garment.library" name="_load_demo_libraries"/>
+
+    <record id="partner_buyer_northwind" model="res.partner">
+        <field name="name">Northwind Apparel Ltd</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_garment_buyer" eval="True"/>
+        <field name="buyer_code">NWA</field>
+        <field name="country_id" ref="base.uk"/>
+        <field name="city">London</field>
+        <field name="email">orders@northwind.example.com</field>
+    </record>
+    <record id="partner_buyer_bluefin" model="res.partner">
+        <field name="name">Bluefin Outfitters Inc</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_garment_buyer" eval="True"/>
+        <field name="buyer_code">BLF</field>
+        <field name="country_id" ref="base.us"/>
+        <field name="city">Portland</field>
+        <field name="email">orders@bluefin.example.com</field>
+    </record>
+    <record id="partner_buyer_maple" model="res.partner">
+        <field name="name">Maple &amp; Finch Retail GmbH</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_garment_buyer" eval="True"/>
+        <field name="buyer_code">MFR</field>
+        <field name="country_id" ref="base.de"/>
+        <field name="city">Hamburg</field>
+        <field name="email">orders@maple.example.com</field>
+    </record>
+    <record id="partner_vendor_sunrise_prints" model="res.partner">
+        <field name="name">Sunrise Screen Prints</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_jobwork_vendor" eval="True"/>
+        <field name="country_id" ref="base.in"/>
+        <field name="city">Tiruppur</field>
+    </record>
+    <record id="partner_vendor_kaveri_wash" model="res.partner">
+        <field name="name">Kaveri Wash House</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_jobwork_vendor" eval="True"/>
+        <field name="country_id" ref="base.in"/>
+        <field name="city">Bengaluru</field>
+    </record>
+    <record id="partner_supplier_delta_weave" model="res.partner">
+        <field name="name">Delta Weave Mills</field>
+        <field name="is_company" eval="True"/>
+        <field name="country_id" ref="base.in"/>
+    </record>
+
+    <record id="season_ss27" model="garment.season">
+        <field name="name">Spring Summer 2027</field>
+        <field name="code">SS27</field>
+        <field name="year">2027</field>
+    </record>
+    <record id="season_aw26" model="garment.season">
+        <field name="name">Autumn Winter 2026</field>
+        <field name="code">AW26</field>
+        <field name="year">2026</field>
+    </record>
+    <record id="colour_navy" model="garment.colour">
+        <field name="name">Navy</field>
+        <field name="code">NAVY</field>
+        <field name="pantone">19-4024 TCX</field>
+        <field name="hex">#1F2A44</field>
+    </record>
+    <record id="colour_white" model="garment.colour">
+        <field name="name">Optic White</field>
+        <field name="code">WHT</field>
+        <field name="pantone">11-0601 TCX</field>
+        <field name="hex">#F4F5F0</field>
+    </record>
+    <record id="colour_black" model="garment.colour">
+        <field name="name">Jet Black</field>
+        <field name="code">BLK</field>
+        <field name="pantone">19-0303 TCX</field>
+        <field name="hex">#1B1B1D</field>
+    </record>
+    <record id="colour_grey" model="garment.colour">
+        <field name="name">Heather Grey</field>
+        <field name="code">HGRY</field>
+        <field name="pantone">16-3802 TCX</field>
+        <field name="hex">#A7A8AA</field>
+    </record>
+    <record id="colour_indigo" model="garment.colour">
+        <field name="name">Indigo Rinse</field>
+        <field name="code">IND</field>
+        <field name="pantone">19-3933 TCX</field>
+        <field name="hex">#2E3A59</field>
+    </record>
+    <record id="colour_sky" model="garment.colour">
+        <field name="name">Sky Blue</field>
+        <field name="code">SKY</field>
+        <field name="pantone">14-4318 TCX</field>
+        <field name="hex">#8FB8DE</field>
+    </record>
+
+    <record id="product_fabric_jersey" model="product.product">
+        <field name="name">Single Jersey 180 gsm Cotton</field>
+        <field name="default_code">FAB-SJ-180</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">lot</field>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">2.40</field>
+    </record>
+    <record id="product_fabric_poplin" model="product.product">
+        <field name="name">Poplin 115 gsm Sky Blue</field>
+        <field name="default_code">FAB-POP-SKY</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">lot</field>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">2.40</field>
+    </record>
+    <record id="product_fabric_denim" model="product.product">
+        <field name="name">Denim 12 oz Indigo</field>
+        <field name="default_code">FAB-DNM-12</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">lot</field>
+        <field name="uom_id" ref="uom.product_uom_meter"/>
+        <field name="uom_po_id" ref="uom.product_uom_meter"/>
+        <field name="standard_price">2.40</field>
+    </record>
+
+    <record id="roll_r00701" model="stock.lot">
+        <field name="name">R00701</field>
+        <field name="product_id" ref="product_fabric_jersey"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_fabric_roll" eval="True"/>
+        <field name="roll_status">received</field>
+        <field name="dye_lot">DL-4410</field>
+        <field name="shade_group">A</field>
+        <field name="shrinkage_group">S1</field>
+        <field name="width_cm">182</field>
+        <field name="gsm">180</field>
+        <field name="points_per_100sqyd">0</field>
+    </record>
+    <record id="roll_r00702" model="stock.lot">
+        <field name="name">R00702</field>
+        <field name="product_id" ref="product_fabric_jersey"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_fabric_roll" eval="True"/>
+        <field name="roll_status">approved</field>
+        <field name="dye_lot">DL-4410</field>
+        <field name="shade_group">A</field>
+        <field name="shrinkage_group">S1</field>
+        <field name="width_cm">182</field>
+        <field name="gsm">178</field>
+        <field name="points_per_100sqyd">14.2</field>
+    </record>
+    <record id="roll_r00703" model="stock.lot">
+        <field name="name">R00703</field>
+        <field name="product_id" ref="product_fabric_jersey"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_fabric_roll" eval="True"/>
+        <field name="roll_status">hold</field>
+        <field name="dye_lot">DL-4411</field>
+        <field name="shade_group">B</field>
+        <field name="shrinkage_group">S2</field>
+        <field name="width_cm">180</field>
+        <field name="gsm">186</field>
+        <field name="points_per_100sqyd">46.5</field>
+        <field name="roll_hold_reason">Inspection 46.5 pts over the 40 limit</field>
+    </record>
+    <record id="roll_r00704" model="stock.lot">
+        <field name="name">R00704</field>
+        <field name="product_id" ref="product_fabric_poplin"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_fabric_roll" eval="True"/>
+        <field name="roll_status">approved</field>
+        <field name="dye_lot">DL-9525</field>
+        <field name="shade_group">A</field>
+        <field name="shrinkage_group">S1</field>
+        <field name="width_cm">147</field>
+        <field name="gsm">113</field>
+        <field name="points_per_100sqyd">12.5</field>
+    </record>
+    <record id="roll_r00705" model="stock.lot">
+        <field name="name">R00705</field>
+        <field name="product_id" ref="product_fabric_denim"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_fabric_roll" eval="True"/>
+        <field name="roll_status">approved</field>
+        <field name="dye_lot">DL-7702</field>
+        <field name="shade_group">A</field>
+        <field name="shrinkage_group">S1</field>
+        <field name="width_cm">150</field>
+        <field name="gsm">405</field>
+        <field name="points_per_100sqyd">9.0</field>
+    </record>
+    <record id="roll_r00706" model="stock.lot">
+        <field name="name">R00706</field>
+        <field name="product_id" ref="product_fabric_denim"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_fabric_roll" eval="True"/>
+        <field name="roll_status">rejected</field>
+        <field name="dye_lot">DL-7703</field>
+        <field name="shade_group">C</field>
+        <field name="shrinkage_group">S3</field>
+        <field name="width_cm">148</field>
+        <field name="gsm">398</field>
+        <field name="points_per_100sqyd">61.0</field>
+        <field name="roll_hold_reason">Holes and shade bands across the width</field>
+    </record>
+    <function model="garment.library" name="_demo_receive_rolls">
+        <value eval="{'zyra_garment_base.roll_r00701': 96, 'zyra_garment_base.roll_r00702': 104, 'zyra_garment_base.roll_r00703': 88, 'zyra_garment_base.roll_r00704': 91, 'zyra_garment_base.roll_r00705': 75, 'zyra_garment_base.roll_r00706': 70}"/>
+    </function>
+
+    <record id="user_anjali" model="res.users">
+        <field name="name">Anjali Menon</field>
+        <field name="login">anjali.menon</field>
+        <field name="email">anjali.menon@zyra-demo.example.com</field>
+        <field name="groups_id" eval="[Command.set([ref('base.group_user'), ref('group_garment_merchandiser')])]"/>
+    </record>
+    <record id="user_vivek" model="res.users">
+        <field name="name">Vivek Nair</field>
+        <field name="login">vivek.nair</field>
+        <field name="email">vivek.nair@zyra-demo.example.com</field>
+        <field name="groups_id" eval="[Command.set([ref('base.group_user'), ref('group_garment_fabric_store')])]"/>
+    </record>
+    <record id="user_arjun" model="res.users">
+        <field name="name">Arjun Pillai</field>
+        <field name="login">arjun.pillai</field>
+        <field name="email">arjun.pillai@zyra-demo.example.com</field>
+        <field name="groups_id" eval="[Command.set([ref('base.group_user'), ref('group_garment_line_supervisor')])]"/>
+    </record>
+    <record id="user_priya" model="res.users">
+        <field name="name">Priya Das</field>
+        <field name="login">priya.das</field>
+        <field name="email">priya.das@zyra-demo.example.com</field>
+        <field name="groups_id" eval="[Command.set([ref('base.group_user'), ref('group_garment_quality')])]"/>
+    </record>
+</odoo>

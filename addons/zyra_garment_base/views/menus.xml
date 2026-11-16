@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_root" name="Garment" sequence="35"
+              web_icon="zyra_garment_base,static/description/icon.png"
+              groups="group_garment_merchandiser,group_garment_techpack_designer,group_garment_costing,group_garment_fabric_store,group_garment_cutting,group_garment_line_supervisor,group_garment_quality,group_garment_packing_shipping,group_garment_wages"/>
+
+    <!-- Section menus other modules hang under (screen top bar order) -->
+    <menuitem id="menu_garment_merch" name="Merchandising" parent="menu_garment_root" sequence="20"/>
+    <menuitem id="menu_garment_materials" name="Materials" parent="menu_garment_root" sequence="30"/>
+    <menuitem id="menu_garment_cutting" name="Cutting" parent="menu_garment_root" sequence="40"/>
+    <menuitem id="menu_garment_sewing" name="Sewing Floor" parent="menu_garment_root" sequence="50"/>
+    <menuitem id="menu_garment_quality" name="Quality" parent="menu_garment_root" sequence="70"/>
+    <menuitem id="menu_garment_shipping" name="Packing &amp; Shipping" parent="menu_garment_root" sequence="80"/>
+    <menuitem id="menu_garment_wages" name="Wages" parent="menu_garment_root" sequence="90"/>
+    <menuitem id="menu_garment_reports" name="Reports" parent="menu_garment_root" sequence="100"/>
+    <menuitem id="menu_garment_config" name="Configuration" parent="menu_garment_root" sequence="200"/>
+
+    <!-- Base content -->
+    <menuitem id="menu_garment_buyers" name="Buyers" parent="menu_garment_merch"
+              action="action_garment_buyer" sequence="90"/>
+    <menuitem id="menu_garment_fabric_rolls" name="Fabric Rolls" parent="menu_garment_materials"
+              action="action_garment_fabric_roll" sequence="50"/>
+
+    <!-- Configuration: every master of this module -->
+    <menuitem id="menu_garment_setup" name="Factory Setup" parent="menu_garment_config"
+              action="action_garment_setup_wizard" sequence="1" groups="group_garment_admin"/>
+    <menuitem id="menu_garment_settings" name="Settings" parent="menu_garment_config"
+              action="action_garment_config_settings" sequence="2" groups="group_garment_admin"/>
+    <menuitem id="menu_garment_config_partners" name="Partners" parent="menu_garment_config" sequence="10"/>
+    <menuitem id="menu_garment_config_buyers" name="Buyers" parent="menu_garment_config_partners"
+              action="action_garment_buyer" sequence="1"/>
+    <menuitem id="menu_garment_config_jobwork_vendors" name="Job-work Vendors" parent="menu_garment_config_partners"
+              action="action_garment_jobwork_vendor" sequence="2"/>
+    <menuitem id="menu_garment_config_styles" name="Styles &amp; Sizes" parent="menu_garment_config" sequence="20"/>
+    <menuitem id="menu_garment_config_seasons" name="Seasons" parent="menu_garment_config_styles"
+              action="action_garment_season" sequence="1"/>
+    <menuitem id="menu_garment_config_types" name="Garment Types" parent="menu_garment_config_styles"
+              action="action_garment_type" sequence="2"/>
+    <menuitem id="menu_garment_config_size_ranges" name="Size Ranges" parent="menu_garment_config_styles"
+              action="action_garment_size_range" sequence="3"/>
+    <menuitem id="menu_garment_config_colours" name="Colours" parent="menu_garment_config_styles"
+              action="action_garment_colour" sequence="4"/>
+    <menuitem id="menu_garment_config_poms" name="Points of Measure" parent="menu_garment_config_styles"
+              action="action_garment_pom" sequence="5"/>
+    <menuitem id="menu_garment_config_floor" name="Floor" parent="menu_garment_config" sequence="30"/>
+    <menuitem id="menu_garment_config_operations" name="Operations" parent="menu_garment_config_floor"
+              action="action_garment_operation" sequence="1"/>
+    <menuitem id="menu_garment_config_machine_types" name="Machine Types" parent="menu_garment_config_floor"
+              action="action_garment_machine_type" sequence="2"/>
+    <menuitem id="menu_garment_config_defects" name="Defects" parent="menu_garment_config_floor"
+              action="action_garment_defect" sequence="3"/>
+</odoo>

@@ -125,3 +125,16 @@ class GarmentLibrary(models.AbstractModel):
         for preset in SIZE_PRESETS:
             self._load_size_preset(preset)
         return True
+
+    @api.model
+    def _demo_receive_rolls(self, quantities):
+        """Demo data hook: put demo rolls in stock. ``quantities`` maps lot xml id -> metres."""
+        warehouse = self.env["stock.warehouse"].search([("company_id", "=", self.env.company.id)], limit=1)
+        if not warehouse:
+            return False
+        Quant = self.env["stock.quant"].sudo()
+        for xmlid, qty in quantities.items():
+            lot = self.env.ref(xmlid, raise_if_not_found=False)
+            if lot and not lot.quant_ids:
+                Quant._update_available_quantity(lot.product_id, warehouse.lot_stock_id, qty, lot_id=lot)
+        return True

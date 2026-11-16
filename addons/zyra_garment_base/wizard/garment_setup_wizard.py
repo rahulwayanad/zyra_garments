@@ -29,7 +29,7 @@ AREA_MENUS = {
     "area_materials": "zyra_garment_base.menu_garment_materials",
     "area_cutting": "zyra_garment_base.menu_garment_cutting",
     "area_sewing": "zyra_garment_base.menu_garment_sewing",
-    "area_jobwork": None,
+    "area_jobwork": "zyra_garment_jobwork.menu_garment_jobwork",  # soft: owned by jobwork
     "area_quality": "zyra_garment_base.menu_garment_quality",
     "area_shipping": "zyra_garment_base.menu_garment_shipping",
     "area_wages": "zyra_garment_base.menu_garment_wages",

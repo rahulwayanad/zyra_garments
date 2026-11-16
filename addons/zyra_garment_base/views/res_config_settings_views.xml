@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_garment" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.garment</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="80"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Garment" string="Garment" name="zyra_garment_base"
+                     groups="zyra_garment_base.group_garment_admin">
+                    <block title="Factory figures" name="garment_factory_figures">
+                        <setting id="garment_working_time" string="Working time"
+                                 help="Minutes worked per day, target line efficiency and the first day of the week.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="working_minutes_per_day" class="col-lg-5 o_light_label"/>
+                                    <field name="working_minutes_per_day"/>
+                                </div>
+                                <div class="row">
+                                    <label for="target_efficiency" class="col-lg-5 o_light_label"/>
+                                    <field name="target_efficiency"/>
+                                </div>
+                                <div class="row">
+                                    <label for="garment_week_start" class="col-lg-5 o_light_label"/>
+                                    <field name="garment_week_start"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="garment_costing_figures" string="Costing"
+                                 help="Value of a standard minute and the margin floor for cost sheets.">
+                            <div class="content-group">
+                                <field name="garment_currency_id" invisible="1"/>
+                                <div class="row mt8">
+                                    <label for="minute_value" class="col-lg-5 o_light_label"/>
+                                    <field name="minute_value"/>
+                                </div>
+                                <div class="row">
+                                    <label for="margin_floor_pct" class="col-lg-5 o_light_label"/>
+                                    <field name="margin_floor_pct"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="garment_fabric_quality" string="Fabric inspection"
+                                 help="4-point inspection limit; rolls above it go on hold.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="garment_fabric_accept_points" class="col-lg-5 o_light_label"/>
+                                    <field name="garment_fabric_accept_points"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="garment_factory_setup" string="Factory setup"
+                                 help="Business models, menu areas, size ranges, libraries and roles.">
+                            <button name="action_open_garment_setup" type="object" string="Open Factory Setup"
+                                    icon="oi-arrow-right" class="btn-link"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_garment_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'zyra_garment_base', 'bin_size': False}</field>
+    </record>
+</odoo>

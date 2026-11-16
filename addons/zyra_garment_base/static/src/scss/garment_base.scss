@@ -1,0 +1,18 @@
+// Factory setup (screen 119): checkbox first, label after it, one per row.
+.o_form_view .o_zyra_setup {
+    .o_zyra_check {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.35rem 0;
+
+        .o_field_widget {
+            width: auto;
+        }
+
+        .o_form_label {
+            font-weight: 400;
+            margin: 0;
+        }
+    }
+}
