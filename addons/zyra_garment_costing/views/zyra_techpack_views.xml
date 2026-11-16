@@ -23,16 +23,27 @@
         </field>
     </record>
 
+    <!-- Screen 23: "Costed FOB" tile on the style form (red when approved below the margin floor) -->
     <record id="garment_style_view_form_costing" model="ir.ui.view">
         <field name="name">garment.style.form.costing</field>
         <field name="model">garment.style</field>
         <field name="inherit_id" ref="zyra_techpack.garment_style_view_form"/>
         <field name="arch" type="xml">
-            <div name="button_box" position="inside">
-                <button name="action_view_cost_sheets" type="object" class="oe_stat_button" icon="fa-calculator"
-                        groups="zyra_garment_base.group_garment_merchandiser,zyra_garment_base.group_garment_costing,zyra_garment_base.group_garment_techpack_designer">
-                    <field name="cost_sheet_count" string="Cost Sheets" widget="statinfo"/>
-                </button>
+            <div name="kpi_techpack" position="after">
+                <field name="approved_cost_sheet_id" invisible="1"/>
+                <field name="costed_below_floor" invisible="1"/>
+                <div class="o_zyra_kpi o_zyra_kpi_bad" name="kpi_costed_fob_bad"
+                     invisible="not approved_cost_sheet_id or not costed_below_floor"
+                     groups="zyra_garment_base.group_garment_merchandiser,zyra_garment_base.group_garment_costing,zyra_garment_base.group_garment_techpack_designer">
+                    <span class="o_zyra_kpi_label">Costed FOB</span>
+                    <span class="o_zyra_kpi_value"><field name="costed_fob_price"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_good" name="kpi_costed_fob"
+                     invisible="not approved_cost_sheet_id or costed_below_floor"
+                     groups="zyra_garment_base.group_garment_merchandiser,zyra_garment_base.group_garment_costing,zyra_garment_base.group_garment_techpack_designer">
+                    <span class="o_zyra_kpi_label">Costed FOB</span>
+                    <span class="o_zyra_kpi_value"><field name="costed_fob_price"/></span>
+                </div>
             </div>
         </field>
     </record>

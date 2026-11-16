@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from odoo import Command, api, models
 
@@ -101,4 +101,7 @@ class GarmentCostSheetDemo(models.AbstractModel):
         # Oxford shirt: tech pack still awaiting approval; sheet in draft
         self._sheet("cost_sheet_oxford_v1", "oxford", "techpack_oxford_v1", date(2026, 10, 10),
                     quantity_basis=2400, margin_pct=15.0, target_price=8.40, sam=14.5, freight_pc=0.26, **common)
+        # Approval dates a few days after costing, like a real desk.
+        for sheet in self.env["garment.cost.sheet"].search([("approved_date", "!=", False)]):
+            sheet.approved_date = sheet.costing_date + timedelta(days=2)
         return True

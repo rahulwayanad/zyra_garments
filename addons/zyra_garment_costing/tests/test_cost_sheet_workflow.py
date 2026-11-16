@@ -1,5 +1,5 @@
 from odoo.exceptions import AccessError, UserError
-from odoo.tests import Form, tagged
+from odoo.tests import Form, new_test_user, tagged
 
 from .common import CostingCase
 
@@ -75,6 +75,18 @@ class TestCostSheetWorkflow(CostingCase):
         self.assertAlmostEqual(tp.planned_cost_per_piece, sheet.total_cost_pc, places=2)
         self.assertAlmostEqual(tp.planned_material_cost, sheet.material_cost_pc, places=2)
         self.assertEqual(self.style.approved_cost_sheet_id, sheet)
+        self.assertAlmostEqual(self.style.costed_fob_price, sheet.fob_price, places=2)
+
+    def test_cost_figures_on_techpack_are_hidden_from_floor_roles(self):
+        sheet = self._sheet()
+        sheet.action_submit()
+        self._approve(sheet, self.costing_user)
+        cutter = new_test_user(self.env, login="test_cutter", name="Test Cutter",
+                               groups="base.group_user,zyra_garment_base.group_garment_cutting")
+        techpack = self.techpack.with_user(cutter)
+        self.assertNotIn("planned_fob_price", techpack.fields_get())
+        self.assertEqual(techpack.read(["name"])[0]["name"], self.techpack.name)
+        self.techpack.style_id.with_user(cutter).read(["name", "sam"])
 
     def test_approved_sheet_cannot_change(self):
         sheet = self._sheet()

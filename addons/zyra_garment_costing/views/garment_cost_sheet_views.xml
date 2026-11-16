@@ -115,15 +115,15 @@
                         </div>
                         <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not below_floor">
                             <span class="o_zyra_kpi_label">Margin</span>
-                            <span class="o_zyra_kpi_value"><field name="margin_pct" digits="[16, 1]"/>%</span>
+                            <span class="o_zyra_kpi_value"><field name="margin_pct" digits="[16, 1]" readonly="1"/>%</span>
                         </div>
                         <div class="o_zyra_kpi o_zyra_kpi_good" invisible="below_floor">
                             <span class="o_zyra_kpi_label">Margin</span>
-                            <span class="o_zyra_kpi_value"><field name="margin_pct" digits="[16, 1]"/>%</span>
+                            <span class="o_zyra_kpi_value"><field name="margin_pct" digits="[16, 1]" readonly="1"/>%</span>
                         </div>
                         <div class="o_zyra_kpi">
                             <span class="o_zyra_kpi_label">Material Share</span>
-                            <span class="o_zyra_kpi_value"><field name="material_share_pct"/>%</span>
+                            <span class="o_zyra_kpi_value"><field name="material_share_pct" readonly="1"/>%</span>
                         </div>
                         <div class="o_zyra_kpi">
                             <span class="o_zyra_kpi_label">Making Cost</span>
@@ -137,7 +137,7 @@
                         <h1><field name="style_label" invisible="not style_id"/></h1>
                         <field name="style_id" invisible="1"/>
                         <div class="text-muted">
-                            <label for="techpack_id" string="Tech pack"/>
+                            <span>Tech pack: </span>
                             <field name="techpack_id" class="oe_inline" options="{'no_create': True}"
                                    readonly="state != 'draft'" placeholder="Choose the tech pack revision…"/>
                         </div>
@@ -179,7 +179,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="material_kind" column_invisible="True"/>
                                     <field name="product_id" string="Fabric"/>
-                                    <field name="colour_id" optional="hide"/>
+                                    <field name="colour_id" optional="show"/>
                                     <field name="method"/>
                                     <field name="consumption"/>
                                     <field name="uom_id"/>

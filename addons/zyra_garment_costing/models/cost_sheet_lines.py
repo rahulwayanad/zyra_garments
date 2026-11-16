@@ -7,7 +7,7 @@ MATERIAL_KINDS = [("fabric", "Fabric"), ("trim", "Trim"), ("packing", "Packing")
 class GarmentCostSheetMaterial(models.Model):
     _name = "garment.cost.sheet.material"
     _description = "Cost Sheet Material Line"
-    _order = "sheet_id, material_kind, sequence, id"
+    _order = "sheet_id, sequence, id"
 
     sheet_id = fields.Many2one("garment.cost.sheet", required=True, ondelete="cascade", index=True)
     company_id = fields.Many2one(related="sheet_id.company_id", store=True)

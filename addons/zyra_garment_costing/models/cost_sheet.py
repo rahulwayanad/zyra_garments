@@ -429,6 +429,7 @@ class GarmentCostSheet(models.Model):
             if colour_id and colours:
                 share = float_round(100.0 / len(colours), precision_digits=2)
             vals_list.append({
+                "sequence": first.sequence,
                 "method": "techpack",
                 "material_kind": first.material_kind or "trim",
                 "product_id": first.product_id.id,
@@ -531,7 +532,7 @@ class GarmentCostSheet(models.Model):
         for sheet in self:
             techpacks = sheet.techpack_id
             # The style's other revisions that pointed at an older version of this family follow too.
-            techpacks |= self.env["zyra.techpack"].search([
+            techpacks |= self.env["zyra.techpack"].sudo().search([
                 ("approved_cost_sheet_id.name", "=", sheet.name),
                 ("approved_cost_sheet_id.company_id", "=", sheet.company_id.id),
             ])

@@ -47,10 +47,10 @@
                     </tr></thead>
                     <tbody>
                         <tr t-foreach="o.fabric_line_ids" t-as="l">
-                            <td t-esc="l.product_id.display_name"/>
+                            <td><t t-esc="l.product_id.display_name"/><t t-if="l.colour_id"> · <t t-esc="l.colour_id.name"/></t></td>
                             <td><span t-field="l.method"/></td>
                             <td class="text-end" t-esc="'%.4f' % l.consumption"/>
-                            <td t-esc="l.uom_id.name"/>
+                            <td t-out="l.uom_id.name or ''"/>
                             <td class="text-end" t-esc="'%.1f' % l.wastage_pct"/>
                             <td class="text-end" t-esc="'%.4f' % l.price_unit"/>
                             <td class="text-end" t-esc="'%.0f' % l.share_pct"/>
@@ -69,7 +69,7 @@
                         <tr t-foreach="o.trim_line_ids" t-as="l">
                             <td t-esc="l.product_id.display_name"/>
                             <td class="text-end" t-esc="'%.3f' % l.consumption"/>
-                            <td t-esc="l.uom_id.name"/>
+                            <td t-out="l.uom_id.name or ''"/>
                             <td class="text-end" t-esc="'%.1f' % l.wastage_pct"/>
                             <td class="text-end" t-esc="'%.4f' % l.price_unit"/>
                             <td class="text-end" t-esc="'%.4f' % l.cost_pc"/>
@@ -86,8 +86,8 @@
                     <tbody>
                         <tr t-foreach="o.process_line_ids" t-as="l">
                             <td><span t-field="l.process_type"/></td>
-                            <td t-esc="l.name"/>
-                            <td t-esc="l.partner_id.name"/>
+                            <td t-out="l.name or ''"/>
+                            <td t-out="l.partner_id.name or ''"/>
                             <td><span t-field="l.charge_basis"/></td>
                             <td class="text-end" t-esc="'%.2f' % l.cost"/>
                             <td class="text-end" t-esc="'%.4f' % l.cost_pc"/>
