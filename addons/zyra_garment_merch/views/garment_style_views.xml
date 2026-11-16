@@ -59,7 +59,8 @@
                 </div>
             </xpath>
             <xpath expr="//div[@name='kpi_techpack']" position="after">
-                <div class="o_zyra_kpi" name="kpi_costed_fob">
+                <field name="has_costing" invisible="1"/>
+                <div class="o_zyra_kpi" name="kpi_costed_fob" invisible="has_costing">
                     <span class="o_zyra_kpi_label">Costed FOB</span>
                     <span class="o_zyra_kpi_value"><field name="costed_fob"/></span>
                 </div>

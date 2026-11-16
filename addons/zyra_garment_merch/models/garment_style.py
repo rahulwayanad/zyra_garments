@@ -18,7 +18,9 @@ class GarmentStyle(models.Model):
     approval_count = fields.Integer(string="Approvals", compute="_compute_merch_figures")
     approvals_pending = fields.Integer(string="Approvals Pending", compute="_compute_merch_figures",
                                        help="Approval cards not yet approved by the buyer.")
-    costed_fob = fields.Monetary(string="Costed FOB", compute="_compute_price_left",
+    has_costing = fields.Boolean(compute="_compute_price_left",
+                                 help="zyra_garment_costing is installed: it shows its own Costed FOB tile.")
+    costed_fob = fields.Monetary(string="FOB for Price Less Material", compute="_compute_price_left",
                                  currency_field="currency_id",
                                  help="FOB price of the approved cost sheet when costing is installed, "
                                       "otherwise the average price of the open production orders.")
@@ -61,10 +63,14 @@ class GarmentStyle(models.Model):
     def _get_costed_fob(self):
         """FOB from the approved cost sheet (zyra_garment_costing, soft), else average open-order price."""
         self.ensure_one()
+        if "costed_fob_price" in self._fields:
+            fob = self.sudo().costed_fob_price
+            if fob:
+                return fob
         if "garment.cost.sheet" in self.env:
             Sheet = self.env["garment.cost.sheet"]
             domain = [("state", "=", "approved")]
-            if "style_id" in Sheet._fields:
+            if "style_id" in Sheet._fields and Sheet._fields["style_id"].store:
                 domain.append(("style_id", "=", self.id))
             elif "techpack_id" in Sheet._fields:
                 domain.append(("techpack_id.style_id", "=", self.id))
@@ -82,7 +88,9 @@ class GarmentStyle(models.Model):
 
     @api.depends("material_cost", "garment_order_ids.price_unit")
     def _compute_price_left(self):
+        has_costing = "garment.cost.sheet" in self.env
         for style in self:
+            style.has_costing = has_costing
             fob = style._get_costed_fob() if isinstance(style.id, int) else 0.0
             style.costed_fob = fob
             style.price_less_material = fob - style.material_cost if fob else 0.0

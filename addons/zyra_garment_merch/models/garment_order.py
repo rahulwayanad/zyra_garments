@@ -222,11 +222,13 @@ class GarmentOrder(models.Model):
             if sheet:
                 order.has_cost_sheet = True
                 order.cost_sheet_ref = "%s,%s" % (sheet._name, sheet.id)
-                order.planned_material_pc = first(sheet, ("material_cost", "material_cost_pc",
+                order.planned_material_pc = first(sheet, ("material_cost_pc", "material_cost",
                                                           "material_per_piece"))
-                order.planned_making_pc = first(sheet, ("making_cost", "making_cost_pc", "making_per_piece"))
-                order.planned_other_pc = first(sheet, ("other_cost", "other_cost_pc", "overhead_cost",
-                                                       "process_cost"))
+                order.planned_making_pc = first(sheet, ("making_cost_pc", "making_cost", "making_per_piece"))
+                other_fields = [f for f in ("process_cost_pc", "overhead_amount_pc", "commission_amount_pc",
+                                            "freight_pc") if f in sheet._fields]
+                order.planned_other_pc = sum(sheet[f] for f in other_fields) if other_fields else \
+                    first(sheet, ("other_cost_pc", "other_cost"))
                 order.planned_margin_pct = first(sheet, ("margin_pct", "margin_percent"))
                 order.planned_margin_low = order.planned_margin_pct < order.company_id.margin_floor_pct
             else:
