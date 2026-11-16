@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="zyra_techpack_view_form_costing" model="ir.ui.view">
+        <field name="name">zyra.techpack.form.costing</field>
+        <field name="model">zyra.techpack</field>
+        <field name="inherit_id" ref="zyra_techpack.zyra_techpack_view_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_cost_sheets" type="object" class="oe_stat_button" icon="fa-calculator"
+                        groups="zyra_garment_base.group_garment_merchandiser,zyra_garment_base.group_garment_costing,zyra_garment_base.group_garment_techpack_designer">
+                    <field name="cost_sheet_count" string="Cost Sheets" widget="statinfo"/>
+                </button>
+            </div>
+            <div name="kpi_material" position="after">
+                <div class="o_zyra_kpi" name="kpi_planned_fob" invisible="not approved_cost_sheet_id"
+                     groups="zyra_garment_base.group_garment_merchandiser,zyra_garment_base.group_garment_costing,zyra_garment_base.group_garment_techpack_designer">
+                    <field name="approved_cost_sheet_id" invisible="1"/>
+                    <field name="planned_currency_id" invisible="1"/>
+                    <span class="o_zyra_kpi_label">Planned FOB</span>
+                    <span class="o_zyra_kpi_value"><field name="planned_fob_price"/></span>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <record id="garment_style_view_form_costing" model="ir.ui.view">
+        <field name="name">garment.style.form.costing</field>
+        <field name="model">garment.style</field>
+        <field name="inherit_id" ref="zyra_techpack.garment_style_view_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_cost_sheets" type="object" class="oe_stat_button" icon="fa-calculator"
+                        groups="zyra_garment_base.group_garment_merchandiser,zyra_garment_base.group_garment_costing,zyra_garment_base.group_garment_techpack_designer">
+                    <field name="cost_sheet_count" string="Cost Sheets" widget="statinfo"/>
+                </button>
+            </div>
+        </field>
+    </record>
+</odoo>

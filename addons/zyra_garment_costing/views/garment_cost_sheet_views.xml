@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Screen 31: cost sheets list, under-floor rows in red -->
+    <record id="garment_cost_sheet_view_list" model="ir.ui.view">
+        <field name="name">garment.cost.sheet.list</field>
+        <field name="model">garment.cost.sheet</field>
+        <field name="arch" type="xml">
+            <list string="Cost Sheets" decoration-danger="below_floor" sample="1">
+                <field name="currency_id" column_invisible="True"/>
+                <field name="below_floor" column_invisible="True"/>
+                <field name="name"/>
+                <field name="version"/>
+                <field name="style_label" string="Style"/>
+                <field name="buyer_id"/>
+                <field name="production_order_ref" optional="show"/>
+                <field name="costing_date" widget="date"/>
+                <field name="quantity_basis" string="Qty"/>
+                <field name="material_cost_pc"/>
+                <field name="making_cost_pc" string="Making / pc"/>
+                <field name="target_price" string="Target"/>
+                <field name="fob_price" string="FOB"/>
+                <field name="margin_pct"/>
+                <field name="quoted_value" sum="Quoted value"/>
+                <field name="state" string="Status" widget="badge"
+                       decoration-info="state == 'submitted'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"
+                       decoration-muted="state in ('draft', 'superseded')"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_cost_sheet_view_search" model="ir.ui.view">
+        <field name="name">garment.cost.sheet.search</field>
+        <field name="model">garment.cost.sheet</field>
+        <field name="arch" type="xml">
+            <search string="Cost Sheets">
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="buyer_id"/>
+                <field name="techpack_id"/>
+                <filter name="latest" string="Latest versions" domain="[('is_latest', '=', True)]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="submitted" string="Awaiting Approval" domain="[('state', '=', 'submitted')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <separator/>
+                <filter name="below_floor" string="Below Margin Floor" domain="[('below_floor', '=', True)]"/>
+                <filter name="mine" string="Costed by Me" domain="[('user_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_style" string="Style" context="{'group_by': 'style_id'}"/>
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Costing Date" context="{'group_by': 'costing_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Screen 32: cost sheet form -->
+    <record id="garment_cost_sheet_view_form" model="ir.ui.view">
+        <field name="name">garment.cost.sheet.form</field>
+        <field name="model">garment.cost.sheet</field>
+        <field name="arch" type="xml">
+            <form string="Cost Sheet">
+                <header>
+                    <button name="action_create_quotation" type="object" string="Create Quotation"
+                            class="btn-primary" invisible="state != 'approved'"/>
+                    <button name="action_submit" type="object" string="Send for Approval"
+                            class="btn-primary" invisible="state not in ('draft', 'rejected')"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'submitted'"
+                            groups="zyra_garment_base.group_garment_costing"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'submitted'"
+                            groups="zyra_garment_base.group_garment_costing"/>
+                    <button name="action_what_if" type="object" string="What If"
+                            invisible="state == 'superseded'"/>
+                    <button name="action_new_version" type="object" string="New Version"
+                            invisible="state not in ('approved', 'rejected') or not is_latest"/>
+                    <button name="action_load_from_techpack" type="object" string="Load from Tech Pack"
+                            invisible="state != 'draft'"
+                            confirm="Tech pack lines are replaced by the current tech pack BoM; manual lines stay."/>
+                    <button name="action_reset_draft" type="object" string="Back to Draft"
+                            invisible="state not in ('submitted', 'rejected')"/>
+                    <button name="action_print" type="object" string="Print"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
+                </header>
+                <sheet>
+                    <field name="below_floor" invisible="1"/>
+                    <field name="is_latest" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_quotations" type="object" class="oe_stat_button"
+                                icon="fa-file-text-o" invisible="not sale_order_count">
+                            <field name="sale_order_count" widget="statinfo" string="Quotations"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Below Floor" bg_color="text-bg-danger"
+                            invisible="not below_floor"/>
+                    <div class="o_zyra_kpis">
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">FOB Price</span>
+                            <span class="o_zyra_kpi_value"><field name="fob_price" widget="monetary"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="fob_over_target &gt; 0">
+                            <span class="o_zyra_kpi_label">Against Target</span>
+                            <span class="o_zyra_kpi_value"><field name="fob_over_target" widget="monetary"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="fob_over_target &lt;= 0">
+                            <span class="o_zyra_kpi_label">Against Target</span>
+                            <span class="o_zyra_kpi_value">+<field name="fob_over_target" widget="monetary"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not below_floor">
+                            <span class="o_zyra_kpi_label">Margin</span>
+                            <span class="o_zyra_kpi_value"><field name="margin_pct" digits="[16, 1]"/>%</span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="below_floor">
+                            <span class="o_zyra_kpi_label">Margin</span>
+                            <span class="o_zyra_kpi_value"><field name="margin_pct" digits="[16, 1]"/>%</span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Material Share</span>
+                            <span class="o_zyra_kpi_value"><field name="material_share_pct"/>%</span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Making Cost</span>
+                            <span class="o_zyra_kpi_value"><field name="making_cost_pc" widget="monetary"/></span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted">
+                            <field name="name" class="oe_inline" readonly="1"/> · v<field name="version" class="oe_inline"/>
+                        </div>
+                        <h1><field name="style_label" invisible="not style_id"/></h1>
+                        <field name="style_id" invisible="1"/>
+                        <div class="text-muted">
+                            <label for="techpack_id" string="Tech pack"/>
+                            <field name="techpack_id" class="oe_inline" options="{'no_create': True}"
+                                   readonly="state != 'draft'" placeholder="Choose the tech pack revision…"/>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Quoted For" name="quoted_for">
+                            <field name="buyer_id" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="production_order_ref" invisible="not production_order_ref"/>
+                            <field name="quantity_basis" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="buyer_supplies_fabric" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="costing_date" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="user_id" readonly="state not in ('draft', 'rejected')"/>
+                        </group>
+                        <group string="Price" name="price">
+                            <field name="target_price" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="fob_price"/>
+                            <field name="fob_over_target"/>
+                            <field name="cif_price"/>
+                            <field name="quoted_value"/>
+                        </group>
+                        <group string="Making Cost" name="making">
+                            <field name="sam" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="line_efficiency" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="cost_per_minute" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="making_cost_pc"/>
+                        </group>
+                        <group string="Shares of the FOB Price" name="shares">
+                            <field name="overhead_pct" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="commission_pct" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="margin_pct" readonly="state not in ('draft', 'rejected')"/>
+                            <field name="freight_pc" readonly="state not in ('draft', 'rejected')"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Fabric" name="fabric">
+                            <field name="fabric_line_ids" readonly="state not in ('draft', 'rejected')"
+                                   context="{'default_material_kind': 'fabric'}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="material_kind" column_invisible="True"/>
+                                    <field name="product_id" string="Fabric"/>
+                                    <field name="colour_id" optional="hide"/>
+                                    <field name="method"/>
+                                    <field name="consumption"/>
+                                    <field name="uom_id"/>
+                                    <field name="wastage_pct"/>
+                                    <field name="price_unit"/>
+                                    <field name="share_pct"/>
+                                    <field name="cost_pc" sum="Fabric / pc"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Trims" name="trims">
+                            <field name="trim_line_ids" readonly="state not in ('draft', 'rejected')"
+                                   context="{'default_material_kind': 'trim'}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id" string="Trim"/>
+                                    <field name="material_kind" optional="hide"/>
+                                    <field name="colour_id" optional="hide"/>
+                                    <field name="method" optional="hide"/>
+                                    <field name="consumption" string="Quantity"/>
+                                    <field name="uom_id"/>
+                                    <field name="wastage_pct"/>
+                                    <field name="price_unit"/>
+                                    <field name="share_pct" optional="hide"/>
+                                    <field name="cost_pc" sum="Trims / pc"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Processes" name="processes">
+                            <field name="process_line_ids" readonly="state not in ('draft', 'rejected')">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="process_type"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="charge_basis"/>
+                                    <field name="cost"/>
+                                    <field name="cost_pc" sum="Processes / pc"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Versions" name="versions">
+                            <field name="version_ids" readonly="1">
+                                <list decoration-danger="below_floor" create="0" delete="0">
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="below_floor" column_invisible="True"/>
+                                    <field name="version"/>
+                                    <field name="techpack_id"/>
+                                    <field name="costing_date"/>
+                                    <field name="user_id"/>
+                                    <field name="fob_price"/>
+                                    <field name="margin_pct"/>
+                                    <field name="approved_by_id"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                            <group invisible="not floor_override_reason">
+                                <field name="floor_override_reason"/>
+                                <field name="approved_by_id"/>
+                                <field name="approved_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_cost_sheet" model="ir.actions.act_window">
+        <field name="name">Cost Sheets</field>
+        <field name="res_model">garment.cost.sheet</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="garment_cost_sheet_view_search"/>
+        <field name="context">{'search_default_latest': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cost a style</p>
+            <p>Pick an approved tech pack revision: its BoM and SAM fill the sheet, the FOB price follows from
+                the margin you need. Sheets under the company margin floor show in red.</p>
+        </field>
+    </record>
+</odoo>

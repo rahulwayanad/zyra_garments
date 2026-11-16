@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_cost_sheet_approve_wizard_view_form" model="ir.ui.view">
+        <field name="name">garment.cost.sheet.approve.wizard.form</field>
+        <field name="model">garment.cost.sheet.approve.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Approve below the Margin Floor">
+                <field name="currency_id" invisible="1"/>
+                <div class="alert alert-danger" role="alert">
+                    The margin of this cost sheet is under the company margin floor. Only a Factory Manager can
+                    approve it, and the reason is kept in the cost sheet history.
+                </div>
+                <group>
+                    <field name="sheet_id"/>
+                    <field name="fob_price"/>
+                    <field name="margin_pct"/>
+                    <field name="margin_floor_pct"/>
+                    <field name="reason" placeholder="Why this price is accepted below the floor…"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Approve" class="btn-primary"
+                            groups="zyra_garment_base.group_garment_factory_manager"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Screen 38: printed internal cost sheet -->
+    <record id="action_report_cost_sheet" model="ir.actions.report">
+        <field name="name">Internal Cost Sheet</field>
+        <field name="model">garment.cost.sheet</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_costing.report_cost_sheet</field>
+        <field name="report_file">zyra_garment_costing.report_cost_sheet</field>
+        <field name="print_report_name">'Cost Sheet %s v%s' % (object.name.replace('/', '-'), object.version)</field>
+        <field name="binding_model_id" ref="model_garment_cost_sheet"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_cost_sheet_document">
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context(lang=o.user_id.lang or user.lang)"/>
+            <t t-set="cur" t-value="o.currency_id"/>
+            <div class="page" style="font-size: 10pt;">
+                <h2 style="margin-bottom: 0;">Cost Sheet <span t-field="o.name"/> · version <span t-field="o.version"/></h2>
+                <div class="text-muted" style="margin-bottom: 8px;" t-esc="o.style_label"/>
+                <div style="border-top: 2px solid #2d2a4a; margin-bottom: 10px;"/>
+                <div class="row" style="border: 1px solid #e3e1ee; padding: 8px 4px; margin: 0 0 14px 0;">
+                    <div class="col-6">
+                        <div><strong>Buyer:</strong> <span t-field="o.buyer_id.name"/></div>
+                        <div t-if="o.production_order_ref"><strong>Production order:</strong> <span t-esc="o.production_order_ref"/></div>
+                        <div><strong>Tech pack:</strong> <span t-esc="o.techpack_id.display_name"/></div>
+                        <div><strong>Quantity basis:</strong> <span t-field="o.quantity_basis"/> pieces</div>
+                        <div><strong>Costed by:</strong> <span t-field="o.user_id.name"/></div>
+                    </div>
+                    <div class="col-6">
+                        <div><strong>Costing date:</strong> <span t-field="o.costing_date"/></div>
+                        <div><strong>Currency:</strong> <span t-esc="cur.name"/></div>
+                        <div><strong>Status:</strong> <span t-field="o.state"/></div>
+                        <div t-if="o.approved_by_id"><strong>Approved by:</strong> <span t-field="o.approved_by_id.name"/>
+                            on <span t-field="o.approved_date"/></div>
+                        <div t-if="o.buyer_supplies_fabric"><strong>Fabric:</strong> supplied by the buyer (CMT)</div>
+                    </div>
+                </div>
+
+                <h5>Fabric</h5>
+                <table class="table table-sm o_main_table">
+                    <thead><tr>
+                        <th>Fabric</th><th>Method</th><th class="text-end">Consumption</th><th>Unit</th>
+                        <th class="text-end">Wastage %</th><th class="text-end">Price</th>
+                        <th class="text-end">Share %</th><th class="text-end">Cost / pc</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr t-foreach="o.fabric_line_ids" t-as="l">
+                            <td t-esc="l.product_id.display_name"/>
+                            <td t-field="l.method"/>
+                            <td class="text-end" t-esc="'%.4f' % l.consumption"/>
+                            <td t-esc="l.uom_id.name"/>
+                            <td class="text-end" t-esc="'%.1f' % l.wastage_pct"/>
+                            <td class="text-end" t-esc="'%.4f' % l.price_unit"/>
+                            <td class="text-end" t-esc="'%.0f' % l.share_pct"/>
+                            <td class="text-end" t-esc="'%.4f' % l.cost_pc"/>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5>Trims</h5>
+                <table class="table table-sm o_main_table">
+                    <thead><tr>
+                        <th>Trim</th><th class="text-end">Quantity</th><th>Unit</th>
+                        <th class="text-end">Wastage %</th><th class="text-end">Price</th><th class="text-end">Cost / pc</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr t-foreach="o.trim_line_ids" t-as="l">
+                            <td t-esc="l.product_id.display_name"/>
+                            <td class="text-end" t-esc="'%.3f' % l.consumption"/>
+                            <td t-esc="l.uom_id.name"/>
+                            <td class="text-end" t-esc="'%.1f' % l.wastage_pct"/>
+                            <td class="text-end" t-esc="'%.4f' % l.price_unit"/>
+                            <td class="text-end" t-esc="'%.4f' % l.cost_pc"/>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5>Processes</h5>
+                <table class="table table-sm o_main_table">
+                    <thead><tr>
+                        <th>Process</th><th>Description</th><th>Done by</th><th>Charged</th>
+                        <th class="text-end">Cost</th><th class="text-end">Cost / pc</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr t-foreach="o.process_line_ids" t-as="l">
+                            <td t-field="l.process_type"/>
+                            <td t-esc="l.name"/>
+                            <td t-esc="l.partner_id.name"/>
+                            <td t-field="l.charge_basis"/>
+                            <td class="text-end" t-esc="'%.2f' % l.cost"/>
+                            <td class="text-end" t-esc="'%.4f' % l.cost_pc"/>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="page-break-inside: avoid;">
+                    <h5>Price build-up</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <table class="table table-sm">
+                                <tr><td>SAM (min)</td><td class="text-end" t-esc="'%.2f' % o.sam"/></tr>
+                                <tr><td>Line efficiency %</td><td class="text-end" t-esc="'%.2f' % o.line_efficiency"/></tr>
+                                <tr><td>Cost per minute</td><td class="text-end" t-esc="'%.4f' % o.cost_per_minute"/></tr>
+                                <tr><td>Fabric / pc</td><td class="text-end"><span t-field="o.fabric_cost_pc"/></td></tr>
+                                <tr><td>Trims / pc</td><td class="text-end"><span t-field="o.trim_cost_pc"/></td></tr>
+                                <tr><td>Processes / pc</td><td class="text-end"><span t-field="o.process_cost_pc"/></td></tr>
+                                <tr><td>Making cost / pc</td><td class="text-end"><span t-field="o.making_cost_pc"/></td></tr>
+                                <tr><td><strong>Cost / pc</strong></td><td class="text-end"><strong><span t-field="o.total_cost_pc"/></strong></td></tr>
+                            </table>
+                        </div>
+                        <div class="col-6">
+                            <table class="table table-sm">
+                                <tr><td>Commercial and finance (<t t-esc="'%.2f' % o.overhead_pct"/> %)</td>
+                                    <td class="text-end"><span t-field="o.overhead_amount_pc"/></td></tr>
+                                <tr><td>Commission (<t t-esc="'%.2f' % o.commission_pct"/> %)</td>
+                                    <td class="text-end"><span t-field="o.commission_amount_pc"/></td></tr>
+                                <tr><td>Margin (<t t-esc="'%.2f' % o.margin_pct"/> %)</td>
+                                    <td class="text-end"><span t-field="o.margin_amount_pc"/></td></tr>
+                                <tr><td><strong>FOB price</strong></td><td class="text-end"><strong><span t-field="o.fob_price"/></strong></td></tr>
+                                <tr><td>Target price</td><td class="text-end"><span t-field="o.target_price"/></td></tr>
+                                <tr><td>Freight / pc</td><td class="text-end"><span t-field="o.freight_pc"/></td></tr>
+                                <tr><td>CIF price</td><td class="text-end"><span t-field="o.cif_price"/></td></tr>
+                                <tr><td><strong>Quoted value</strong></td><td class="text-end"><strong><span t-field="o.quoted_value"/></strong></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <p t-if="o.below_floor" class="text-danger">
+                        Below the margin floor of <t t-esc="'%.1f' % o.margin_floor_pct"/> %.
+                        <t t-if="o.floor_override_reason">Reason for approval: <span t-field="o.floor_override_reason"/></t>
+                    </p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_cost_sheet">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="zyra_garment_costing.report_cost_sheet_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

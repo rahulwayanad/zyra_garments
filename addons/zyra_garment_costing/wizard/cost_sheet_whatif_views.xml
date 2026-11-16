@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_cost_sheet_whatif_view_form" model="ir.ui.view">
+        <field name="name">garment.cost.sheet.whatif.form</field>
+        <field name="model">garment.cost.sheet.whatif</field>
+        <field name="arch" type="xml">
+            <form string="What If">
+                <field name="currency_id" invisible="1"/>
+                <field name="sheet_state" invisible="1"/>
+                <field name="below_floor" invisible="1"/>
+                <div class="o_zyra_kpis">
+                    <div class="o_zyra_kpi">
+                        <span class="o_zyra_kpi_label">FOB Price</span>
+                        <span class="o_zyra_kpi_value"><field name="fob_price"/></span>
+                    </div>
+                    <div class="o_zyra_kpi">
+                        <span class="o_zyra_kpi_label">Against Target</span>
+                        <span class="o_zyra_kpi_value"><field name="fob_over_target"/></span>
+                    </div>
+                    <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not below_floor">
+                        <span class="o_zyra_kpi_label">Margin</span>
+                        <span class="o_zyra_kpi_value"><field name="margin_pct" readonly="1"/>%</span>
+                    </div>
+                    <div class="o_zyra_kpi o_zyra_kpi_good" invisible="below_floor">
+                        <span class="o_zyra_kpi_label">Margin</span>
+                        <span class="o_zyra_kpi_value"><field name="margin_pct" readonly="1"/>%</span>
+                    </div>
+                    <div class="o_zyra_kpi">
+                        <span class="o_zyra_kpi_label">Making Cost</span>
+                        <span class="o_zyra_kpi_value"><field name="making_cost_pc"/></span>
+                    </div>
+                </div>
+                <group>
+                    <group string="Try">
+                        <field name="sheet_id"/>
+                        <field name="sam"/>
+                        <field name="line_efficiency"/>
+                        <field name="cost_per_minute"/>
+                        <field name="margin_pct"/>
+                    </group>
+                    <group string="Against the Sheet">
+                        <field name="current_fob"/>
+                        <field name="target_price"/>
+                        <field name="margin_at_target"/>
+                        <field name="margin_floor_pct"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply to Sheet" class="btn-primary"
+                            invisible="sheet_state != 'draft'"/>
+                    <button name="action_use_target_margin" type="object" string="Use Margin at Target"
+                            invisible="not target_price"/>
+                    <button special="cancel" string="Close"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_cost_sheet_rule_company" model="ir.rule">
+        <field name="name">Cost sheets: own companies</field>
+        <field name="model_id" ref="model_garment_cost_sheet"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="garment_cost_sheet_material_rule_company" model="ir.rule">
+        <field name="name">Cost sheet materials: own companies</field>
+        <field name="model_id" ref="model_garment_cost_sheet_material"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="garment_cost_sheet_process_rule_company" model="ir.rule">
+        <field name="name">Cost sheet processes: own companies</field>
+        <field name="model_id" ref="model_garment_cost_sheet_process"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>
