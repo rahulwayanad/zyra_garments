@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cost sheets for the zyra_techpack demo styles. Lines come from each tech pack's BoM; created in
+         Python so they follow the real approval path (see models/costing_demo.py). -->
+    <function model="garment.cost.sheet.demo" name="_load_demo"/>
+</odoo>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_cost_sheets" name="Cost Sheets" parent="zyra_garment_base.menu_garment_merch"
+              action="action_garment_cost_sheet" sequence="30"
+              groups="zyra_garment_base.group_garment_merchandiser,zyra_garment_base.group_garment_costing,zyra_garment_base.group_garment_techpack_designer"/>
+</odoo>
