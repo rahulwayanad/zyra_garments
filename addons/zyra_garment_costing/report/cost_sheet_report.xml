@@ -48,7 +48,7 @@
                     <tbody>
                         <tr t-foreach="o.fabric_line_ids" t-as="l">
                             <td t-esc="l.product_id.display_name"/>
-                            <td t-field="l.method"/>
+                            <td><span t-field="l.method"/></td>
                             <td class="text-end" t-esc="'%.4f' % l.consumption"/>
                             <td t-esc="l.uom_id.name"/>
                             <td class="text-end" t-esc="'%.1f' % l.wastage_pct"/>
@@ -85,10 +85,10 @@
                     </tr></thead>
                     <tbody>
                         <tr t-foreach="o.process_line_ids" t-as="l">
-                            <td t-field="l.process_type"/>
+                            <td><span t-field="l.process_type"/></td>
                             <td t-esc="l.name"/>
                             <td t-esc="l.partner_id.name"/>
-                            <td t-field="l.charge_basis"/>
+                            <td><span t-field="l.charge_basis"/></td>
                             <td class="text-end" t-esc="'%.2f' % l.cost"/>
                             <td class="text-end" t-esc="'%.4f' % l.cost_pc"/>
                         </tr>

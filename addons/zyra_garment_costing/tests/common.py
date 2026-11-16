@@ -68,7 +68,7 @@ class CostingCase(TransactionCase):
             groups="base.group_user,zyra_garment_base.group_garment_costing")
         cls.merch_user = new_test_user(
             env, login="test_merch", name="Test Merchandiser",
-            groups="base.group_user,zyra_garment_base.group_garment_merchandiser")
+            groups="base.group_user,sales_team.group_sale_salesman,zyra_garment_base.group_garment_merchandiser")
         cls.manager = new_test_user(
             env, login="test_fm", name="Test Factory Manager",
             groups="base.group_user,zyra_garment_base.group_garment_factory_manager")

@@ -48,9 +48,13 @@ class GarmentCostSheetWhatIf(models.TransientModel):
         Sheet = self.env["garment.cost.sheet"]
         for wiz in self:
             sheet = wiz.sheet_id
-            making = Sheet._formula_making_cost(wiz.sam, wiz.cost_per_minute, wiz.line_efficiency)
-            cost = sheet.material_cost_pc + sheet.process_cost_pc + making
-            fob = Sheet._formula_fob_price(cost, sheet.overhead_pct, sheet.commission_pct, wiz.margin_pct)
+            if not sheet:
+                wiz.update({"making_cost_pc": 0.0, "fob_price": 0.0, "fob_over_target": 0.0,
+                            "margin_at_target": 0.0, "below_floor": False})
+                continue
+            parts = sheet._cost_parts(sam=wiz.sam, cost_per_minute=wiz.cost_per_minute,
+                                      line_efficiency=wiz.line_efficiency, margin_pct=wiz.margin_pct)
+            making, cost, fob = parts["making"], parts["total"], parts["fob"]
             wiz.making_cost_pc = making
             wiz.fob_price = fob
             wiz.fob_over_target = fob - sheet.target_price if sheet.target_price else 0.0

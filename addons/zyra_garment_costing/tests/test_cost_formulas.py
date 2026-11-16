@@ -65,11 +65,11 @@ class TestCostFormulas(CostingCase):
             ],
         )
         # fabric: navy 0.25*1.04*6*0.5 = 0.78 ; white 0.25*1.02*5*0.5 = 0.6375
-        self.assertAlmostEqual(sheet.fabric_cost_pc, 1.4175, places=4)
-        self.assertAlmostEqual(sheet.trim_cost_pc, 0.04, places=4)
-        self.assertAlmostEqual(sheet.material_cost_pc, 1.4575, places=4)
-        self.assertAlmostEqual(sheet.process_cost_pc, 0.40, places=4)  # 0.30 + 200/2000
-        self.assertAlmostEqual(sheet.making_cost_pc, 0.50, places=4)  # 6 x 0.05 / 0.60
+        self.assertAlmostEqual(sheet.fabric_cost_pc, 1.4175, places=2)  # monetary: 2 decimals
+        self.assertAlmostEqual(sheet.trim_cost_pc, 0.04, places=2)
+        self.assertAlmostEqual(sheet.material_cost_pc, 1.4575, places=2)
+        self.assertAlmostEqual(sheet.process_cost_pc, 0.40, places=2)  # 0.30 + 200/2000
+        self.assertAlmostEqual(sheet.making_cost_pc, 0.50, places=2)  # 6 x 0.05 / 0.60
         total = 1.4575 + 0.40 + 0.50
         self.assertAlmostEqual(sheet.total_cost_pc, total, places=2)
         fob = total / 0.80
@@ -81,6 +81,8 @@ class TestCostFormulas(CostingCase):
         self.assertAlmostEqual(sheet.fob_over_target, fob - 5.0, places=2)
         self.assertAlmostEqual(sheet.quoted_value, round(fob, 2) * 2000, places=2)
         self.assertAlmostEqual(sheet.material_share_pct, 1.4575 / fob * 100, places=1)
+        # the price is built from unrounded line costs, not from the 2-decimal subtotals
+        self.assertAlmostEqual(sheet._cost_parts()["total"], total, places=6)
 
     def test_buyer_supplied_fabric_is_left_out_of_the_price(self):
         sheet = self._sheet(buyer_supplies_fabric=True)
@@ -104,7 +106,7 @@ class TestCostFormulas(CostingCase):
         wiz = self.env["garment.cost.sheet.whatif"].with_context(default_sheet_id=sheet.id).create({})
         self.assertAlmostEqual(wiz.fob_price, sheet.fob_price, places=2)
         wiz.margin_pct = 20.0
-        expected = sheet.total_cost_pc / (1 - 0.23)
+        expected = sheet._cost_parts()["total"] / (1 - 0.23)
         self.assertAlmostEqual(wiz.fob_price, expected, places=2)
         self.assertEqual(sheet.margin_pct, 15.0)
         wiz.action_apply()

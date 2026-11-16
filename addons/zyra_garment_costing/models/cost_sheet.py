@@ -273,14 +273,9 @@ class GarmentCostSheet(models.Model):
     )
     def _compute_costs(self):
         for sheet in self:
-            fabric = sum(sheet.material_line_ids.filtered(lambda l: l.material_kind == "fabric").mapped("cost_pc"))
-            trims = sum(sheet.material_line_ids.filtered(lambda l: l.material_kind != "fabric").mapped("cost_pc"))
-            if sheet.buyer_supplies_fabric:
-                fabric = 0.0
-            processes = sum(sheet.process_line_ids.mapped("cost_pc"))
-            making = sheet._formula_making_cost(sheet.sam, sheet.cost_per_minute, sheet.line_efficiency)
-            total = fabric + trims + processes + making
-            fob = sheet._formula_fob_price(total, sheet.overhead_pct, sheet.commission_pct, sheet.margin_pct)
+            parts = sheet._cost_parts()
+            fabric, trims, processes, making, total, fob = (
+                parts[k] for k in ("fabric", "trims", "processes", "making", "total", "fob"))
             sheet.fabric_cost_pc = fabric
             sheet.trim_cost_pc = trims
             sheet.material_cost_pc = fabric + trims
@@ -297,6 +292,21 @@ class GarmentCostSheet(models.Model):
             sheet.quoted_value = sheet.currency_id.round(fob) * sheet.quantity_basis if sheet.currency_id \
                 else fob * sheet.quantity_basis
             sheet.material_share_pct = (fabric + trims) / fob * 100.0 if fob else 0.0
+
+    def _cost_parts(self, **overrides):
+        """Unrounded cost build-up per piece; ``overrides`` replace sheet inputs (What If)."""
+        self.ensure_one()
+        get = lambda name: overrides[name] if name in overrides else self[name]  # noqa: E731
+        lines = self.material_line_ids
+        fabric = 0.0 if self.buyer_supplies_fabric else sum(
+            lines.filtered(lambda l: l.material_kind == "fabric").mapped("cost_pc"))
+        trims = sum(lines.filtered(lambda l: l.material_kind != "fabric").mapped("cost_pc"))
+        processes = sum(self.process_line_ids.mapped("cost_pc"))
+        making = self._formula_making_cost(get("sam"), get("cost_per_minute"), get("line_efficiency"))
+        total = fabric + trims + processes + making
+        fob = self._formula_fob_price(total, get("overhead_pct"), get("commission_pct"), get("margin_pct"))
+        return {"fabric": fabric, "trims": trims, "processes": processes, "making": making,
+                "total": total, "fob": fob}
 
     @api.depends("margin_pct", "margin_floor_pct")
     def _compute_below_floor(self):
@@ -359,6 +369,7 @@ class GarmentCostSheet(models.Model):
                 vals["name"] = self.env["ir.sequence"].with_company(company).next_by_code(
                     "garment.cost.sheet", sequence_date=vals.get("costing_date")) or _("New")
         sheets = super().create(vals_list)
+        self.invalidate_model(["version_ids", "is_latest"])
         if not self.env.context.get("garment_cost_sheet_no_load"):
             for sheet in sheets.filtered(lambda s: not s.material_line_ids and s.state == "draft"):
                 lines = sheet._prepare_material_lines_from_techpack()
