@@ -20,7 +20,7 @@ halfway" prompt.
 |---|---|---|
 | 0 | repo, docs/screens, CLAUDE.md, theme installs | done (commit 7f9791c) |
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
-| 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | agents running (wt-techpack/costing/merch) |
+| 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | techpack merged; costing, merch running |
 | 3 | materials, cutting, quality, shipping | – |
 | 4 | sewing, jobwork | – |
 | 5 | wages, pnl, cockpit, portal, connect | – |
@@ -32,3 +32,4 @@ halfway" prompt.
 - ~23:40 usage limit hit (resets 02:00); base agent stopped mid-way (models, data, libraries written, uncommitted).
 - 02:40 base agent resumed from its transcript.
 - ~02:55 base merged to main (gate 31/31). Wave 2 contract written (contracts/wave2_techpack.md): techpack owns garment.style. Wave 2 started.
+- 03:14 techpack done (38/38 tests, contract met; BOM price_unit is Float not Monetary for sub-cent trims). Merged to main; wt-techpack kept until costing/merch finish (they test against it).
