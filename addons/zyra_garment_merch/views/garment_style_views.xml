@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Style form (screen 23): order figures and the sample / approval counts. -->
+    <record id="garment_style_view_form_merch" model="ir.ui.view">
+        <field name="name">garment.style.form.merch</field>
+        <field name="model">garment.style</field>
+        <field name="inherit_id" ref="zyra_techpack.garment_style_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']/button[@name='action_view_variants']" position="before">
+                <button name="action_view_garment_orders" type="object" class="oe_stat_button" icon="fa-industry">
+                    <field name="order_count" string="Orders" widget="statinfo"/>
+                </button>
+            </xpath>
+            <xpath expr="//div[@name='button_box']/button[@name='action_view_variants']" position="after">
+                <button name="action_view_samples" type="object" class="oe_stat_button" icon="fa-tags">
+                    <field name="sample_count" string="Samples" widget="statinfo"/>
+                </button>
+                <button name="action_view_approvals" type="object" class="oe_stat_button" icon="fa-check-square-o">
+                    <field name="approval_count" string="Approvals" widget="statinfo"/>
+                </button>
+            </xpath>
+            <xpath expr="//div[@name='kpi_variants']" position="before">
+                <div class="o_zyra_kpi" name="kpi_open_orders">
+                    <span class="o_zyra_kpi_label">Open orders</span>
+                    <span class="o_zyra_kpi_value"><field name="open_order_count"/></span>
+                </div>
+                <div class="o_zyra_kpi" name="kpi_pieces_on_order">
+                    <span class="o_zyra_kpi_label">Pieces on order</span>
+                    <span class="o_zyra_kpi_value"><field name="pieces_on_order"/></span>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='kpi_material']" position="after">
+                <div class="o_zyra_kpi o_zyra_kpi_good" name="kpi_price_less_material"
+                     invisible="price_less_material &lt;= 0">
+                    <span class="o_zyra_kpi_label">Price less material</span>
+                    <span class="o_zyra_kpi_value"><field name="price_less_material"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="price_less_material &gt; 0">
+                    <span class="o_zyra_kpi_label">Price less material</span>
+                    <span class="o_zyra_kpi_value"><field name="price_less_material"/></span>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='kpi_techpack']" position="before">
+                <div class="o_zyra_kpi o_zyra_kpi_bad" name="kpi_samples_pending" invisible="not samples_pending">
+                    <span class="o_zyra_kpi_label">Samples pending</span>
+                    <span class="o_zyra_kpi_value"><field name="samples_pending"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_good" invisible="samples_pending">
+                    <span class="o_zyra_kpi_label">Samples pending</span>
+                    <span class="o_zyra_kpi_value"><field name="samples_pending"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_warn" name="kpi_approvals_pending" invisible="not approvals_pending">
+                    <span class="o_zyra_kpi_label">Approvals pending</span>
+                    <span class="o_zyra_kpi_value"><field name="approvals_pending"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_good" invisible="approvals_pending">
+                    <span class="o_zyra_kpi_label">Approvals pending</span>
+                    <span class="o_zyra_kpi_value"><field name="approvals_pending"/></span>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='kpi_techpack']" position="after">
+                <field name="has_costing" invisible="1"/>
+                <div class="o_zyra_kpi" name="kpi_costed_fob" invisible="has_costing">
+                    <span class="o_zyra_kpi_label">Costed FOB</span>
+                    <span class="o_zyra_kpi_value"><field name="costed_fob"/></span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

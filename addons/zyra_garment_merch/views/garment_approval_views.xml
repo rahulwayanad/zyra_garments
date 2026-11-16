@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Approval cards board (screen 29) -->
+    <record id="garment_approval_view_kanban" model="ir.ui.view">
+        <field name="name">garment.approval.kanban</field>
+        <field name="model">garment.approval</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false" sample="1" group_create="false"
+                    group_delete="false" group_edit="false">
+                <field name="colour_hex"/>
+                <field name="is_overdue"/>
+                <field name="submission"/>
+                <field name="swatch_image"/>
+                <field name="decision_due"/>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="me-2">
+                            <img t-if="record.swatch_image.raw_value" class="rounded o_zyra_card_swatch"
+                                 t-att-src="kanban_image('garment.approval', 'swatch_image', record.id.raw_value)" alt="Swatch"/>
+                            <div t-else="" class="rounded o_zyra_card_swatch"
+                                 t-attf-style="width:44px;height:44px;border:1px solid #e9e6f3;background: {{ record.colour_hex.raw_value or '#f1effa' }}"/>
+                        </aside>
+                        <main>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <field name="name" class="o_zyra_card_ref"/>
+                                <span class="badge rounded-pill text-bg-light"><field name="kind"/></span>
+                            </div>
+                            <field name="style_id" class="fw-bold"/>
+                            <field name="colour_id" class="text-muted small"/>
+                            <field name="buyer_id" class="text-muted small"/>
+                            <div class="text-muted small">
+                                <i class="fa fa-clock-o me-1" title="Decision due"/>
+                                <t t-esc="record.decision_due.value"/>
+                                <span t-if="record.submission.raw_value &gt; 1"> · <i class="fa fa-refresh" title="Submission"/> <t t-esc="record.submission.raw_value"/></span>
+                                <span t-if="record.is_overdue.raw_value"> · <span class="badge rounded-pill text-bg-danger">Overdue</span></span>
+                            </div>
+                            <footer class="pt-2">
+                                <field name="merchandiser_id" widget="many2one_avatar_user" class="ms-auto"/>
+                            </footer>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="garment_approval_view_list" model="ir.ui.view">
+        <field name="name">garment.approval.list</field>
+        <field name="model">garment.approval</field>
+        <field name="arch" type="xml">
+            <list string="Approvals" decoration-danger="is_overdue">
+                <field name="is_overdue" column_invisible="1"/>
+                <field name="name"/>
+                <field name="kind"/>
+                <field name="style_id"/>
+                <field name="colour_id"/>
+                <field name="buyer_id"/>
+                <field name="submission"/>
+                <field name="sent_date"/>
+                <field name="decision_due"/>
+                <field name="decision_date" optional="hide"/>
+                <field name="chosen_option_id" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'"
+                       decoration-warning="state == 'resubmit'" decoration-info="state == 'with_buyer'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_approval_view_search" model="ir.ui.view">
+        <field name="name">garment.approval.search</field>
+        <field name="model">garment.approval</field>
+        <field name="arch" type="xml">
+            <search string="Approvals">
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="buyer_id"/>
+                <field name="colour_id"/>
+                <filter name="open" string="Open" domain="['|', ('state', '!=', 'approved'), ('decision_date', '&gt;=', (context_today() - relativedelta(days=60)).strftime('%Y-%m-%d'))]"/>
+                <filter name="overdue" string="Overdue" domain="[('is_overdue', '=', True)]"/>
+                <separator/>
+                <filter name="lab_dip" string="Lab dips" domain="[('kind', '=', 'lab_dip')]"/>
+                <filter name="strike_off" string="Strike-offs" domain="[('kind', '=', 'strike_off')]"/>
+                <filter name="trim_card" string="Trim cards" domain="[('kind', '=', 'trim_card')]"/>
+                <filter name="wash_standard" string="Wash standards" domain="[('kind', '=', 'wash_standard')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_kind" string="Kind" context="{'group_by': 'kind'}"/>
+                    <filter name="group_style" string="Style" context="{'group_by': 'style_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Approval card (screen 30) -->
+    <record id="garment_approval_view_form" model="ir.ui.view">
+        <field name="name">garment.approval.form</field>
+        <field name="model">garment.approval</field>
+        <field name="arch" type="xml">
+            <form string="Approval Card">
+                <header>
+                    <button name="%(zyra_garment_merch.action_report_approval_card)d" type="action" string="Print Card"/>
+                    <button name="action_send" type="object" string="Send to Buyer" class="btn-primary"
+                            invisible="state not in ('draft', 'resubmit')"/>
+                    <button name="action_approve" type="object" string="Approved" class="btn-primary"
+                            invisible="state != 'with_buyer'"/>
+                    <button name="action_ask_resubmission" type="object" string="Resubmission Asked"
+                            invisible="state != 'with_buyer'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="with_buyer,approved"/>
+                </header>
+                <sheet>
+                    <field name="company_id" invisible="1"/>
+                    <field name="is_overdue" invisible="1"/>
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="o_zyra_kpis flex-grow-1" name="kpi_strip">
+                            <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_good" invisible="state != 'approved'">
+                                <span class="o_zyra_kpi_label">Status</span>
+                                <span class="o_zyra_kpi_value"><field name="state" readonly="1"/></span>
+                            </div>
+                            <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_warn" invisible="state != 'resubmit'">
+                                <span class="o_zyra_kpi_label">Status</span>
+                                <span class="o_zyra_kpi_value"><field name="state" readonly="1"/></span>
+                            </div>
+                            <div class="o_zyra_kpi o_zyra_kpi_text" invisible="state in ('approved', 'resubmit')">
+                                <span class="o_zyra_kpi_label">Status</span>
+                                <span class="o_zyra_kpi_value"><field name="state" readonly="1"/></span>
+                            </div>
+                            <div class="o_zyra_kpi">
+                                <span class="o_zyra_kpi_label">Submission</span>
+                                <span class="o_zyra_kpi_value"><field name="submission"/></span>
+                            </div>
+                            <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not is_overdue">
+                                <span class="o_zyra_kpi_label">Decision due in</span>
+                                <span class="o_zyra_kpi_value"><field name="decision_due_label"/></span>
+                            </div>
+                            <div class="o_zyra_kpi" invisible="is_overdue">
+                                <span class="o_zyra_kpi_label">Decision due in</span>
+                                <span class="o_zyra_kpi_value"><field name="decision_due_label"/></span>
+                            </div>
+                            <div class="o_zyra_kpi">
+                                <span class="o_zyra_kpi_label">Days to approval</span>
+                                <span class="o_zyra_kpi_value"><field name="days_to_approval_label"/></span>
+                            </div>
+                            <div class="o_zyra_kpi o_zyra_kpi_good" invisible="other_open_count">
+                                <span class="o_zyra_kpi_label">Other open cards</span>
+                                <span class="o_zyra_kpi_value"><field name="other_open_count"/></span>
+                            </div>
+                            <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not other_open_count">
+                                <span class="o_zyra_kpi_label">Other open cards</span>
+                                <span class="o_zyra_kpi_value"><field name="other_open_count"/></span>
+                            </div>
+                        </div>
+                        <div class="o_zyra_approval_swatch">
+                            <field name="swatch_image" widget="image" class="oe_avatar m-0" invisible="not swatch_image"
+                                   options="{'size': [84, 84]}"/>
+                            <field name="swatch_html" nolabel="1" invisible="swatch_image"/>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="style_id" placeholder="Style" options="{'no_create': True}"/></h1>
+                    </div>
+                    <group>
+                        <group string="Card" name="card">
+                            <field name="kind"/>
+                            <field name="colour_id"/>
+                            <field name="material_id"/>
+                            <field name="options_sent" invisible="not options_sent"/>
+                            <field name="chosen_option_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="buyer_id"/>
+                            <field name="order_id" invisible="not order_id"/>
+                        </group>
+                        <group string="Submission" name="submission">
+                            <field name="submission" string="Submission No."/>
+                            <field name="sent_date"/>
+                            <field name="decision_due"/>
+                            <field name="decision_date"/>
+                            <field name="courier"/>
+                            <field name="merchandiser_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Buyer Comments" name="comments">
+                            <field name="buyer_comment" nolabel="1" placeholder="What the buyer said…"/>
+                        </page>
+                        <page string="Options" name="options">
+                            <field name="option_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="hex" widget="color"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                            <field name="swatch_image" string="Swatch photo" widget="image" class="mt-3"
+                                   options="{'size': [120, 120]}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_approval" model="ir.actions.act_window">
+        <field name="name">Approvals</field>
+        <field name="res_model">garment.approval</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="garment_approval_view_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create an approval card</p>
+            <p>Lab dips, strike-offs, trim cards and wash standards sent to the buyer, with the option chosen.</p>
+        </field>
+    </record>
+</odoo>

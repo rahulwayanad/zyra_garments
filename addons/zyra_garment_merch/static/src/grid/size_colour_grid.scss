@@ -1,0 +1,124 @@
+.o_zyra_grid {
+    width: 100%;
+
+    .o_zyra_grid_legend {
+        display: flex;
+        gap: 16px;
+        margin: 4px 0 10px;
+        font-size: 0.78rem;
+        color: var(--zyra-muted, #6b6880);
+
+        .o_zyra_dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+    }
+
+    .o_zyra_dot_cut, .o_zyra_bar_cut { background: #3b82f6; }
+    .o_zyra_dot_sewn, .o_zyra_bar_sewn { background: var(--zyra-violet, #6d4ee8); }
+    .o_zyra_dot_packed, .o_zyra_bar_packed { background: var(--zyra-good, #12a37f); }
+
+    .o_zyra_grid_table {
+        margin-bottom: 0;
+
+        thead th {
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            color: var(--zyra-muted, #6b6880);
+            font-weight: 600;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+    }
+
+    .o_zyra_grid_colour {
+        font-weight: 600;
+        white-space: nowrap;
+
+        .o_zyra_swatch_sm {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 8px;
+            vertical-align: -1px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+    }
+
+    .o_zyra_grid_cell {
+        text-align: center;
+        min-width: 80px;
+    }
+
+    .o_zyra_grid_qty {
+        font-size: 1.05rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .o_zyra_grid_input {
+        border: 1px solid var(--zyra-line, #e9e6f3);
+        border-radius: 6px;
+        padding: 2px 4px;
+        width: 72px;
+        text-align: center;
+        font-weight: 600;
+        margin: 0 auto;
+    }
+
+    .o_zyra_grid_bars {
+        width: 80px;
+        margin: 4px auto 0;
+
+        .o_zyra_bar {
+            height: 3px;
+            border-radius: 2px;
+            background: var(--zyra-line, #e9e6f3);
+            margin-top: 2px;
+            overflow: hidden;
+
+            span {
+                display: block;
+                height: 100%;
+                border-radius: 2px;
+            }
+        }
+    }
+
+    .o_zyra_grid_total {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .o_zyra_grid_foot td {
+        color: var(--zyra-violet, #6d4ee8);
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.o_field_zyra_size_colour_grid {
+    width: 100%;
+}
+
+// Six KPI tiles per row on the production order so "5,388 / 5,396" fits.
+.o_zyra_kpis.o_zyra_kpis_6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+
+    .o_zyra_kpi_value {
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .o_zyra_kpis.o_zyra_kpis_6 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

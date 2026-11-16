@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Order breakdown by colourway and size (screen 35) -->
+    <template id="report_order_breakdown">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h3><t t-esc="o.name"/> · <t t-esc="o.style_id.display_name"/></h3>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div><strong>Buyer:</strong> <t t-esc="o.buyer_id.name"/></div>
+                                <div><strong>Buyer PO No.:</strong> <t t-esc="o.buyer_po or ''"/></div>
+                                <div><strong>Merchandiser:</strong> <t t-esc="o.merchandiser_id.name or ''"/></div>
+                            </div>
+                            <div class="col-6">
+                                <div><strong>Order date:</strong> <span t-field="o.date_order"/></div>
+                                <div><strong>Ex-factory date:</strong> <span t-field="o.ex_factory_date"/></div>
+                                <div><strong>Sewing line:</strong> <t t-esc="o.sewing_line_id.name or ''"/></div>
+                            </div>
+                        </div>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Colourway</th>
+                                    <th>Size</th>
+                                    <th class="text-end">Ordered</th>
+                                    <th class="text-end">Cut</th>
+                                    <th class="text-end">Sewn</th>
+                                    <th class="text-end">Packed</th>
+                                    <th class="text-end">Shipped</th>
+                                    <th class="text-end">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="l">
+                                    <td><t t-esc="l.colour_id.name"/></td>
+                                    <td><t t-esc="l.size_id.name"/></td>
+                                    <td class="text-end"><t t-esc="l.qty_ordered"/></td>
+                                    <td class="text-end"><t t-esc="l.qty_cut"/></td>
+                                    <td class="text-end"><t t-esc="l.qty_sewn"/></td>
+                                    <td class="text-end"><t t-esc="l.qty_packed"/></td>
+                                    <td class="text-end"><t t-esc="l.qty_shipped"/></td>
+                                    <td class="text-end"><t t-esc="l.qty_balance"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="fw-bold">
+                                    <td colspan="2">Total</td>
+                                    <td class="text-end"><t t-esc="o.qty_ordered"/></td>
+                                    <td class="text-end"><t t-esc="o.qty_cut"/></td>
+                                    <td class="text-end"><t t-esc="o.qty_sewn"/></td>
+                                    <td class="text-end"><t t-esc="o.qty_packed"/></td>
+                                    <td class="text-end"><t t-esc="o.qty_shipped"/></td>
+                                    <td class="text-end"><t t-esc="o.qty_balance"/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
