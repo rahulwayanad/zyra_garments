@@ -18,12 +18,17 @@ halfway" prompt.
 ## Waves
 | Wave | Modules | Status |
 |---|---|---|
-| 0 | repo, docs/screens, CLAUDE.md, theme installs | in progress |
-| 1 | zyra_garment_base | – |
-| 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | – |
+| 0 | repo, docs/screens, CLAUDE.md, theme installs | done (commit 7f9791c) |
+| 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
+| 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | agents running (wt-techpack/costing/merch) |
 | 3 | materials, cutting, quality, shipping | – |
 | 4 | sewing, jobwork | – |
 | 5 | wages, pnl, cockpit, portal, connect | – |
 
 ## Log
-- 16 Nov late: repo set up.
+- 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
+- Hourly check-in job (:17) restarts the plan after any stall/usage-limit pause (session-only).
+- Wave 1 started: zyra_garment_base agent.
+- ~23:40 usage limit hit (resets 02:00); base agent stopped mid-way (models, data, libraries written, uncommitted).
+- 02:40 base agent resumed from its transcript.
+- ~02:55 base merged to main (gate 31/31). Wave 2 contract written (contracts/wave2_techpack.md): techpack owns garment.style. Wave 2 started.

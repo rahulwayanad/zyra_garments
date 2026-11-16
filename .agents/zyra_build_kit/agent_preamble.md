@@ -13,6 +13,9 @@ do not ask questions — decide, write the decision in the module README under "
     --addons-path=$O/addons,$O/odoo/addons,$PWD/addons --db-filter='.*' -d DB \
     -i MODULE --test-tags=/MODULE --stop-after-init --log-level=test 2>&1 | tail -150
   ```
+  Also pass `--http-port=PORT` (your own port, given below; 8089 is in use).
+  Known harmless log line: `<string>:38: (ERROR/3) Unexpected indentation` / docutils WARNING from Odoo core
+  `mail` — ignore it; set `description` in your manifest so your README isn't parsed as RST.
   Use ONLY your database `DB`. Never touch `garments` or any other database. Never put the DB password in a file.
   Scan the full log for `WARNING`, `ERROR`, `FAIL`; the module is done only with none of them from your module.
 - Screens: `WT/docs/screens/sNNN.jpg` (+ `captions.json`). Open each screen named in your prompt with the Read tool
