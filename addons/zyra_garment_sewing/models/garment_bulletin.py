@@ -76,3 +76,43 @@ class GarmentBulletinLine(models.Model):
     def _compute_target(self):
         for line in self:
             line.target_per_hour = int(round(60 / line.sam, 6)) if line.sam else 0
+
+
+class GarmentBulletinDemo(models.Model):
+    _inherit = "garment.bulletin"
+
+    @api.model
+    def _garment_load_demo(self):
+        """Demo: one bulletin per style whose tech pack has operations; first line runs the first one."""
+        techpacks = self.env["zyra.techpack"].search([("operation_ids", "!=", False)], order="id")
+        bulletins = self.browse()
+        for techpack in techpacks:
+            if self.search_count([("style_id", "=", techpack.style_id.id)]):
+                continue
+            bulletin = self.create({"name": _("Bulletin %s", techpack.style_id.display_name),
+                                    "style_id": techpack.style_id.id, "techpack_id": techpack.id})
+            bulletin.action_load_from_techpack()
+            bulletins |= bulletin
+        lines = self.env["garment.line"].search([], order="sequence, id")
+        for line, bulletin in zip(lines, bulletins):
+            line.current_bulletin_id = bulletin
+        self._garment_load_demo_scans(lines[:1])
+        return True
+
+    @api.model
+    def _garment_load_demo_scans(self, line):
+        """Demo: issue a few cut bundles to the first line and scan their coupons with demo operators."""
+        employees = self.env["hr.employee"].search([], limit=6)
+        bundles = self.env["garment.bundle"].search([("stage", "=", "cut"), ("coupon_ids", "!=", False)],
+                                                    limit=4, order="id")
+        if not (line and employees and bundles):
+            return
+        bundles.action_issue(line.workcenter_id)
+        Scan = self.env["garment.scan"]
+        for b_index, bundle in enumerate(bundles):
+            coupons = bundle.coupon_ids.sorted("sequence")
+            # last bundle stays in sewing (half its coupons scanned)
+            if b_index == len(bundles) - 1:
+                coupons = coupons[:len(coupons) // 2]
+            for c_index, coupon in enumerate(coupons):
+                Scan._garment_scan(coupon.payload, employees[(b_index + c_index) % len(employees)], line=line)

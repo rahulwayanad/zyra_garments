@@ -24,5 +24,8 @@
         "wizard/line_balancing_views.xml",
         "views/menus.xml",
     ],
+    "demo": [
+        "demo/sewing_demo.xml",
+    ],
     "installable": True,
 }

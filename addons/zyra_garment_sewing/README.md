@@ -45,6 +45,11 @@ env["garment.line.balancing"]._garment_balance(sams, operators)  # pure maths
   operators; cycle = SAM ÷ operators; bottleneck = longest cycle; balanced/h = 60 ÷ bottleneck cycle;
   target/h = operators × 60 ÷ total SAM; balance loss % = (1 − total SAM ÷ (operators × bottleneck cycle)) × 100.
 
+## Demo
+
+Four lines on merch's demo work centres, one bulletin per tech pack with operations, minute rate 1.8,
+four cut bundles issued to Line 1 and scanned (three sewn, one in sewing).
+
 ## Menus
 
 Garment › Sewing Floor › Coupon Scans, Operation Bulletins, Sewing Lines.
@@ -75,6 +80,5 @@ daily summary efficiency rule + hourly board, scan without badge refused.
 
 - Client actions: scan station (screen 4, IndexedDB queue calling `garment_sync_batch`), line TV board
   (screen 56), daily summary screen (58), planning board (3). The server methods they need are done and tested.
-- Demo data (lines, bulletin, scans) for the screens.
 - Screen-exact layouts for 54/55/57 (views are functional lists/forms with theme KPI tiles).
 - Multi-company rule on `garment.line` (the work centre carries the company).
