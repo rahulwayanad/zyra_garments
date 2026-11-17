@@ -29,13 +29,16 @@ action (`zyra_garment_cockpit`) whose tabs switch cockpit. Compliance (18) and M
   lines) so the cockpit shows exactly what the line TV shows.
 - DHU today = defects ÷ pieces checked of today's inline inspections × 100.
 - Cartons waiting = cartons packed, not yet shipped. Failed finals = final inspections with result fail.
-- Fixed "30 days" period; the date-range / buyer / business-model filters of screen 5 are not built yet.
+- Filters (`get_cockpit(key, {days, buyer_id, business_model})`): period 7/30/90/365 days drives the day charts;
+  buyer and business model filter the open-order domain.
+- Lines stopped today = lines with a downtime row on today's line day (`garment.line.day.downtime`); "stopped now"
+  = those whose line day is still open; machines down = downtime rows with a machine. "Since" = time the downtime
+  was logged (the sewing module stores no start time). On-standard % = average planned efficiency of line days.
 - No demo data of its own: the cockpits read the department modules' demo data.
 
 ## Not done yet
-- Filters bar (period, buyers and lines, business model) and Day shift button of screen 5.
 - Per-screen layouts of 6–17 beyond tiles + generic charts/lists (they share one generic layout).
-- Screen 1: "Lines stopped now", "Machines down" tiles, efficiency 30-day chart, pieces-per-hour chart and
-  "Lines that stopped today" list are not built.
+- Day shift button only toggles the label (Day / Night); scans are not split by shift yet.
+- Buyer / business-model filters apply to order-based tiles of Factory Pulse only.
 - Department readings: cutting shows fabric laid instead of fabric utilisation %.
 - Browser check of the client action (no time in this segment).

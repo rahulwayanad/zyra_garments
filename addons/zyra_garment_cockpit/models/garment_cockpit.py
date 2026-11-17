@@ -254,7 +254,7 @@ class GarmentCockpit(models.AbstractModel):
         eff_labels, eff_vals, std_vals = [], [], []
         for i in range(self._days()):
             d = start + timedelta(days=i)
-            e, p = next(((e, p) for k, (e, p) in eff_rows.items() if k and k.date() == d), (None, None))
+            e, p = next(((e, p) for k, (e, p) in eff_rows.items() if k and (k.date() if hasattr(k, "hour") else k) == d), (None, None))
             eff_labels.append(d.strftime("%d/%m"))
             eff_vals.append(round(e, 1) if e is not None else None)
             std_vals.append(round(p, 1) if p is not None else None)
