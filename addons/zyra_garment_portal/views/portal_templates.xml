@@ -58,7 +58,7 @@
                                 <td t-esc="short_date(o.ex_factory_date)"/>
                                 <td class="o_zp_bar_cell">
                                     <span class="o_zp_bar"><span t-attf-style="width: #{min(o.packed_pct, 100)}%"/></span>
-                                    <t t-esc="'%d%%' % round(o.packed_pct)"/>
+                                    <t t-esc="str(round(o.packed_pct)) + '%'"/>
                                 </td>
                                 <td><span class="o_zp_pill o_zp_pill_info" t-esc="dict(o._fields['state']._description_selection(o.env))[o.state]"/></td>
                             </tr>

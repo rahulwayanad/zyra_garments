@@ -99,7 +99,7 @@ class GarmentPortal(http.Controller):
     def garment_order(self, order_id, **kw):
         order = self._get_order(order_id)
         if not order:
-            return request.not_found()
+            raise request.not_found()
         order = order.sudo()
         grid = order._garment_get_grid()
         colours = order.colour_ids
@@ -132,7 +132,7 @@ class GarmentPortal(http.Controller):
             sample.check_access("read")
             sample.read(["name"])
         except (AccessError, MissingError):
-            return request.not_found()
+            raise request.not_found()
         sample = sample.sudo()
         try:
             if comment:
@@ -156,7 +156,7 @@ class GarmentPortal(http.Controller):
             card.check_access("read")
             card.read(["name"])
         except (AccessError, MissingError):
-            return request.not_found()
+            raise request.not_found()
         card = card.sudo()
         try:
             vals = {}
