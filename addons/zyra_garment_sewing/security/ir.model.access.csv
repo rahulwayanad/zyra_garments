@@ -11,3 +11,10 @@ access_garment_scan_wages,garment.scan wages,model_garment_scan,zyra_garment_bas
 access_garment_scan_mgr,garment.scan manager,model_garment_scan,zyra_garment_base.group_garment_factory_manager,1,1,1,1
 access_garment_line_balancing,garment.line.balancing,model_garment_line_balancing,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
 access_garment_line_balancing_station,garment.line.balancing.station,model_garment_line_balancing_station,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_line_day_user,garment.line.day user,model_garment_line_day,base.group_user,1,0,0,0
+access_garment_line_day_sup,garment.line.day supervisor,model_garment_line_day,zyra_garment_base.group_garment_line_supervisor,1,1,1,0
+access_garment_line_day_mgr,garment.line.day manager,model_garment_line_day,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_garment_line_day_hour_user,garment.line.day.hour user,model_garment_line_day_hour,base.group_user,1,0,0,0
+access_garment_line_day_hour_sup,garment.line.day.hour supervisor,model_garment_line_day_hour,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_line_day_downtime_user,garment.line.day.downtime user,model_garment_line_day_downtime,base.group_user,1,0,0,0
+access_garment_line_day_downtime_sup,garment.line.day.downtime supervisor,model_garment_line_day_downtime,zyra_garment_base.group_garment_line_supervisor,1,1,1,1

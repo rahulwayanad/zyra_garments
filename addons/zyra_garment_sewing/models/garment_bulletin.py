@@ -116,3 +116,4 @@ class GarmentBulletinDemo(models.Model):
                 coupons = coupons[:len(coupons) // 2]
             for c_index, coupon in enumerate(coupons):
                 Scan._garment_scan(coupon.payload, employees[(b_index + c_index) % len(employees)], line=line)
+        self.env["garment.line.day"].create({"line_id": line.id})

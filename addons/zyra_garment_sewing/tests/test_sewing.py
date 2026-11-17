@@ -1,4 +1,4 @@
-from odoo import Command
+from odoo import Command, fields
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 
@@ -157,3 +157,22 @@ class TestSewing(CuttingCase):
         self.assertEqual(data["title"], self.sew_line.name)
         self.assertEqual(data["top_operator"], self.operator.name)
         self.assertGreaterEqual(data["max_bar"], 1)
+
+    # --- daily line summary (screen 58) -------------------------------------------
+    def test_line_day_figures_from_scans_and_close(self):
+        bundle = self._bundle()
+        at = fields.Datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)
+        for payload in self._payloads(bundle):
+            self.env["garment.scan"]._garment_scan(payload, self.operator, scanned_at=at)
+        day = self.env["garment.line.day"].create({"line_id": self.sew_line.id})
+        self.assertTrue(day.name.startswith("LD/"))
+        self.assertEqual(day.pieces, bundle.pieces)
+        self.assertEqual(day.available_minutes, 4800)
+        self.assertAlmostEqual(day.earned_minutes, round(bundle.pieces * 1.2, 1), places=1)
+        self.assertTrue(day.hour_ids)
+        day.hour_ids[0].reason = "Late bundle issue"
+        day.action_close()
+        self.assertEqual(day.state, "closed")
+        self.assertEqual(day.hour_ids[0].reason, "Late bundle issue")
+        with self.assertRaises(UserError):
+            day.action_refresh()
