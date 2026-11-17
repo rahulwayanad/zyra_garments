@@ -24,6 +24,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="%(action_report_line_day_hourly)d" type="action" string="Print Hourly Report"/>
                     <button name="action_refresh" type="object" string="Refresh Figures" invisible="state == 'closed'"/>
                     <button name="action_close" type="object" string="Close Day" class="btn-primary" invisible="state == 'closed'"/>
                     <button name="action_reopen" type="object" string="Reopen" invisible="state == 'open'"
@@ -79,6 +80,16 @@
                                     <field name="reason"/>
                                     <field name="machine_type_id"/>
                                     <field name="minutes" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Defects" name="defects">
+                            <field name="defect_ids" readonly="state == 'closed'">
+                                <list editable="bottom">
+                                    <field name="defect_id"/>
+                                    <field name="operation"/>
+                                    <field name="employee_id"/>
+                                    <field name="qty" sum="Total"/>
                                 </list>
                             </field>
                         </page>

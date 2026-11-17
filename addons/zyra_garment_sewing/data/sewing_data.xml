@@ -6,6 +6,12 @@
         <field name="prefix">LD/%(year)s/</field>
         <field name="padding">4</field>
     </record>
+    <record id="seq_garment_line_balancing" model="ir.sequence">
+        <field name="name">Line Balancing</field>
+        <field name="code">garment.line.balancing</field>
+        <field name="prefix">LB/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
     <record id="cron_garment_line_day" model="ir.cron">
         <field name="name">Garment: refresh daily line summaries</field>
         <field name="model_id" ref="model_garment_line_day"/>

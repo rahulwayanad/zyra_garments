@@ -22,6 +22,7 @@
         "views/garment_bulletin_views.xml",
         "data/sewing_data.xml",
         "views/garment_scan_views.xml",
+        "report/line_day_report.xml",
         "views/garment_line_day_views.xml",
         "views/sewing_client_actions.xml",
         "wizard/line_balancing_views.xml",

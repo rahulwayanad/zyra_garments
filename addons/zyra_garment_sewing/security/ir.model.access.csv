@@ -10,6 +10,7 @@ access_garment_scan_sup,garment.scan supervisor,model_garment_scan,zyra_garment_
 access_garment_scan_wages,garment.scan wages,model_garment_scan,zyra_garment_base.group_garment_wages,1,0,0,0
 access_garment_scan_mgr,garment.scan manager,model_garment_scan,zyra_garment_base.group_garment_factory_manager,1,1,1,1
 access_garment_line_balancing,garment.line.balancing,model_garment_line_balancing,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_line_balancing_user,garment.line.balancing user,model_garment_line_balancing,base.group_user,1,0,0,0
 access_garment_line_balancing_station,garment.line.balancing.station,model_garment_line_balancing_station,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
 access_garment_line_day_user,garment.line.day user,model_garment_line_day,base.group_user,1,0,0,0
 access_garment_line_day_sup,garment.line.day supervisor,model_garment_line_day,zyra_garment_base.group_garment_line_supervisor,1,1,1,0
@@ -21,3 +22,5 @@ access_garment_line_day_downtime_sup,garment.line.day.downtime supervisor,model_
 access_garment_line_plan_user,garment.line.plan user,model_garment_line_plan,base.group_user,1,0,0,0
 access_garment_line_plan_sup,garment.line.plan supervisor,model_garment_line_plan,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
 access_garment_line_plan_merch,garment.line.plan merchandiser,model_garment_line_plan,zyra_garment_base.group_garment_merchandiser,1,1,1,1
+access_garment_line_day_defect_user,garment.line.day.defect user,model_garment_line_day_defect,base.group_user,1,0,0,0
+access_garment_line_day_defect_sup,garment.line.day.defect supervisor,model_garment_line_day_defect,zyra_garment_base.group_garment_line_supervisor,1,1,1,1

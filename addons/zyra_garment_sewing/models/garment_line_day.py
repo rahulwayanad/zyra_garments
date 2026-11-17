@@ -32,6 +32,7 @@ class GarmentLineDay(models.Model):
     dhu = fields.Float(string="DHU", digits=(16, 1))
     hour_ids = fields.One2many("garment.line.day.hour", "day_id", string="Hours")
     downtime_ids = fields.One2many("garment.line.day.downtime", "day_id", string="Downtime")
+    defect_ids = fields.One2many("garment.line.day.defect", "day_id", string="Defects")
     title = fields.Char(compute="_compute_title")
 
     _sql_constraints = [("line_day_unique", "UNIQUE(line_id, date)", "One summary per line and day.")]
@@ -133,3 +134,14 @@ class GarmentLineDayDowntime(models.Model):
     reason = fields.Char(required=True)
     machine_type_id = fields.Many2one("garment.machine.type", string="Machine")
     minutes = fields.Integer()
+
+
+class GarmentLineDayDefect(models.Model):
+    _name = "garment.line.day.defect"
+    _description = "Line Day Defect"
+
+    day_id = fields.Many2one("garment.line.day", required=True, ondelete="cascade", index=True)
+    defect_id = fields.Many2one("garment.defect", string="Defect", required=True)
+    operation = fields.Char()
+    employee_id = fields.Many2one("hr.employee", string="Operator")
+    qty = fields.Integer(string="Pieces", default=1)

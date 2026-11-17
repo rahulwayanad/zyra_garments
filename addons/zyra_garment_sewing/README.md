@@ -84,9 +84,15 @@ daily summary efficiency rule + hourly board, scan without badge refused.
 - Planning board (3): model `garment.line.plan` and client action `zyra_garment_line_planning_board`, with drag to move a bar to another line or week. RPC `garment_board`, `garment_plan_orders`, `garment_move`.
 - Bulletin (54): versions, draft/approved states, sewing SAM (all sections except preparation and finishing), rate card, manual rate.
 
+- Line balancing (55): stored `garment.line.balancing` (LB/…), states draft → applied (+ cancelled), stations
+  `garment.line.balancing.station` with operators needed (SAM ÷ pitch) and assigned in half operators, station
+  efficiency, capacity/h = assigned × 60 ÷ SAM × eff; balanced output = lowest capacity (bottleneck);
+  target/h = operators × 60 ÷ SAM × planned eff; loss % = (1 − balanced ÷ target) × 100 (matches the screen).
+  The wizard is gone; "Balance Line" on a bulletin creates a record. Code stays in `wizard/line_balancing.py`.
+- Line day (58): Defects tab (`garment.line.day.defect`) and the "Print Hourly Report" QWeb PDF.
+
 ## Not done yet
 
-- Screen 55: balancing is still a wizard. The screen wants a stored LB/ record (order, stations with fractional operators assigned, station efficiency, notes, draft/applied states).
-- Screen 58: Defects tab and "Print Hourly Report". DHU waits on quality.
+- DHU in the daily summary waits on quality.
 - Client actions were checked only by syntax and the assets bundle compiling. Nobody has opened them in a browser yet.
 - Times on scans and summaries use UTC day boundaries.

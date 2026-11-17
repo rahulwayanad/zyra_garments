@@ -84,10 +84,9 @@ class GarmentBulletin(models.Model):
 
     def action_open_balancing(self):
         self.ensure_one()
-        return {
-            "type": "ir.actions.act_window", "name": _("Line Balancing"), "res_model": "garment.line.balancing",
-            "view_mode": "form", "target": "new", "context": {"default_bulletin_id": self.id},
-        }
+        rec = self.env["garment.line.balancing"].create({"bulletin_id": self.id})
+        return {"type": "ir.actions.act_window", "name": _("Line Balancing"), "res_model": "garment.line.balancing",
+                "res_id": rec.id, "view_mode": "form"}
 
 
 class GarmentBulletinLine(models.Model):

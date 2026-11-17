@@ -35,22 +35,17 @@ class TestSewing(CuttingCase):
         return [c.payload for c in bundle.coupon_ids.sorted("sequence")]
 
     # --- line balancing maths -------------------------------------------------
-    def test_balancing_rule_pitch_target_bottleneck_and_loss(self):
-        """Rule: pitch = total SAM ÷ operators; target/h = operators × 60 ÷ SAM; balance loss from bottleneck."""
-        res = self.env["garment.line.balancing"]._garment_balance([0.5, 1.0, 1.5], 6)
-        self.assertAlmostEqual(res["pitch"], 0.5)
-        self.assertEqual(res["target"], 120)
-        self.assertEqual(res["alloc"], [1, 2, 3])
-        self.assertEqual(res["balanced"], 120)
-        self.assertEqual(res["loss"], 0.0)
-        res = self.env["garment.line.balancing"]._garment_balance([0.6, 1.0, 1.4], 5)
-        self.assertLessEqual(res["allocated"], 5)
-        neck_cycle = max(res["cycles"])
-        self.assertEqual(res["balanced"], int(60 / neck_cycle))
-        self.assertEqual(res["loss"], round((1 - 3.0 / (res["allocated"] * neck_cycle)) * 100, 1))
-        self.assertGreater(res["loss"], 0)
+    def test_balancing_rule_half_operator_assignment(self):
+        """Rule: needed = SAM ÷ pitch; assigned rounded to half operators (min 0.5), never above available."""
+        needed, assigned = self.env["garment.line.balancing"]._garment_assign([0.374, 0.78, 0.86], 3)
+        pitch = (0.374 + 0.78 + 0.86) / 3
+        self.assertAlmostEqual(needed[0], 0.374 / pitch)
+        self.assertEqual(assigned, [0.5, 1.0, 1.5])
+        _needed, assigned = self.env["garment.line.balancing"]._garment_assign([0.5, 0.5, 0.5, 0.5], 1)
+        self.assertEqual(assigned, [0.5, 0.5, 0.5, 0.5])  # min 0.5 a station even when short
 
-    def test_balancing_wizard_on_bulletin(self):
+    def test_balancing_record_figures_and_apply_to_line(self):
+        """Rule: capacity/h = assigned × 60 ÷ SAM × eff; balanced = lowest capacity; loss = 1 − balanced ÷ target."""
         bulletin = self.env["garment.bulletin"].create({"style_id": self.style.id})
         bulletin.action_load_from_techpack()
         self.assertEqual(bulletin.operation_count, 2)
@@ -60,14 +55,24 @@ class TestSewing(CuttingCase):
         bulletin.action_approve()
         self.assertEqual(bulletin.state, "approved")
         self.assertTrue(bulletin.rates_applied_on)
-        wiz = self.env["garment.line.balancing"].create({"bulletin_id": bulletin.id, "operators": 2,
-                                                         "line_id": self.sew_line.id})
-        self.assertEqual(wiz.target_output, 100)  # 2 × 60 ÷ 1.2
-        self.assertEqual(wiz.balanced_output, 75)  # 60 ÷ 0.8
-        self.assertEqual(wiz.bottleneck, "Attach sleeves")
-        self.assertEqual(len(wiz.station_ids), 2)
-        wiz.action_apply()
+        rec = self.env["garment.line.balancing"].browse(bulletin.action_open_balancing()["res_id"])
+        rec.write({"operators": 3, "planned_efficiency": 50, "line_id": self.sew_line.id})
+        rec.action_propose()
+        self.assertTrue(rec.name.startswith("LB/"))
+        self.assertAlmostEqual(rec.pitch_time, 0.4)
+        self.assertAlmostEqual(rec.target_output, 75.0)  # 3 × 60 ÷ 1.2 × 50 %
+        first, second = rec.station_ids.sorted("sequence")
+        self.assertEqual((first.assigned, second.assigned), (1.0, 2.0))
+        self.assertAlmostEqual(first.capacity, 1 * 60 / 0.4 * 0.5)
+        first.efficiency = 30
+        self.assertAlmostEqual(rec.balanced_output, round(60 / 0.4 * 0.3))
+        self.assertEqual(rec.bottleneck, first.name)
+        self.assertAlmostEqual(rec.balance_loss, round((1 - 45 / 75) * 100, 1))
+        self.assertEqual(rec.operators_allocated, 3.0)
+        rec.action_apply()
+        self.assertEqual(rec.state, "applied")
         self.assertEqual(self.sew_line.current_bulletin_id, bulletin)
+        self.assertEqual(self.sew_line.target_efficiency, 50)
         new = self.env["garment.bulletin"].browse(bulletin.action_new_version()["res_id"])
         self.assertEqual((new.version, new.state, bulletin.active), (2, "draft", False))
         self.assertEqual(new.operation_count, 2)
@@ -187,6 +192,16 @@ class TestSewing(CuttingCase):
         self.assertEqual(day.hour_ids[0].reason, "Late bundle issue")
         with self.assertRaises(UserError):
             day.action_refresh()
+
+    def test_line_day_defects_and_hourly_report_renders(self):
+        defect = self.env["garment.defect"].search([], limit=1) or self.env["garment.defect"].create(
+            {"code": "ZS-D1", "name": "Open seam"})
+        day = self.env["garment.line.day"].create({"line_id": self.sew_line.id})
+        day.defect_ids = [Command.create({"defect_id": defect.id, "operation": "Join shoulders", "qty": 3})]
+        html, _fmt = self.env["ir.actions.report"]._render_qweb_html(
+            "zyra_garment_sewing.action_report_line_day_hourly", day.ids)
+        self.assertIn(day.name, html.decode())
+        self.assertIn(defect.name, html.decode())
 
     # --- planning board (screen 3) ------------------------------------------------
     def test_planning_board_load_late_and_clash(self):
