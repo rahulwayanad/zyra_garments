@@ -23,7 +23,7 @@ halfway" prompt.
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | **merged** (gate 375/375) |
 | 4 | sewing, jobwork | **merged** (gate 339/339) |
-| 5 | wages, pnl, cockpit, portal, connect | wages, pnl, portal, connect **merged** (gate 395/395); cockpit WIP 637addb |
+| 5 | wages, pnl, cockpit, portal, connect | **merged** — gate via suite 426/426, all 15 modules + suite, clean |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
