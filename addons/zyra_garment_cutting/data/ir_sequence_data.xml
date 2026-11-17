@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_garment_cut_plan" model="ir.sequence">
+            <field name="name">Cut Plan</field>
+            <field name="code">garment.cut.plan</field>
+            <field name="prefix">CP/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_garment_bundle" model="ir.sequence">
+            <field name="name">Bundle</field>
+            <field name="code">garment.bundle</field>
+            <field name="prefix">B</field>
+            <field name="padding">7</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

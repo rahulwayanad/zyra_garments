@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_bundle_issue_view_form" model="ir.ui.view">
+        <field name="name">garment.bundle.issue.form</field>
+        <field name="model">garment.bundle.issue</field>
+        <field name="arch" type="xml">
+            <form string="Issue Bundles to Line">
+                <group>
+                    <field name="line_id" options="{'no_create': True}"/>
+                    <field name="issue_date"/>
+                </group>
+                <field name="bundle_ids" options="{'no_create': True}">
+                    <list>
+                        <field name="name"/>
+                        <field name="order_id"/>
+                        <field name="colour_id"/>
+                        <field name="size_id"/>
+                        <field name="shade"/>
+                        <field name="pieces" sum="Total"/>
+                        <field name="stage"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_issue" type="object" string="Issue" class="btn-primary"/>
+                    <button special="cancel" string="Discard"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_bundle_split_view_form" model="ir.ui.view">
+        <field name="name">garment.bundle.split.form</field>
+        <field name="model">garment.bundle.split</field>
+        <field name="arch" type="xml">
+            <form string="Split Bundle">
+                <group>
+                    <field name="bundle_id" readonly="1"/>
+                    <field name="pieces"/>
+                    <field name="pieces_new"/>
+                </group>
+                <p class="text-muted">The last plies move to a new bundle with its own ticket.</p>
+                <footer>
+                    <button name="action_split" type="object" string="Split" class="btn-primary"/>
+                    <button special="cancel" string="Discard"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_lay_end_bits_view_form" model="ir.ui.view">
+        <field name="name">garment.lay.end.bits.form</field>
+        <field name="model">garment.lay.end.bits</field>
+        <field name="arch" type="xml">
+            <form string="Return End Bits">
+                <group>
+                    <field name="lay_id" readonly="1"/>
+                    <field name="end_bits_m"/>
+                    <field name="note"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
+                    <button special="cancel" string="Discard"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

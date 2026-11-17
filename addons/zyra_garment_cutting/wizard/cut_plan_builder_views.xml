@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cut plan builder (screen 48) -->
+    <record id="garment_cut_plan_builder_view_form" model="ir.ui.view">
+        <field name="name">garment.cut.plan.builder.form</field>
+        <field name="model">garment.cut.plan.builder</field>
+        <field name="arch" type="xml">
+            <form string="Cut Plan Builder">
+                <sheet>
+                    <field name="plan_id" invisible="1"/>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not left_to_plan">
+                            <span class="o_zyra_kpi_label">Left to plan</span>
+                            <span class="o_zyra_kpi_value"><field name="left_to_plan"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="left_to_plan">
+                            <span class="o_zyra_kpi_label">Left to plan</span>
+                            <span class="o_zyra_kpi_value"><field name="left_to_plan"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Proposed lays</span>
+                            <span class="o_zyra_kpi_value"><field name="lay_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Pieces proposed</span>
+                            <span class="o_zyra_kpi_value"><field name="pieces"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Fabric</span>
+                            <span class="o_zyra_kpi_value"><field name="fabric"/> m</span>
+                        </div>
+                    </div>
+                    <separator string="Quantities left per size"/>
+                    <field name="sizes_html" nolabel="1" readonly="1"/>
+                    <separator string="Lays proposed from your markers · edit plies before approving"/>
+                    <field name="line_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="sequence" string="#"/>
+                            <field name="style_id" column_invisible="1"/>
+                            <field name="marker_id" string="Marker" options="{'no_create': True}"/>
+                            <field name="ratio_text" string="Size Ratio"/>
+                            <field name="plies" string="Plies (edit)"/>
+                            <field name="pieces" string="Pieces"/>
+                            <field name="lay_length" string="Lay Length"/>
+                            <field name="fabric" string="Fabric"/>
+                        </list>
+                    </field>
+                    <div class="d-flex gap-2 mt-3">
+                        <button name="action_approve" type="object" string="Approve plan" class="btn-primary"/>
+                        <button name="action_repropose" type="object" string="Re-propose" class="btn-secondary"/>
+                        <button name="action_import_markers" type="object" string="Import markers (CSV)"
+                                class="btn-secondary"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

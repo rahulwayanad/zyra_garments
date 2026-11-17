@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="employee_spreader_sunil" model="hr.employee">
+        <field name="name">Sunil Kumar</field>
+        <field name="job_title">Spreader</field>
+        <field name="barcode">OP1020</field>
+    </record>
+    <record id="employee_spreader_ravi" model="hr.employee">
+        <field name="name">Ravi Shankar</field>
+        <field name="job_title">Spreader</field>
+        <field name="barcode">OP1021</field>
+    </record>
+    <record id="employee_cutter_noushad" model="hr.employee">
+        <field name="name">Noushad P</field>
+        <field name="job_title">Cutter</field>
+        <field name="barcode">OP1022</field>
+    </record>
+    <record id="employee_cutter_deepa" model="hr.employee">
+        <field name="name">Deepa Varghese</field>
+        <field name="job_title">Cutter</field>
+        <field name="barcode">OP1023</field>
+    </record>
+    <record id="employee_op_lina" model="hr.employee">
+        <field name="name">Lina Joseph</field>
+        <field name="job_title">Sewing Operator</field>
+        <field name="barcode">OP1024</field>
+    </record>
+    <record id="employee_op_fathima" model="hr.employee">
+        <field name="name">Fathima S</field>
+        <field name="job_title">Sewing Operator</field>
+        <field name="barcode">OP1025</field>
+    </record>
+    <record id="employee_op_ajmal" model="hr.employee">
+        <field name="name">Ajmal N</field>
+        <field name="job_title">Sewing Operator</field>
+        <field name="barcode">OP1026</field>
+    </record>
+    <record id="employee_op_jijo" model="hr.employee">
+        <field name="name">Jijo Mathew</field>
+        <field name="job_title">Sewing Operator</field>
+        <field name="barcode">OP1027</field>
+    </record>
+    <record id="employee_op_meera" model="hr.employee">
+        <field name="name">Meera Krishnan</field>
+        <field name="job_title">Sewing Operator</field>
+        <field name="barcode">OP1028</field>
+    </record>
+    <record id="employee_op_salim" model="hr.employee">
+        <field name="name">Salim Rahman</field>
+        <field name="job_title">Sewing Operator</field>
+        <field name="barcode">OP1029</field>
+    </record>
+
+    <function model="garment.cutting.demo" name="_load_demo"/>
+</odoo>

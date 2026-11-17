@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_cut_plans" name="Cut Plans" parent="zyra_garment_base.menu_garment_cutting"
+              action="action_garment_cut_plan" sequence="10"
+              groups="zyra_garment_base.group_garment_cutting,zyra_garment_base.group_garment_merchandiser"/>
+    <menuitem id="menu_garment_lays" name="Lays" parent="zyra_garment_base.menu_garment_cutting"
+              action="action_garment_lay" sequence="20"
+              groups="zyra_garment_base.group_garment_cutting,zyra_garment_base.group_garment_fabric_store"/>
+    <menuitem id="menu_garment_bundles" name="Bundles" parent="zyra_garment_base.menu_garment_cutting"
+              action="action_garment_bundle" sequence="30"
+              groups="zyra_garment_base.group_garment_cutting,zyra_garment_base.group_garment_line_supervisor"/>
+    <menuitem id="menu_garment_markers" name="Markers" parent="zyra_garment_base.menu_garment_cutting"
+              action="action_garment_marker" sequence="40"
+              groups="zyra_garment_base.group_garment_cutting"/>
+</odoo>

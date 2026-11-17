@@ -1,0 +1,11 @@
+// Cut plan builder: per-size quantities table (screen 48)
+.o_zyra_size_table {
+    font-variant-numeric: tabular-nums;
+
+    th {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--zyra-muted, #6b6880);
+    }
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_bundle_ticket" model="ir.actions.report">
+        <field name="name">Bundle Ticket</field>
+        <field name="model">garment.bundle</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_cutting.report_bundle_ticket</field>
+        <field name="report_file">zyra_garment_cutting.report_bundle_ticket</field>
+        <field name="print_report_name">'Bundle ticket %s' % object.name</field>
+        <field name="binding_model_id" ref="model_garment_bundle"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Bundle ticket (screen 53): header + one tear-off QR coupon per sewing operation. -->
+    <template id="report_bundle_ticket">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="bundle">
+                <div class="page" style="font-family: sans-serif; font-size: 11px; page-break-after: always;">
+                    <div style="max-width: 430px; margin: 0 auto;">
+                        <table style="width: 100%; border: 1px solid #222; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 70px; padding: 8px; vertical-align: middle;">
+                                    <img t-att-src="bundle._garment_qr_src(bundle.name)" style="width: 60px; height: 60px;"/>
+                                </td>
+                                <td style="padding: 8px 4px; vertical-align: middle;">
+                                    <div style="font-size: 20px; font-weight: bold;" t-out="bundle.name"/>
+                                    <div><b t-out="bundle.order_id.name"/> · <span t-out="bundle.style_id.code"/></div>
+                                    <div><span t-out="bundle.colour_id.name"/> · <b>Size <t t-out="bundle.size_id.name"/></b></div>
+                                    <div>Cut <b t-out="bundle.lay_id.name"/> · Bundle <t t-out="bundle.bundle_no"/></div>
+                                    <div>Plies <t t-out="bundle.plies_label"/> · Shade <b t-out="bundle.shade or '-'"/> · Roll <t t-out="bundle.roll_id.name or '-'"/></div>
+                                </td>
+                                <td style="width: 80px; padding: 8px; text-align: center; border-left: 1px solid #222; vertical-align: middle;">
+                                    <div>Pieces</div>
+                                    <div style="font-size: 26px; font-weight: bold;" t-out="bundle.pieces"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width: 100%; border-collapse: collapse; border-left: 1px solid #222; border-right: 1px solid #222;">
+                            <t t-foreach="bundle.coupon_ids" t-as="coupon">
+                                <tr style="border-bottom: 1px dashed #888; page-break-inside: avoid;">
+                                    <td style="width: 26px; padding: 6px; font-weight: bold;" t-out="coupon.sequence"/>
+                                    <td style="padding: 6px;" t-out="coupon.name"/>
+                                    <td style="padding: 6px;" t-out="bundle.name"/>
+                                    <td style="padding: 6px; white-space: nowrap;"><t t-out="bundle.pieces"/> pcs</td>
+                                    <td style="width: 64px; padding: 4px;">
+                                        <img t-att-src="bundle._garment_qr_src(coupon.payload)" style="width: 54px; height: 54px;"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
