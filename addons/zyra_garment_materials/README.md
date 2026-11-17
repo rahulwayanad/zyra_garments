@@ -81,3 +81,8 @@ Fabric booking sheet, fabric inspection report, roll label.
 reason, reject, re-inspection release, tablet API), `tests/test_booking.py` (required maths, shortfall
 = required − stock − open PO, rejected rolls excluded, raise POs, receipt tagging, short flag, in-house %),
 `tests/test_tablet.py` (client action loads, queue, tour).
+
+## Not done yet
+- The browser tour of the tablet screen (`test_tablet_inspection_tour_records_a_defect_and_finishes`) is
+  skipped: the Odoo venv has no `websocket-client` package. The tablet API itself is tested server side.
+- Screens 39–45 checked against the view code and demo data, not yet opened in a live browser.
