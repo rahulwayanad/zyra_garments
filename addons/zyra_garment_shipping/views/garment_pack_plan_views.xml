@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Pack plans list (screen 67) -->
+    <record id="garment_pack_plan_view_list" model="ir.ui.view">
+        <field name="name">garment.pack.plan.list</field>
+        <field name="model">garment.pack.plan</field>
+        <field name="arch" type="xml">
+            <list string="Pack Plans" sample="1">
+                <field name="name" string="Plan"/>
+                <field name="order_id" string="Order"/>
+                <field name="buyer_id" string="Buyer"/>
+                <field name="pack_kind" string="Pack Kind"/>
+                <field name="pieces_per_carton" string="Pcs / Carton"/>
+                <field name="cartons_planned" string="Cartons Planned" sum="Total"/>
+                <field name="cartons_packed" string="Packed" sum="Total"/>
+                <field name="gross_weight" string="Gross kg" sum="Total"/>
+                <field name="volume_cbm" string="CBM" sum="Total"/>
+                <field name="state" string="State" widget="badge"
+                       decoration-info="state == 'packing'" decoration-success="state in ('packed', 'shipped')"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_pack_plan_view_search" model="ir.ui.view">
+        <field name="name">garment.pack.plan.search</field>
+        <field name="model">garment.pack.plan</field>
+        <field name="arch" type="xml">
+            <search string="Pack Plans">
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="buyer_id"/>
+                <filter name="open" string="Open" domain="[('state', 'in', ('draft', 'packing', 'packed'))]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="packing" string="Packing" domain="[('state', '=', 'packing')]"/>
+                <filter name="packed" string="Packed" domain="[('state', '=', 'packed')]"/>
+                <filter name="shipped" string="Shipped" domain="[('state', '=', 'shipped')]"/>
+                <filter name="waiting_stock" string="Waiting for Stock" domain="[('pieces_waiting_stock', '>', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                    <filter name="group_kind" string="Pack Kind" context="{'group_by': 'pack_kind'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Pack plan in progress (screen 68) -->
+    <record id="garment_pack_plan_view_form" model="ir.ui.view">
+        <field name="name">garment.pack.plan.form</field>
+        <field name="model">garment.pack.plan</field>
+        <field name="arch" type="xml">
+            <form string="Pack Plan">
+                <header>
+                    <button name="action_open_pack_wizard" type="object" string="Pack / Scan Cartons"
+                            class="btn-primary" invisible="state == 'shipped' or not id"/>
+                    <button name="action_post_to_stock" type="object" string="Post to Stock"
+                            invisible="not pieces_waiting_stock"/>
+                    <button name="action_generate_cartons" type="object" string="Generate More Cartons"
+                            invisible="not id or state == 'shipped'"/>
+                    <button name="action_print_packing_list" type="object" string="Packing List"
+                            invisible="not cartons_packed"/>
+                    <button name="action_assign_sscc" type="object" string="Assign SSCC" invisible="not carton_count"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,packing,packed,shipped"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_cartons" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="cartons_planned" widget="statinfo" string="Cartons"/>
+                        </button>
+                        <button name="action_view_productions" type="object" class="oe_stat_button" icon="fa-industry"
+                                invisible="not production_count">
+                            <field name="production_count" widget="statinfo" string="Stock Postings"/>
+                        </button>
+                    </div>
+                    <field name="company_id" invisible="1"/>
+                    <field name="carton_count" invisible="1"/>
+                    <field name="order_qty_packed" invisible="1"/>
+
+                    <div class="o_zyra_kpis" name="kpi_strip" invisible="not id">
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="cartons_packed &lt; cartons_planned or not cartons_planned">
+                            <span class="o_zyra_kpi_label">Cartons packed</span>
+                            <span class="o_zyra_kpi_value"><field name="cartons_packed"/> / <field name="cartons_planned"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="cartons_packed &gt;= cartons_planned and cartons_planned">
+                            <span class="o_zyra_kpi_label">Cartons packed</span>
+                            <span class="o_zyra_kpi_value"><field name="cartons_packed"/> / <field name="cartons_planned"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Pieces in cartons</span>
+                            <span class="o_zyra_kpi_value"><field name="pieces_packed"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="order_qty_packed &lt; pieces_planned">
+                            <span class="o_zyra_kpi_label">Order packed</span>
+                            <span class="o_zyra_kpi_value"><field name="order_qty_packed"/> / <field name="pieces_planned"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="order_qty_packed &gt;= pieces_planned">
+                            <span class="o_zyra_kpi_label">Order packed</span>
+                            <span class="o_zyra_kpi_value"><field name="order_qty_packed"/> / <field name="pieces_planned"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not pieces_waiting_stock">
+                            <span class="o_zyra_kpi_label">Waiting for stock</span>
+                            <span class="o_zyra_kpi_value"><field name="pieces_waiting_stock"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="pieces_waiting_stock">
+                            <span class="o_zyra_kpi_label">Waiting for stock</span>
+                            <span class="o_zyra_kpi_value">0</span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Cartons shipped</span>
+                            <span class="o_zyra_kpi_value"><field name="cartons_shipped"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Gross weight</span>
+                            <span class="o_zyra_kpi_value"><field name="gross_weight"/> kg</span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Volume</span>
+                            <span class="o_zyra_kpi_value"><field name="volume_cbm"/> CBM</span>
+                        </div>
+                    </div>
+
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="order_id" placeholder="Production order" readonly="cartons_packed"
+                                   options="{'no_create': True}"/></h1>
+                    </div>
+                    <group>
+                        <group string="How it is packed" name="how">
+                            <field name="pack_kind" readonly="cartons_packed"/>
+                            <field name="ratio_name" string="Ratio Pack" invisible="pack_kind == 'solid'"/>
+                            <field name="pieces_per_carton" readonly="pack_kind != 'solid' or cartons_packed"/>
+                            <field name="first_carton_no" readonly="carton_count"/>
+                            <field name="buyer_id"/>
+                        </group>
+                        <group string="Carton" name="carton">
+                            <field name="carton_product_id" options="{'no_create': True}"/>
+                            <label for="length_cm" string="L × W × H (cm)"/>
+                            <div class="o_row">
+                                <field name="length_cm" nolabel="1"/> ×
+                                <field name="width_cm" nolabel="1"/> ×
+                                <field name="height_cm" nolabel="1"/>
+                            </div>
+                            <field name="net_weight_per_piece"/>
+                            <field name="empty_carton_weight"/>
+                        </group>
+                        <group string="Totals" name="totals">
+                            <field name="pieces_planned"/>
+                            <field name="pieces_packed" string="Pieces in Packed Cartons"/>
+                            <field name="cartons_packed_pct" widget="progressbar"/>
+                            <field name="net_weight"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Ratio" name="ratio" invisible="pack_kind == 'solid'">
+                            <field name="ratio_line_ids" readonly="cartons_packed">
+                                <list editable="bottom">
+                                    <field name="colour_id" column_invisible="parent.pack_kind != 'ratio'"
+                                           options="{'no_create': True}"/>
+                                    <field name="size_id" options="{'no_create': True}"/>
+                                    <field name="qty" sum="Pieces per carton"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_pack_plan" model="ir.actions.act_window">
+        <field name="name">Pack Plans</field>
+        <field name="res_model">garment.pack.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Plan how an order is packed</p>
+            <p>Pick the pack kind and carton; the plan works out the cartons and their content from the order grid.</p>
+        </field>
+    </record>
+</odoo>

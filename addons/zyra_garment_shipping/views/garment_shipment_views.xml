@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Shipments list (screen 70) -->
+    <record id="garment_shipment_view_list" model="ir.ui.view">
+        <field name="name">garment.shipment.list</field>
+        <field name="model">garment.shipment</field>
+        <field name="arch" type="xml">
+            <list string="Shipments" decoration-danger="days_late &gt; 0" sample="1">
+                <field name="currency_id" column_invisible="1"/>
+                <field name="name" string="Shipment"/>
+                <field name="buyer_id" string="Buyer"/>
+                <field name="order_names" string="Orders"/>
+                <field name="mode" string="Mode"/>
+                <field name="port_loading" string="Port"/>
+                <field name="planned_date" string="Planned Ex-factory"/>
+                <field name="actual_date" string="Actual"/>
+                <field name="days_late" string="Days Late"/>
+                <field name="carton_count" string="Cartons" sum="Total"/>
+                <field name="value" string="Value" sum="Total"/>
+                <field name="lc_id" string="LC"/>
+                <field name="stage" string="Stage" widget="badge"
+                       decoration-info="stage in ('confirmed', 'ex_factory', 'handed_over', 'on_board', 'documents_presented')"
+                       decoration-success="stage == 'paid'"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_shipment_view_search" model="ir.ui.view">
+        <field name="name">garment.shipment.search</field>
+        <field name="model">garment.shipment</field>
+        <field name="arch" type="xml">
+            <search string="Shipments">
+                <field name="name"/>
+                <field name="buyer_id"/>
+                <field name="order_ids"/>
+                <field name="lc_id"/>
+                <filter name="open" string="Not Shipped" domain="[('stage', 'in', ('draft', 'confirmed'))]"/>
+                <filter name="in_transit" string="In Transit"
+                        domain="[('stage', 'in', ('ex_factory', 'handed_over', 'on_board', 'documents_presented'))]"/>
+                <filter name="paid" string="Paid" domain="[('stage', '=', 'paid')]"/>
+                <separator/>
+                <filter name="overridden" string="Manager Override" domain="[('override_user_id', '!=', False)]"/>
+                <filter name="planned" string="Planned Ex-factory" date="planned_date"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                    <filter name="group_mode" string="Mode" context="{'group_by': 'mode'}"/>
+                    <filter name="group_stage" string="Stage" context="{'group_by': 'stage'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Shipment (screen 71) -->
+    <record id="garment_shipment_view_form" model="ir.ui.view">
+        <field name="name">garment.shipment.form</field>
+        <field name="model">garment.shipment</field>
+        <field name="arch" type="xml">
+            <form string="Shipment">
+                <header>
+                    <button name="action_print_packing_list" type="object" string="Packing List"
+                            invisible="not carton_count"/>
+                    <button name="action_add_packed_cartons" type="object" string="Add Packed Cartons"
+                            invisible="stage not in ('draft', 'confirmed') or not order_ids"/>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"
+                            invisible="stage != 'draft'"/>
+                    <button name="action_open_override" type="object" string="Manager Override"
+                            groups="zyra_garment_base.group_garment_factory_manager"
+                            invisible="stage != 'confirmed' or (lc_ok and not hold_count) or override_user_id"/>
+                    <button name="action_ex_factory" type="object" string="Ship Ex-factory" class="btn-primary"
+                            invisible="stage != 'confirmed'"/>
+                    <button name="action_handed_over" type="object" string="Handed Over" class="btn-primary"
+                            invisible="stage != 'ex_factory'"/>
+                    <button name="action_on_board" type="object" string="On Board" class="btn-primary"
+                            invisible="stage != 'handed_over'"/>
+                    <button name="action_documents_presented" type="object" string="Documents Presented"
+                            class="btn-primary" invisible="stage != 'on_board'"/>
+                    <button name="action_paid" type="object" string="Mark Paid" class="btn-primary"
+                            invisible="stage != 'documents_presented'"/>
+                    <button name="action_create_invoice" type="object" string="Create Invoice"
+                            invisible="stage in ('draft', 'confirmed') or invoice_count"/>
+                    <button name="action_draft" type="object" string="Back to Draft" invisible="stage != 'confirmed'"/>
+                    <field name="stage" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_cartons" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="carton_count" widget="statinfo" string="Cartons"/>
+                        </button>
+                        <button name="action_view_deliveries" type="object" class="oe_stat_button" icon="fa-truck">
+                            <field name="delivery_count" widget="statinfo" string="Deliveries"/>
+                        </button>
+                        <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="lc_ok" invisible="1"/>
+                    <field name="days_late" invisible="1"/>
+                    <field name="override_user_id" invisible="1"/>
+
+                    <div class="alert alert-warning" role="alert" invisible="lc_ok">
+                        <strong>Letter of credit</strong>
+                        <div style="white-space: pre-line;"><field name="lc_warning" readonly="1"/></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not hold_count">
+                        <strong>Final inspection</strong>
+                        <div style="white-space: pre-line;"><field name="quality_warning" readonly="1"/></div>
+                    </div>
+
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_bad" invisible="not days_late">
+                            <span class="o_zyra_kpi_label">Ex-factory</span>
+                            <span class="o_zyra_kpi_value"><field name="ex_factory_label"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_good" invisible="days_late">
+                            <span class="o_zyra_kpi_label">Ex-factory</span>
+                            <span class="o_zyra_kpi_value"><field name="ex_factory_label"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Cartons</span>
+                            <span class="o_zyra_kpi_value"><field name="carton_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Pieces</span>
+                            <span class="o_zyra_kpi_value"><field name="pieces"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Value</span>
+                            <span class="o_zyra_kpi_value"><field name="value" widget="monetary"
+                                  options="{'currency_field': 'currency_id'}"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Volume</span>
+                            <span class="o_zyra_kpi_value"><field name="volume_cbm"/> CBM</span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="hold_count">
+                            <span class="o_zyra_kpi_label">Holds</span>
+                            <span class="o_zyra_kpi_value"><field name="hold_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not hold_count">
+                            <span class="o_zyra_kpi_label">Holds</span>
+                            <span class="o_zyra_kpi_value"><field name="hold_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="documents_to_prepare">
+                            <span class="o_zyra_kpi_label">Documents to prepare</span>
+                            <span class="o_zyra_kpi_value"><field name="documents_to_prepare"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not documents_to_prepare">
+                            <span class="o_zyra_kpi_label">Documents to prepare</span>
+                            <span class="o_zyra_kpi_value"><field name="documents_to_prepare"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_bad" invisible="lc_ok">
+                            <span class="o_zyra_kpi_label">Letter of credit</span>
+                            <span class="o_zyra_kpi_value">Check</span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_good" invisible="not lc_ok">
+                            <span class="o_zyra_kpi_label">Letter of credit</span>
+                            <span class="o_zyra_kpi_value">OK</span>
+                        </div>
+                    </div>
+
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="buyer_id" placeholder="Buyer" options="{'no_create': True}"
+                                   readonly="stage != 'draft'"/></h1>
+                    </div>
+                    <group>
+                        <group string="What ships" name="what_ships">
+                            <field name="order_ids" widget="many2many_tags" options="{'no_create': True}"
+                                   readonly="stage not in ('draft', 'confirmed')"/>
+                            <field name="lc_id" options="{'no_create': True}"
+                                   readonly="stage not in ('draft', 'confirmed')"/>
+                            <field name="final_shipment" readonly="stage not in ('draft', 'confirmed')"/>
+                            <field name="clerk_id"/>
+                            <field name="planned_date"/>
+                            <field name="actual_date"/>
+                        </group>
+                        <group string="Transport" name="transport">
+                            <field name="mode"/>
+                            <field name="incoterm_id"/>
+                            <field name="port_loading"/>
+                            <field name="port_discharge"/>
+                            <field name="forwarder"/>
+                            <field name="vessel_flight" string="Flight" invisible="mode != 'air'"/>
+                            <field name="vessel_flight" string="Vessel" invisible="mode == 'air'"/>
+                            <field name="transport_doc_no" string="AWB No." invisible="mode != 'air'"/>
+                            <field name="transport_doc_no" string="B/L No." invisible="mode == 'air'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Cartons" name="cartons">
+                            <field name="carton_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="order_name" string="Order"/>
+                                    <field name="colour_id"/>
+                                    <field name="content"/>
+                                    <field name="pieces" sum="Total"/>
+                                    <field name="net_weight" sum="Total"/>
+                                    <field name="gross_weight" sum="Total"/>
+                                    <field name="cbm" sum="Total"/>
+                                    <field name="sscc_display" string="SSCC"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Override" name="override" invisible="not override_user_id">
+                            <group>
+                                <field name="override_reason"/>
+                                <field name="override_user_id"/>
+                                <field name="override_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_shipment" model="ir.actions.act_window">
+        <field name="name">Shipments</field>
+        <field name="res_model">garment.shipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a shipment</p>
+            <p>Pick the buyer and orders, add the packed cartons, and ship them through a stock delivery.</p>
+        </field>
+    </record>
+
+</odoo>

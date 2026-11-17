@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Screen 2: "Cartons packed" tile and "Pack Plan" button on the production order -->
+    <record id="garment_order_view_form_shipping" model="ir.ui.view">
+        <field name="name">garment.order.form.shipping</field>
+        <field name="model">garment.order</field>
+        <field name="inherit_id" ref="zyra_garment_merch.garment_order_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_mark_completed']" position="before">
+                <button name="action_garment_pack_plan" type="object" string="Pack Plan"
+                        invisible="state not in ('confirmed', 'in_production', 'packed', 'shipped')"/>
+            </xpath>
+            <xpath expr="//div[@name='kpi_strip']" position="inside">
+                <field name="garment_cartons_planned" invisible="1"/>
+                <div name="kpi_cartons_packed" class="o_zyra_kpi o_zyra_kpi_good"
+                     invisible="not garment_cartons_planned or garment_cartons_packed &lt; garment_cartons_planned">
+                    <span class="o_zyra_kpi_label">Cartons packed</span>
+                    <span class="o_zyra_kpi_value"><field name="garment_cartons_packed"/> / <field name="garment_cartons_planned"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_warn"
+                     invisible="not garment_cartons_planned or garment_cartons_packed &gt;= garment_cartons_planned">
+                    <span class="o_zyra_kpi_label">Cartons packed</span>
+                    <span class="o_zyra_kpi_value"><field name="garment_cartons_packed"/> / <field name="garment_cartons_planned"/></span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

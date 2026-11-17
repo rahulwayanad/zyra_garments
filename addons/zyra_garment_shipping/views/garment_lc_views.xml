@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Letters of credit list (screen 72) -->
+    <record id="garment_lc_view_list" model="ir.ui.view">
+        <field name="name">garment.lc.list</field>
+        <field name="model">garment.lc</field>
+        <field name="arch" type="xml">
+            <list string="Letters of Credit" decoration-danger="is_expired" sample="1">
+                <field name="is_expired" column_invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="name" string="LC No."/>
+                <field name="buyer_id" string="Buyer"/>
+                <field name="issuing_bank" string="Issuing Bank"/>
+                <field name="amount" string="Amount" sum="Total"/>
+                <field name="drawn" string="Drawn" sum="Total"/>
+                <field name="balance" string="Balance" sum="Total"/>
+                <field name="latest_shipment_date" string="Latest Shipment"/>
+                <field name="expiry_date" string="Expiry"/>
+                <field name="days_left" string="Days Left"/>
+                <field name="display_state" string="State" widget="badge"
+                       decoration-success="display_state == 'open'" decoration-danger="display_state == 'expired'"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_lc_view_search" model="ir.ui.view">
+        <field name="name">garment.lc.search</field>
+        <field name="model">garment.lc</field>
+        <field name="arch" type="xml">
+            <search string="Letters of Credit">
+                <field name="name"/>
+                <field name="buyer_id"/>
+                <field name="issuing_bank"/>
+                <filter name="open" string="Open" domain="[('state', '=', 'open'), ('is_expired', '=', False)]"/>
+                <filter name="expired" string="Expired" domain="[('is_expired', '=', True)]"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                    <filter name="group_bank" string="Issuing Bank" context="{'group_by': 'issuing_bank'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Letter of credit (screen 73) -->
+    <record id="garment_lc_view_form" model="ir.ui.view">
+        <field name="name">garment.lc.form</field>
+        <field name="model">garment.lc</field>
+        <field name="arch" type="xml">
+            <form string="Letter of Credit">
+                <header>
+                    <button name="action_open" type="object" string="Open" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_record_drawing" type="object" string="Record Drawing"
+                            invisible="state != 'open'"/>
+                    <button name="action_amend" type="object" string="Amend" invisible="state == 'closed'"/>
+                    <button name="action_close" type="object" string="Close" invisible="state != 'open'"/>
+                    <button name="action_draft" type="object" string="Reset to Draft" invisible="state != 'closed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_shipments" type="object" class="oe_stat_button" icon="fa-ship">
+                            <field name="shipment_count" widget="statinfo" string="Shipments"/>
+                        </button>
+                    </div>
+                    <field name="company_id" invisible="1"/>
+                    <field name="is_expired" invisible="1"/>
+                    <field name="expiry_before_shipment" invisible="1"/>
+                    <field name="latest_shipment_soon" invisible="1"/>
+
+                    <div class="o_zyra_kpis" name="kpi_strip" invisible="not id">
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="balance &lt;= 0">
+                            <span class="o_zyra_kpi_label">Available</span>
+                            <span class="o_zyra_kpi_value"><field name="balance" widget="monetary"
+                                  options="{'currency_field': 'currency_id'}"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="balance &gt; 0">
+                            <span class="o_zyra_kpi_label">Available</span>
+                            <span class="o_zyra_kpi_value"><field name="balance" widget="monetary"
+                                  options="{'currency_field': 'currency_id'}"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Drawn</span>
+                            <span class="o_zyra_kpi_value"><field name="drawn" widget="monetary"
+                                  options="{'currency_field': 'currency_id'}"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not latest_shipment_soon">
+                            <span class="o_zyra_kpi_label">Latest shipment date</span>
+                            <span class="o_zyra_kpi_value"><field name="latest_shipment_date"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" invisible="latest_shipment_soon">
+                            <span class="o_zyra_kpi_label">Latest shipment date</span>
+                            <span class="o_zyra_kpi_value"><field name="latest_shipment_date"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="days_left &gt; 14 and not expiry_before_shipment">
+                            <span class="o_zyra_kpi_label">Days to expiry</span>
+                            <span class="o_zyra_kpi_value"><field name="days_left"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="days_left &lt;= 14 or expiry_before_shipment">
+                            <span class="o_zyra_kpi_label">Days to expiry</span>
+                            <span class="o_zyra_kpi_value"><field name="days_left"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Tolerance</span>
+                            <span class="o_zyra_kpi_value"><field name="tolerance_label"/></span>
+                        </div>
+                    </div>
+
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" placeholder="LC number"/></div>
+                        <h1><field name="title" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Parties" name="parties">
+                            <field name="buyer_id" options="{'no_create': True}"/>
+                            <field name="beneficiary_id"/>
+                            <field name="issuing_bank"/>
+                            <field name="advising_bank"/>
+                        </group>
+                        <group string="Terms" name="terms">
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="amount" readonly="state != 'draft'"/>
+                            <field name="tolerance_pct" string="Tolerance (±%)" readonly="state != 'draft'"/>
+                            <field name="latest_shipment_date" readonly="state != 'draft'"/>
+                            <field name="expiry_date" readonly="state != 'draft'"/>
+                            <field name="partial_shipments"/>
+                            <field name="documents"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Drawings" name="drawings">
+                            <field name="drawing_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="shipment_id"/>
+                                    <field name="note"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="amount" sum="Drawn"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_lc_drawing_view_form" model="ir.ui.view">
+        <field name="name">garment.lc.drawing.form</field>
+        <field name="model">garment.lc.drawing</field>
+        <field name="arch" type="xml">
+            <form string="Drawing">
+                <group>
+                    <field name="lc_id" readonly="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="date"/>
+                    <field name="shipment_id" options="{'no_create': True}"/>
+                    <field name="amount"/>
+                    <field name="note"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_lc" model="ir.actions.act_window">
+        <field name="name">Letters of Credit</field>
+        <field name="res_model">garment.lc</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register a letter of credit</p>
+            <p>Shipments under a credit warn when they ship after its latest shipment date or after it expires.</p>
+        </field>
+    </record>
+</odoo>

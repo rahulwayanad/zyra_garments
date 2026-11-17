@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cartons list with SSCC (screen 69) -->
+    <record id="garment_carton_view_list" model="ir.ui.view">
+        <field name="name">garment.carton.list</field>
+        <field name="model">garment.carton</field>
+        <field name="arch" type="xml">
+            <list string="Cartons" decoration-muted="state == 'planned'">
+                <header>
+                    <button name="action_pack" type="object" string="Pack"/>
+                    <button name="action_unpack" type="object" string="Unpack"/>
+                </header>
+                <field name="name" string="Carton"/>
+                <field name="order_name" string="Order"/>
+                <field name="colour_id" string="Colour"/>
+                <field name="content" string="Content"/>
+                <field name="pieces" string="Pieces" sum="Total"/>
+                <field name="net_weight" string="Net kg" sum="Total"/>
+                <field name="gross_weight" string="Gross kg" sum="Total"/>
+                <field name="cbm" string="CBM" sum="Total"/>
+                <field name="sscc_display" string="SSCC"/>
+                <field name="shipment_id" string="Shipment"/>
+                <field name="state" optional="hide" widget="badge"/>
+                <field name="plan_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_carton_view_form" model="ir.ui.view">
+        <field name="name">garment.carton.form</field>
+        <field name="model">garment.carton</field>
+        <field name="arch" type="xml">
+            <form string="Carton">
+                <header>
+                    <button name="action_pack" type="object" string="Pack" class="btn-primary"
+                            invisible="state != 'planned'"/>
+                    <button name="action_unpack" type="object" string="Unpack"
+                            invisible="state != 'packed' or stock_posted or shipment_id"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="plan_id" readonly="1"/></div>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="number" readonly="state != 'planned'"/>
+                            <field name="order_id"/>
+                            <field name="colour_id"/>
+                            <field name="content"/>
+                            <field name="pieces"/>
+                        </group>
+                        <group>
+                            <field name="sscc_display"/>
+                            <field name="net_weight"/>
+                            <field name="gross_weight"/>
+                            <field name="cbm"/>
+                            <field name="shipment_id"/>
+                            <field name="date_packed"/>
+                            <field name="stock_posted"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" readonly="state != 'planned'">
+                        <list editable="bottom">
+                            <field name="colour_id" options="{'no_create': True}"/>
+                            <field name="size_id" options="{'no_create': True}"/>
+                            <field name="qty" sum="Pieces"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_carton_view_search" model="ir.ui.view">
+        <field name="name">garment.carton.search</field>
+        <field name="model">garment.carton</field>
+        <field name="arch" type="xml">
+            <search string="Cartons">
+                <field name="name"/>
+                <field name="sscc"/>
+                <field name="plan_id"/>
+                <field name="order_id"/>
+                <field name="shipment_id"/>
+                <field name="colour_id"/>
+                <filter name="planned" string="Planned" domain="[('state', '=', 'planned')]"/>
+                <filter name="packed" string="Packed" domain="[('state', '=', 'packed')]"/>
+                <filter name="shipped" string="Shipped" domain="[('state', '=', 'shipped')]"/>
+                <separator/>
+                <filter name="no_shipment" string="Not on a Shipment" domain="[('shipment_id', '=', False)]"/>
+                <filter name="waiting_stock" string="Waiting for Stock"
+                        domain="[('state', '!=', 'planned'), ('stock_posted', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_plan" string="Pack Plan" context="{'group_by': 'plan_id'}"/>
+                    <filter name="group_shipment" string="Shipment" context="{'group_by': 'shipment_id'}"/>
+                    <filter name="group_colour" string="Colour" context="{'group_by': 'colour_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_garment_carton" model="ir.actions.act_window">
+        <field name="name">Cartons</field>
+        <field name="res_model">garment.carton</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No cartons yet</p>
+            <p>Cartons are generated from a pack plan.</p>
+        </field>
+    </record>
+</odoo>
