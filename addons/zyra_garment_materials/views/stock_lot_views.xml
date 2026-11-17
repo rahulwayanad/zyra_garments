@@ -10,6 +10,7 @@
                 <field name="roll_colour_hex"/>
                 <field name="product_uom_id"/>
                 <field name="roll_status"/>
+                <field name="shade_group"/>
                 <templates>
                     <t t-name="card" class="flex-row">
                         <aside class="me-3">
