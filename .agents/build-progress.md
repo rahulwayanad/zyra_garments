@@ -116,3 +116,7 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   clean install): rate card, weekly wage sheet from scans (top-up, overtime, incentive), scan→wage line no double
   count, balanced journal entry, wage slip PDF. Left: screens 77–81 per images (KPI tiles), demo data.
   16:24 STOP: no agents, no odoo runs, nothing scheduled. Not pushed. NO BUILD UNTIL RAHUL SAYS.
+- 16:24–16:29 tiny wages segment (usage 72%): wages WIP fcd32d4 on feat/wages (NOT merged, 4/4, clean): demo rate card +
+  floor sheet from sewing demo scans (all operators on minimum top-up: demo pieces too low), KPI tiles on sheet form.
+  Left: match screens 77–81 to images (not opened yet), richer demo so piece earnings exceed the minimum.
+  STOP: no agents, no odoo runs, nothing scheduled. Not pushed. NO BUILD UNTIL RAHUL SAYS.
