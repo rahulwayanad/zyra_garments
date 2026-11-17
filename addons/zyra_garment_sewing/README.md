@@ -76,9 +76,17 @@ daily summary efficiency rule + hourly board, scan without badge refused.
 - 'sewn' progress posts the bundle's good pieces (pieces − worst rejected, cutting's `good_pieces`).
 - DHU in the daily summary is filled only if a quality module provides `garment.inspection._garment_line_dhu`.
 
+## Screens (segment 2)
+
+- Scan station (screen 4): client action `zyra_garment_scan_station`; IndexedDB queue (`static/src/scan_station/offline_queue.js`) sent through `garment_sync_batch`; RPC `station_lines`, `station_badge`, `station_stats`.
+- Line TV board (56): full-screen client action `zyra_garment_line_tv_board`, RPC `garment.line.garment_tv_board`, refresh every minute.
+- Daily line summary (58): model `garment.line.day` (LD/…), with hours, downtime and open/closed states, plus an hourly cron.
+- Planning board (3): model `garment.line.plan` and client action `zyra_garment_line_planning_board`, with drag to move a bar to another line or week. RPC `garment_board`, `garment_plan_orders`, `garment_move`.
+- Bulletin (54): versions, draft/approved states, sewing SAM (all sections except preparation and finishing), rate card, manual rate.
+
 ## Not done yet
 
-- Client actions: scan station (screen 4, IndexedDB queue calling `garment_sync_batch`), line TV board
-  (screen 56), daily summary screen (58), planning board (3). The server methods they need are done and tested.
-- Screen-exact layouts for 54/55 (functional forms with theme KPI tiles); scan list (57) matches the screen columns, but coupons show their own display name, not a C-number.
-- Multi-company rule on `garment.line` (the work centre carries the company).
+- Screen 55: balancing is still a wizard. The screen wants a stored LB/ record (order, stations with fractional operators assigned, station efficiency, notes, draft/applied states).
+- Screen 58: Defects tab and "Print Hourly Report". DHU waits on quality.
+- Client actions were checked only by syntax and the assets bundle compiling. Nobody has opened them in a browser yet.
+- Times on scans and summaries use UTC day boundaries.
