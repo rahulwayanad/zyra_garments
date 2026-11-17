@@ -62,7 +62,7 @@ Posting `sewn` progress on the order is left to the caller (sewing).
 `Bundle ticket` (screen 53): header + one tear-off QR coupon per operation. QR via Odoo's report barcode, with
 an SVG fallback when the server's reportlab has no PNG renderer.
 
-## Tests (`tests/`)
+## Tests (`tests/`) — 47, all green
 
 Cut plan (lay proposal covers sizes exactly, max plies, no overcut, builder), lay (fabric formula, roll
 rules, cut progress, fabric consumption, rights), bundle (split by plies/roll/bundle size, coupons per
