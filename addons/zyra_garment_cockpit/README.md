@@ -35,5 +35,7 @@ action (`zyra_garment_cockpit`) whose tabs switch cockpit. Compliance (18) and M
 ## Not done yet
 - Filters bar (period, buyers and lines, business model) and Day shift button of screen 5.
 - Per-screen layouts of 6–17 beyond tiles + generic charts/lists (they share one generic layout).
+- Screen 1: "Lines stopped now", "Machines down" tiles, efficiency 30-day chart, pieces-per-hour chart and
+  "Lines that stopped today" list are not built.
 - Department readings: cutting shows fabric laid instead of fabric utilisation %.
 - Browser check of the client action (no time in this segment).

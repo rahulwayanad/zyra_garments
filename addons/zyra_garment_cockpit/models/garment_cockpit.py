@@ -55,7 +55,13 @@ class GarmentCockpit(models.AbstractModel):
         return res
 
     def _by(self, model, domain, groupby):
-        """{group value: count} with one _read_group."""
+        """{group value: count} with one _read_group (non-stored field: one search, counted in Python)."""
+        Model = self.env[model]
+        if not Model._fields[groupby].store:
+            res = {}
+            for rec in Model.search(domain):
+                res[rec[groupby]] = res.get(rec[groupby], 0) + 1
+            return res
         return {(g.id if hasattr(g, "id") else g): c
                 for g, c in self.env[model]._read_group(domain, [groupby], ["__count"])}
 
@@ -308,10 +314,14 @@ class GarmentCockpit(models.AbstractModel):
         """Screen 9. Time-and-action milestones by status."""
         M = "garment.tna.milestone"
         dom = self._company_domain()
-        c = self._by(M, dom, "status")
+        # status is computed (not stored): group in Python over one search, tiles open the matching ids
+        ids = {}
+        for ms in self.env[M].search(dom):
+            ids.setdefault(ms.status, []).append(ms.id)
         labels = [("pending", _("Pending"), ""), ("on_time", _("On time"), "good"),
                   ("late", _("Done late"), "warn"), ("overdue", _("Overdue"), "bad")]
-        return {"tiles": [self._tile(k, l, c.get(k, 0), t, M, dom + [("status", "=", k)]) for k, l, t in labels],
+        return {"tiles": [self._tile(k, l, len(ids.get(k, [])), t, M, [("id", "in", ids.get(k, []))])
+                          for k, l, t in labels],
                 "charts": [], "lists": []}
 
     def _cockpit_fabric(self):
