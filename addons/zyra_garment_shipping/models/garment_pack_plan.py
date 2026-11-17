@@ -346,8 +346,8 @@ class GarmentPackPlan(models.Model):
                 # Only what is reserved (with its lot) is consumed; fabric issue is booked by materials.
                 move.move_line_ids.filtered(lambda ml: not ml.lot_id).unlink()
             move.picked = True
-        for move in mo.move_finished_ids:
-            move.picked = True
+        # Finished moves stay unpicked: mrp counts picked finished quantity as already produced and
+        # would then post nothing (the finished move gets cancelled).
         result = mo.with_context(skip_consumption=True, skip_backorder=True).button_mark_done()
         if mo.state != "done":
             raise UserError(_("Manufacturing order %(mo)s could not be closed (%(res)s).", mo=mo.name, res=result))

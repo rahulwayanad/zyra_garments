@@ -4,8 +4,6 @@ from unittest.mock import patch
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
 
-from odoo.addons.zyra_garment_merch.models.garment_order import GarmentOrder
-
 from .common import ShippingCase
 
 
@@ -82,7 +80,7 @@ class TestShipment(ShippingCase):
 
     def test_failed_final_inspection_blocks_shipment_until_manager_override(self):
         order, plan, ship = self._packed_shipment()
-        with patch.object(GarmentOrder, "_garment_shipping_final_ok", lambda self: False, create=True):
+        with patch.object(type(order), "_garment_shipping_final_ok", lambda self: False):
             ship.invalidate_recordset()
             self.assertEqual(ship.hold_count, 1)
             self.assertIn(order.name, ship.quality_warning)
