@@ -80,5 +80,5 @@ daily summary efficiency rule + hourly board, scan without badge refused.
 
 - Client actions: scan station (screen 4, IndexedDB queue calling `garment_sync_batch`), line TV board
   (screen 56), daily summary screen (58), planning board (3). The server methods they need are done and tested.
-- Screen-exact layouts for 54/55/57 (views are functional lists/forms with theme KPI tiles).
+- Screen-exact layouts for 54/55 (functional forms with theme KPI tiles); scan list (57) matches the screen columns, but coupons show their own display name, not a C-number.
 - Multi-company rule on `garment.line` (the work centre carries the company).
