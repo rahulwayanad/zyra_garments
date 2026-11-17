@@ -92,7 +92,7 @@
                                 <tr t-foreach="doc.defect_line_ids" t-as="line">
                                     <td t-esc="'%.1f' % line.position_yd"/>
                                     <td t-esc="line.defect_id.name or ''"/>
-                                    <td t-field="line.length_band"/>
+                                    <td><span t-field="line.length_band"/></td>
                                     <td class="text-end" t-esc="line.points"/>
                                 </tr>
                             </tbody>

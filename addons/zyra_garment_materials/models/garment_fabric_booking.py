@@ -405,7 +405,7 @@ class GarmentFabricBookingLine(models.Model):
         return (seller.partner_id if seller else self.product_id.seller_ids[:1].partner_id)
 
     @api.depends("qty_required", "price_unit", "uom_id", "product_id", "roll_ids.roll_received_qty",
-                 "roll_ids.roll_status", "purchase_line_ids.product_qty", "purchase_line_ids.qty_received",
+                 "roll_ids.roll_status", "roll_ids.quant_ids.quantity", "purchase_line_ids.product_qty", "purchase_line_ids.qty_received",
                  "purchase_line_ids.state")
     def _compute_quantities(self):
         for line in self:
