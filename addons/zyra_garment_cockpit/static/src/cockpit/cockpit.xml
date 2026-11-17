@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_cockpit.Cockpit">
+        <div class="o_zyra_cockpit o_action h-100 overflow-auto" t-ref="root">
+            <t t-set="d" t-value="state.data"/>
+            <div class="o_zyra_cockpit_head">
+                <div class="o_zyra_cockpit_icon"/>
+                <div class="flex-grow-1">
+                    <div class="o_zyra_cockpit_eyebrow">ZYRA GARMENT · COCKPIT</div>
+                    <h1 class="o_zyra_cockpit_title" t-esc="d.title"/>
+                    <div class="o_zyra_cockpit_subtitle" t-esc="d.subtitle"/>
+                </div>
+                <div class="d-flex gap-2 flex-wrap justify-content-end">
+                    <span class="o_zyra_cockpit_chip">Data date · <t t-esc="d.data_date"/></span>
+                    <span class="o_zyra_cockpit_chip"><span t-att-class="'o_zyra_live_dot' + (state.live ? ' o_zyra_live_on' : '')"/> Live</span>
+                    <button class="o_zyra_cockpit_chip" t-on-click="present">Present</button>
+                    <button class="o_zyra_cockpit_chip" t-on-click="toggleShift"><t t-esc="state.shift === 'day' ? 'Day shift' : 'Night shift'"/></button>
+                </div>
+            </div>
+
+            <div class="o_zyra_cockpit_headline">
+                <t t-foreach="d.headline" t-as="part" t-key="part_index">
+                    <t t-if="cellKind(part) === 'text'" t-esc="part"/>
+                    <span t-else="" t-att-class="'o_zyra_hl_' + part.tone" t-esc="part.t"/>
+                </t>
+            </div>
+
+            <div class="o_zyra_kpis">
+                <div t-foreach="d.tiles" t-as="tile" t-key="tile.key" t-att-class="tileClass(tile)"
+                     t-att-title="tile.model ? 'Open the records' : ''" t-on-click="() => this.openTile(tile)">
+                    <div class="o_zyra_kpi_label" t-esc="tile.label"/>
+                    <div class="o_zyra_kpi_value" t-esc="fmt(tile)"/>
+                    <div t-if="tile.note" class="o_zyra_kpi_note" t-esc="tile.note"/>
+                </div>
+            </div>
+
+            <ul class="o_zyra_cockpit_tabs">
+                <li t-foreach="d.cockpits" t-as="c" t-key="c.key">
+                    <a href="#" t-att-class="c.key === d.key ? 'active' : ''"
+                       t-on-click.prevent="() => this.switchTo(c.key)" t-esc="c.title"/>
+                </li>
+            </ul>
+
+            <div class="o_zyra_cockpit_filters">
+                <div class="o_zyra_cockpit_seg">
+                    <t t-foreach="[[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, '12 months']]" t-as="p" t-key="p[0]">
+                        <button t-att-class="d.filters.days === p[0] ? 'active' : ''"
+                                t-on-click="() => this.setFilter('days', p[0])" t-esc="p[1]"/>
+                    </t>
+                </div>
+                <span class="o_zyra_cockpit_chip"><t t-esc="fmtDate(d.filters.date_from)"/> → <t t-esc="fmtDate(d.filters.date_to)"/></span>
+                <select class="o_zyra_cockpit_select" t-on-change="(ev) => this.setFilter('buyer_id', parseInt(ev.target.value) || false)">
+                    <option value="">All buyers and lines</option>
+                    <option t-foreach="d.filters.buyers" t-as="b" t-key="b.id" t-att-value="b.id"
+                            t-att-selected="b.id === d.filters.buyer_id" t-esc="b.name"/>
+                </select>
+                <select class="o_zyra_cockpit_select" t-on-change="(ev) => this.setFilter('business_model', ev.target.value || false)">
+                    <option value="">All business models</option>
+                    <option t-foreach="d.filters.business_models" t-as="m" t-key="m.key" t-att-value="m.key"
+                            t-att-selected="m.key === d.filters.business_model" t-esc="m.name"/>
+                </select>
+                <a href="#" class="ms-auto o_zyra_cockpit_reset" t-on-click.prevent="resetFilters">↺ Reset</a>
+            </div>
+
+            <div class="o_zyra_cockpit_panels">
+                <div class="o_zyra_cockpit_panel" t-foreach="d.panels" t-as="p" t-key="d.key + p.key">
+                    <div class="o_zyra_cockpit_panel_title" t-esc="p.title"/>
+
+                    <div t-if="p.type === 'chart'" class="o_zyra_cockpit_chart">
+                        <canvas t-att-data-panel="p.key"/>
+                    </div>
+
+                    <div t-elif="p.type === 'donut'" class="o_zyra_cockpit_donut">
+                        <div class="o_zyra_cockpit_donut_ring">
+                            <canvas t-att-data-panel="p.key"/>
+                            <div class="o_zyra_cockpit_donut_total" t-esc="p.total.toLocaleString()"/>
+                        </div>
+                        <ul class="o_zyra_cockpit_legend">
+                            <li t-foreach="p.segments" t-as="s" t-key="s_index">
+                                <span class="o_zyra_dot" t-att-style="'background:' + s.color"/>
+                                <t t-esc="s.label"/> <b t-esc="s.value.toLocaleString()"/>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div t-elif="p.type === 'hbars'" class="o_zyra_cockpit_hbars">
+                        <div t-if="!p.rows.length" class="o_zyra_cockpit_empty">Nothing to show.</div>
+                        <div class="o_zyra_hbar" t-foreach="p.rows" t-as="r" t-key="r_index">
+                            <span class="o_zyra_hbar_label" t-esc="r.label"/>
+                            <span class="o_zyra_hbar_track">
+                                <span t-att-class="'o_zyra_hbar_fill o_zyra_tone_' + r.tone" t-att-style="'width:' + r.width + '%'"/>
+                                <span class="o_zyra_hbar_text" t-att-style="'left:calc(' + r.width + '% + 6px)'" t-esc="r.text"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <t t-elif="p.type === 'table'">
+                        <div t-if="!p.rows.length" class="o_zyra_cockpit_empty">Nothing to show.</div>
+                        <table t-else="" class="o_zyra_cockpit_table">
+                            <thead><tr><th t-foreach="p.columns" t-as="col" t-key="col_index"
+                                           t-att-class="'text-' + col.align" t-esc="col.label"/></tr></thead>
+                            <tbody>
+                                <tr t-foreach="p.rows" t-as="r" t-key="r_index"
+                                    t-att-class="(r.tone === 'bad' ? 'o_zyra_row_bad' : '') + (p.model and r.id ? ' o_zyra_row_link' : '')"
+                                    t-on-click="() => this.openRecord(p.model, r.id)">
+                                    <td t-foreach="r.cells" t-as="cell" t-key="cell_index"
+                                        t-att-class="'text-' + p.columns[cell_index].align">
+                                        <t t-if="cellKind(cell) === 'pct'">
+                                            <span class="o_zyra_progress">
+                                                <span class="o_zyra_progress_track">
+                                                    <span t-att-class="'o_zyra_progress_fill o_zyra_tone_' + cell.tone"
+                                                          t-att-style="'width:' + Math.min(cell.pct, 100) + '%'"/>
+                                                </span>
+                                                <span><t t-esc="cell.pct"/>%</span>
+                                            </span>
+                                        </t>
+                                        <span t-elif="cellKind(cell) === 'badge'"
+                                              t-att-class="'o_zyra_badge o_zyra_badge_' + (cell.tone || 'muted')" t-esc="cell.badge"/>
+                                        <t t-else="" t-esc="cell"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

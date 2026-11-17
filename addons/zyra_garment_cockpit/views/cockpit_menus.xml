@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_garment_cockpit" model="ir.actions.client">
+        <field name="name">Cockpits</field>
+        <field name="tag">zyra_garment_cockpit</field>
+        <field name="params" eval="{'cockpit': 'pulse'}"/>
+    </record>
+    <record id="action_garment_cockpit_sewing" model="ir.actions.client">
+        <field name="name">Sewing Floor Cockpit</field>
+        <field name="tag">zyra_garment_cockpit</field>
+        <field name="params" eval="{'cockpit': 'sewing'}"/>
+    </record>
+    <menuitem id="menu_garment_cockpit" name="Cockpits" parent="zyra_garment_base.menu_garment_root"
+              action="action_garment_cockpit" sequence="5"/>
+    <menuitem id="menu_garment_cockpit_sewing" name="Sewing Floor Cockpit" parent="zyra_garment_base.menu_garment_sewing"
+              action="action_garment_cockpit_sewing" sequence="1"/>
+</odoo>

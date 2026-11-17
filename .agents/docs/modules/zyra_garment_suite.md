@@ -14,9 +14,8 @@ Not in scope: any business logic, views or data. Those stay in the area modules.
 ## Modules it installs
 zyra_garment_theme, zyra_garment_base, zyra_techpack, zyra_garment_costing, zyra_garment_merch,
 zyra_garment_materials, zyra_garment_cutting, zyra_garment_jobwork, zyra_garment_quality, zyra_garment_sewing,
-zyra_garment_wages, zyra_garment_shipping, zyra_garment_pnl, zyra_garment_portal, zyra_garment_connect.
-
-`zyra_garment_cockpit` is added to the manifest when `feat/cockpit` is merged.
+zyra_garment_wages, zyra_garment_shipping, zyra_garment_pnl, zyra_garment_portal, zyra_garment_connect,
+zyra_garment_cockpit.
 
 ## Changes outside this module
 - `zyra_garment_base`: `application` → False (the suite is the app); root menu `menu_garment_root` renamed
@@ -31,4 +30,4 @@ zyra_garment_wages, zyra_garment_shipping, zyra_garment_pnl, zyra_garment_portal
 None of its own.
 
 ## Open questions
-- Cockpit to be added to `depends` once merged.
+- None.
