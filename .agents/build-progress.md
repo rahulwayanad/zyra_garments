@@ -21,7 +21,7 @@ halfway" prompt.
 | 0 | repo, docs/screens, CLAUDE.md, theme installs | done (commit 7f9791c) |
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
-| 3 | materials, cutting, quality, shipping | cutting + materials **merged** (gate 238/238); shipping running; quality paused |
+| 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
 | 4 | sewing, jobwork | – |
 | 5 | wages, pnl, cockpit, portal, connect | – |
 
@@ -73,3 +73,6 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   Shipping agent started in cutting's slot (port 18104).
 - 14:15 materials done (41 tests; browser tour skipped: websocket-client missing from the venv) → merged 821078d;
   gate base..materials 238/238, clean. Quality still paused (launch blocked; waiting for Rahul's OK to retry).
+- 14:19 shipping done (43/43, demo on merch orders, final_passed soft-read) → merged 0fa3acf; gate base..shipping
+  (7 modules) 281/281, clean. Worktrees wt-cutting, wt-materials, wt-shipping removed (branches kept).
+  Wave 3 left: quality (paused at 39865c0; its launch was blocked, retry needs Rahul's OK).
