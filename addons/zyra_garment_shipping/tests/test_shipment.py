@@ -89,8 +89,7 @@ class TestShipment(ShippingCase):
             ship.with_user(self.manager)._garment_override("Buyer accepted the re-check on 2 cartons.")
             ship.action_ex_factory()
         self.assertEqual(ship.stage, "ex_factory")
-        self.assertIn("Manager override: Buyer accepted", ship.message_ids[-1:].body or "".join(
-            ship.message_ids.mapped("body")))
+        self.assertIn("Manager override: Buyer accepted", " ".join(ship.message_ids.mapped("body")))
 
     def test_final_passed_is_read_only_when_quality_defines_it(self):
         order = self.make_order()

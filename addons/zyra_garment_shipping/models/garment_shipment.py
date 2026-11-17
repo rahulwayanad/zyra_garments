@@ -164,7 +164,7 @@ class GarmentShipment(models.Model):
             holds = ship._final_inspection_holds()
             ship.hold_count = len(holds)
             ship.quality_warning = "\n".join(
-                _("Final inspection of %s has not passed: the shipment is blocked until a re-inspection "
+                ship.env._("Final inspection of %s has not passed: the shipment is blocked until a re-inspection "
                   "passes or a Factory Manager overrides.", o.name) for o in holds) or False
             lc_lines = ship.lc_id._shipment_warnings(ship._ship_date(), ship.value) if ship.lc_id else []
             short = ship._short_shipment_warning()
