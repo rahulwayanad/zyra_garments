@@ -198,6 +198,10 @@ class GarmentLcDrawing(models.Model):
         ("amount_positive", "CHECK(amount > 0)", "A drawing is above zero."),
     ]
 
+    @api.constrains("amount", "lc_id")
+    def _check_lc_limit(self):
+        self.mapped("lc_id")._check_drawn_within_tolerance()
+
     @api.model_create_multi
     def create(self, vals_list):
         drawings = super().create(vals_list)

@@ -162,6 +162,8 @@ class GarmentPackPlan(models.Model):
         for vals in vals_list:
             if vals.get("name", _("New")) == _("New"):
                 vals["name"] = self.env["ir.sequence"].next_by_code("garment.pack.plan") or _("New")
+            if vals.get("pack_kind", "assorted") != "solid":
+                vals.pop("pieces_per_carton", None)  # the sum of the ratio
         return super().create(vals_list)
 
     def unlink(self):
