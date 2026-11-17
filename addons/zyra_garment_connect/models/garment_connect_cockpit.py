@@ -19,7 +19,7 @@ class GarmentFirstSteps(models.TransientModel):
     _name = "garment.first.steps"
     _description = "Garment First Steps"
 
-    steps_done = fields.Integer(compute="_compute_steps")
+    steps_done = fields.Integer(string="Done", compute="_compute_steps")
     steps_total = fields.Integer(compute="_compute_steps")
     steps_label = fields.Char(string="Steps Done", compute="_compute_steps")
     steps_html = fields.Html(compute="_compute_steps", sanitize=False)

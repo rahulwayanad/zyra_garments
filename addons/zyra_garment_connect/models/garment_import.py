@@ -141,7 +141,7 @@ class GarmentImport(models.Model):
         """Record the row updates instead of creating: same roll no. + fabric, or same employee name."""
         if self.target == "rolls":
             return Model.search([("name", "=", vals["name"]), ("product_id", "=", vals["product_id"]),
-                                 ("company_id", "=", vals["company_id"])], limit=1)
+                                 ("company_id", "in", [vals["company_id"], False])], limit=1)
         if self.target == "rosters":
             return Model.search([("name", "=", vals["name"])], limit=1)
         return Model.browse()
