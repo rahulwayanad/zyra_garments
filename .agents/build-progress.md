@@ -22,7 +22,7 @@ halfway" prompt.
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
-| 4 | sewing, jobwork | – |
+| 4 | sewing, jobwork | agents running (14:46) |
 | 5 | wages, pnl, cockpit, portal, connect | – |
 
 ## Log
@@ -76,3 +76,6 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
 - 14:19 shipping done (43/43, demo on merch orders, final_passed soft-read) → merged 0fa3acf; gate base..shipping
   (7 modules) 281/281, clean. Worktrees wt-cutting, wt-materials, wt-shipping removed (branches kept).
   Wave 3 left: quality (paused at 39865c0; its launch was blocked, retry needs Rahul's OK).
+- 14:46 WAVE 4 START (Rahul via phone session, 14:37 "start next task"; session usage 23%). Worktrees wt-sewing
+  (feat/sewing, DB zyra_sewing, port 18105) and wt-jobwork (feat/jobwork, DB zyra_jobwork, port 18106) from main 04756c0.
+  14:47 stop job replaced by hard stop at 15:12 (segment ends 15:15). Quality still paused.
