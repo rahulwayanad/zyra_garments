@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app data-string="Garment" string="Garment" name="zyra_garment_base"
+                <app data-string="Garment Suite" string="Garment Suite" name="zyra_garment_base"
                      groups="zyra_garment_base.group_garment_admin">
                     <block title="Factory figures" name="garment_factory_figures">
                         <setting id="garment_working_time" string="Working time"
