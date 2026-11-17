@@ -10,6 +10,16 @@ from .common import ShippingCase
 @tagged("post_install", "-at_install", "zyra")
 class TestShipment(ShippingCase):
 
+    def setUp(self):
+        super().setUp()
+        # With zyra_garment_quality installed, an order without a passed final inspection blocks ex-factory.
+        # These tests are about shipping, so treat the final as passed, except in the tests about that rule.
+        Order = self.env["garment.order"]
+        if "final_passed" in Order._fields and self._testMethodName not in (
+                "test_final_passed_is_read_only_when_quality_defines_it",
+                "test_failed_final_inspection_blocks_shipment_until_manager_override"):
+            self.startPatcher(patch.object(type(Order), "_garment_shipping_final_ok", lambda self: True))
+
     def _packed_shipment(self, lc=None, final=False, cartons=None, **vals):
         order = self.make_order()
         plan = self.make_plan(order)
