@@ -23,7 +23,7 @@ halfway" prompt.
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | **merged** (gate 375/375) |
 | 4 | sewing, jobwork | **merged** (gate 339/339) |
-| 5 | wages, pnl, cockpit, portal, connect | wages, pnl, portal, connect **merged** (gate 395/395); cockpit running |
+| 5 | wages, pnl, cockpit, portal, connect | wages, pnl, portal, connect **merged** (gate 395/395); cockpit WIP 637addb |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
@@ -131,3 +131,10 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
 - ~17:00 usage limit hit (100%) during P&L; resumed 18:05 on Rahul's "next" (window reset 17:50).
 - 18:08 pnl done (9/9, screens 74/75, _garment_profit_summary for cockpit) → merged 61fb097; gate 14 modules 395/395,
   clean. wt-pnl removed. Stopped a leftover headless Chrome from the overnight techpack agent. Cockpit started.
+- 18:3x cockpit WIP 637addb on feat/cockpit (NOT merged, 14/14, clean install): garment.cockpit data layer for
+  cockpits 1, 5–17 (+21 present mode), one OWL client action, screen 1 complete, screen 5 filter bar. Left: own layouts
+  for cockpits 6–17 (now one generic layout), shift split, buyer filter beyond Factory Pulse, browser check.
+- STOP (full run ended; 18:42 job cancelled). No agents, no odoo runs, nothing scheduled. Not pushed.
+  Merged 14/15: base, techpack, costing, merch, materials, cutting, quality, shipping, sewing, jobwork, wages, pnl,
+  portal, connect — gate 395/395. Open for Rahul: portal vendor menu + Approvals page; connect webhook emits in
+  cutting/quality/shipping; browser check of all screens. NO BUILD UNTIL RAHUL SAYS.
