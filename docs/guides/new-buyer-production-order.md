@@ -126,6 +126,9 @@ smart button.
 
 ## Step 7 · What follows
 
+Every stage below, with the clicks, what Odoo records underneath and how Odoo MOs fit in, is explained in
+**`docs/guides/after-the-order.md`**.
+
 | Next | Where | Test script section |
 |---|---|---|
 | Lab dip, trim card, PP sample | Merchandising › Approvals / Samples | — |
