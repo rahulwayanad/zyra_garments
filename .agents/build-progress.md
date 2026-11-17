@@ -23,7 +23,7 @@ halfway" prompt.
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | **merged** (gate 375/375) |
 | 4 | sewing, jobwork | **merged** (gate 339/339) |
-| 5 | wages, pnl, cockpit, portal, connect | portal + connect **merged** (gate 339/339 with sewing); wages core WIP 302a4d5; pnl, cockpit left |
+| 5 | wages, pnl, cockpit, portal, connect | wages, pnl, portal, connect **merged** (gate 395/395); cockpit running |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
@@ -128,3 +128,6 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   rule's own tests) → gate 12 modules 375/375, clean. wt-quality removed. Wave 3 complete.
 - 16:49 wages done (11/11, screens 77–81 matched, approve step, cancel posted sheet) → merged f076c00; gate 13 modules
   386/386, clean. wt-wages removed. P&L started.
+- ~17:00 usage limit hit (100%) during P&L; resumed 18:05 on Rahul's "next" (window reset 17:50).
+- 18:08 pnl done (9/9, screens 74/75, _garment_profit_summary for cockpit) → merged 61fb097; gate 14 modules 395/395,
+  clean. wt-pnl removed. Stopped a leftover headless Chrome from the overnight techpack agent. Cockpit started.
