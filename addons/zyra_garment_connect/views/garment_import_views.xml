@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_garment_import_form" model="ir.ui.view">
+        <field name="name">garment.import.form</field>
+        <field name="model">garment.import</field>
+        <field name="arch" type="xml">
+            <form string="CSV Import">
+                <header>
+                    <button name="action_apply" string="Apply" type="object" class="btn-primary"
+                            invisible="state != 'checked'"/>
+                    <button name="action_dry_run" string="Dry Run" type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_dry_run" string="Dry Run Again" type="object"
+                            invisible="state != 'checked'"/>
+                    <button name="action_reset" string="Reset" type="object" invisible="state != 'checked'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Rows</span>
+                            <span class="o_zyra_kpi_value"><field name="row_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good">
+                            <span class="o_zyra_kpi_label">Create</span>
+                            <span class="o_zyra_kpi_value"><field name="create_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Update</span>
+                            <span class="o_zyra_kpi_value"><field name="update_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad">
+                            <span class="o_zyra_kpi_label">Skip</span>
+                            <span class="o_zyra_kpi_value"><field name="error_count"/></span>
+                        </div>
+                    </div>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="target" readonly="state != 'draft'"/>
+                            <field name="columns_hint"/>
+                        </group>
+                        <group>
+                            <field name="file" filename="filename" readonly="state == 'done'"/>
+                            <field name="filename" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" readonly="1">
+                        <list>
+                            <field name="row_no"/>
+                            <field name="data"/>
+                            <field name="status" widget="badge"
+                                   decoration-success="status in ('create', 'created')"
+                                   decoration-info="status in ('update', 'updated')"
+                                   decoration-danger="status == 'skip'"/>
+                            <field name="message"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_garment_import_list" model="ir.ui.view">
+        <field name="name">garment.import.list</field>
+        <field name="model">garment.import</field>
+        <field name="arch" type="xml">
+            <list string="CSV Imports">
+                <field name="name"/>
+                <field name="target"/>
+                <field name="filename"/>
+                <field name="row_count"/>
+                <field name="error_count"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_garment_import" model="ir.actions.act_window">
+        <field name="name">Import Jobs</field>
+        <field name="res_model">garment.import</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_garment_api_reference" model="ir.actions.act_url">
+        <field name="name">API Reference</field>
+        <field name="url">/api/garment/v1</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

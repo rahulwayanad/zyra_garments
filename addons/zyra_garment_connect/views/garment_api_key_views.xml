@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_garment_api_key_form" model="ir.ui.view">
+        <field name="name">garment.api.key.form</field>
+        <field name="model">garment.api.key</field>
+        <field name="arch" type="xml">
+            <form string="API Key">
+                <header>
+                    <button name="action_revoke" string="Revoke" type="object" invisible="state != 'active'"
+                            confirm="Revoke this key? Every system using it stops at once."/>
+                    <button name="action_activate" string="Activate" type="object" invisible="state != 'revoked'"/>
+                    <button name="action_rotate" string="Rotate" type="object"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Calls, 30 Days</span>
+                            <span class="o_zyra_kpi_value"><field name="calls_30d"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn">
+                            <span class="o_zyra_kpi_label">Refused</span>
+                            <span class="o_zyra_kpi_value"><field name="refused_30d"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Rate Limit</span>
+                            <span class="o_zyra_kpi_value"><field name="rate_limit_label"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Expires In</span>
+                            <span class="o_zyra_kpi_value"><field name="expires_in_days"/> d</span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="reference" readonly="1"/></div>
+                        <h1><field name="name" placeholder="e.g. Web shop integration"/></h1>
+                    </div>
+                    <group>
+                        <group string="Scopes">
+                            <field name="read_scopes" placeholder="styles, orders, rolls"/>
+                            <field name="post_scopes" placeholder="orders, rosters"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="user_id"/>
+                            <field name="key_prefix"/>
+                        </group>
+                        <group string="Limits">
+                            <field name="rate_limit"/>
+                            <field name="expiry_date"/>
+                            <field name="allowed_ips" placeholder="Any"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Call Log" name="calls">
+                            <field name="call_ids" readonly="1">
+                                <list limit="20">
+                                    <field name="create_date"/>
+                                    <field name="method"/>
+                                    <field name="path"/>
+                                    <field name="status" decoration-danger="status &gt;= 400"
+                                           decoration-success="status &lt; 300"/>
+                                    <field name="duration_ms"/>
+                                    <field name="ip"/>
+                                    <field name="error"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_garment_api_key_list" model="ir.ui.view">
+        <field name="name">garment.api.key.list</field>
+        <field name="model">garment.api.key</field>
+        <field name="arch" type="xml">
+            <list string="API Keys">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="read_scopes"/>
+                <field name="post_scopes"/>
+                <field name="rate_limit"/>
+                <field name="expiry_date"/>
+                <field name="key_prefix"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'"
+                       decoration-muted="state == 'revoked'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_garment_api_key" model="ir.actions.act_window">
+        <field name="name">API Keys</field>
+        <field name="res_model">garment.api.key</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create an API key for a web shop, buyer EDI or scanner app</p>
+            <p>Give each key only the scopes it needs. Use "Rotate" to get the secret: it is shown once.</p>
+        </field>
+    </record>
+
+    <record id="view_garment_api_call_list" model="ir.ui.view">
+        <field name="name">garment.api.call.list</field>
+        <field name="model">garment.api.call</field>
+        <field name="arch" type="xml">
+            <list string="API Calls" create="0" edit="0">
+                <field name="create_date"/>
+                <field name="key_id"/>
+                <field name="method"/>
+                <field name="path"/>
+                <field name="status" decoration-danger="status &gt;= 400"/>
+                <field name="duration_ms"/>
+                <field name="ip"/>
+                <field name="error"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_garment_api_call" model="ir.actions.act_window">
+        <field name="name">API Call Log</field>
+        <field name="res_model">garment.api.call</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <template id="api_reference_page" name="Garment API Reference">
+        <t t-call="web.layout">
+            <t t-set="title">Zyra Garment API v1</t>
+            <div class="container py-4" style="max-width: 960px;">
+                <h1>Zyra Garment API v1</h1>
+                <p>Base URL: <code t-esc="base_url"/>. Send <code>Authorization: Bearer &lt;key&gt;</code> on
+                    every call. Bodies and answers are JSON.</p>
+                <h3>Status codes</h3>
+                <table class="table table-sm">
+                    <tr><td>200 / 201</td><td>OK / created</td></tr>
+                    <tr><td>400</td><td>Bad JSON or bad parameter</td></tr>
+                    <tr><td>401</td><td>Missing, unknown, revoked or expired key</td></tr>
+                    <tr><td>403</td><td>No scope for this resource, IP not allowed, or no access right</td></tr>
+                    <tr><td>404</td><td>Unknown resource or record</td></tr>
+                    <tr><td>405</td><td>Method not allowed (resource is read-only)</td></tr>
+                    <tr><td>422</td><td>Business rule refused the data (message says why)</td></tr>
+                    <tr><td>429</td><td>Rate limit reached: wait a minute</td></tr>
+                </table>
+                <h3>Resources</h3>
+                <table class="table table-sm">
+                    <thead><tr><th>Resource</th><th>GET (read scope)</th><th>POST (post scope)</th>
+                        <th>Fields</th></tr></thead>
+                    <tr t-foreach="resources" t-as="res">
+                        <td><code t-esc="res[0]"/></td>
+                        <td><code>/<t t-esc="res[0]"/>?limit=80&amp;offset=0</code>,
+                            <code>/<t t-esc="res[0]"/>/&lt;id&gt;</code></td>
+                        <td><t t-if="res[0] in ('scans', 'rolls', 'rosters', 'orders')">yes</t>
+                            <t t-else="">-</t></td>
+                        <td><t t-esc="', '.join(res[2])"/></td>
+                    </tr>
+                </table>
+                <h3>POST bodies</h3>
+                <ul>
+                    <li><code>scans</code>: <code>{"payload": "&lt;coupon QR&gt;", "employee_id": 7, "pieces": 20,
+                        "rejected": 0}</code></li>
+                    <li><code>rolls</code>: <code>{"roll", "product", "dye_lot", "shade_group", "shrinkage_group",
+                        "width_cm", "gsm"}</code></li>
+                    <li><code>rosters</code>: <code>{"name", "job_title", "department", "work_email"}</code></li>
+                    <li><code>orders</code>: <code>{"buyer", "style", "buyer_po", "ex_factory_date",
+                        "business_model"}</code></li>
+                </ul>
+                <h3>Webhooks</h3>
+                <p>Events: order.confirmed, order.shipped, bundle.cut, bundle.scanned, final.failed,
+                    shipment.left. Header <code>X-Zyra-Signature: sha256=&lt;hex&gt;</code> is the HMAC-SHA256 of
+                    the raw body with the webhook secret. Failed deliveries are retried after 1, 5, 15 and 60
+                    minutes.</p>
+            </div>
+        </t>
+    </template>
+</odoo>
