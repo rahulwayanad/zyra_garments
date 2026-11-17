@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pnl_costing,pnl costing,model_garment_order_pnl,zyra_garment_base.group_garment_costing,1,1,1,0
+access_pnl_fm,pnl factory manager,model_garment_order_pnl,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_pnl_admin,pnl admin,model_garment_order_pnl,zyra_garment_base.group_garment_admin,1,1,1,1
+access_pnl_merch,pnl merchandiser,model_garment_order_pnl,zyra_garment_base.group_garment_merchandiser,1,0,0,0
+access_pnl_cost_costing,pnl cost costing,model_garment_order_pnl_cost,zyra_garment_base.group_garment_costing,1,1,1,1
+access_pnl_cost_fm,pnl cost fm,model_garment_order_pnl_cost,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_pnl_cost_admin,pnl cost admin,model_garment_order_pnl_cost,zyra_garment_base.group_garment_admin,1,1,1,1
+access_pnl_cost_merch,pnl cost merch,model_garment_order_pnl_cost,zyra_garment_base.group_garment_merchandiser,1,0,0,0
