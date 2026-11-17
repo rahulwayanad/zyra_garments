@@ -78,6 +78,13 @@
                 </header>
                 <sheet>
                     <h1><field name="name"/></h1>
+                    <div class="o_zyra_kpis">
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Operators</span><span class="o_zyra_kpi_value"><field name="operator_count"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good"><span class="o_zyra_kpi_label">Piece Earnings</span><span class="o_zyra_kpi_value"><field name="total_earnings"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Top-up</span><span class="o_zyra_kpi_value"><field name="total_topup"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Overtime</span><span class="o_zyra_kpi_value"><field name="total_overtime"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good"><span class="o_zyra_kpi_label">Net Payable</span><span class="o_zyra_kpi_value"><field name="total_net"/></span></div>
+                    </div>
                     <group>
                         <group>
                             <field name="line_id" readonly="state == 'posted'"/>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="demo_rate_card" model="garment.rate.card">
+        <field name="name">Standard Floor Card</field>
+        <field name="minute_value">1.8</field>
+        <field name="hours_per_day">8</field>
+        <field name="min_daily_wage">450</field>
+        <field name="incentive_threshold">80</field>
+        <field name="incentive_percent">10</field>
+    </record>
+    <record id="demo_wage_sheet" model="garment.wage.sheet">
+        <field name="rate_card_id" ref="demo_rate_card"/>
+        <field name="date_from" eval="(DateTime.today() - relativedelta(days=30)).strftime('%Y-%m-%d')"/>
+        <field name="date_to" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+    </record>
+    <function model="garment.wage.sheet" name="action_compute" eval="[[ref('demo_wage_sheet')]]"/>
+</odoo>

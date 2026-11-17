@@ -13,5 +13,6 @@
         "report/wage_slip.xml",
         "views/wage_views.xml",
     ],
+    "demo": ["demo/wages_demo.xml"],
     "installable": True,
 }
