@@ -17,7 +17,7 @@ class GarmentRateCard(models.Model):
     currency_id = fields.Many2one(related="company_id.currency_id")
     basis = fields.Selection([("sam", "Standard minute value")], default="sam", required=True)
     minute_value = fields.Monetary(string="Value of a Standard Minute", required=True, tracking=True,
-                                   digits=(16, 4), help="Money paid per earned (standard) minute.")
+                                   help="Money paid per earned (standard) minute.")
     hourly_full = fields.Monetary(string="Earnings per Hour at 100% Efficiency", compute="_compute_figures")
     hours_per_day = fields.Float(string="Hours per Day", default=8.0, required=True)
     min_daily_wage = fields.Monetary(string="Guaranteed Daily Minimum", required=True, tracking=True)

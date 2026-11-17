@@ -25,7 +25,7 @@
                     </div>
                     <div class="col-6">
                         <div><strong>Paid by:</strong> <span t-field="wl.paid_by"/></div>
-                        <div><strong>Efficiency:</strong> <t t-esc="'%.1f%%' % wl.efficiency"/></div>
+                        <div><strong>Efficiency:</strong> <t t-esc="'%.1f' % wl.efficiency"/>%</div>
                     </div>
                 </div>
                 <h5>Work done</h5>

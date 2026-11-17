@@ -37,7 +37,7 @@ class GarmentWageSheet(models.Model):
     payable_account_id = fields.Many2one("account.account", string="Wages Payable Account")
     move_id = fields.Many2one("account.move", string="Journal Entry", readonly=True, copy=False)
     scan_count = fields.Integer(string="Scans Paid", compute="_compute_scan_count")
-    move_count = fields.Integer(string="Journal Entry", compute="_compute_scan_count")
+    move_count = fields.Integer(string="Journal Entries", compute="_compute_scan_count")
     operator_count = fields.Integer(string="Operators", compute="_compute_totals", store=True)
     below_minimum_count = fields.Integer(string="Below Minimum", compute="_compute_totals", store=True)
     total_pieces = fields.Integer(string="Pieces", compute="_compute_totals", store=True)
@@ -141,7 +141,8 @@ class GarmentWageSheet(models.Model):
                                              "debit": 0.0, "credit": wl.net_payable, "partner_id": partner}))
             if not lines:
                 raise UserError(self.env._("Nothing to pay on this wage sheet."))
-            move = self.env["account.move"].create({
+            # wages clerks post without accounting rights: the entry is checked above, written as superuser
+            move = self.env["account.move"].sudo().create({
                 "move_type": "entry", "journal_id": sheet.journal_id.id, "date": sheet.date_to,
                 "ref": "%s · %s" % (sheet.name, sheet.period_label), "line_ids": lines,
             })
@@ -157,13 +158,13 @@ class GarmentWageSheet(models.Model):
         for sheet in self:
             if sheet.state != "posted":
                 raise UserError(self.env._("Only a posted wage sheet can be cancelled this way."))
-            reversal = sheet.move_id._reverse_moves(
-                [{"ref": self.env._("Reversal of %s", sheet.move_id.name), "date": fields.Date.context_today(sheet)}],
+            reversal = sheet.move_id.sudo()._reverse_moves(
+                [{"ref": self.env._("Reversal of %s", sheet.move_id.sudo().name), "date": fields.Date.context_today(sheet)}],
                 cancel=True)
             sheet.line_ids.scan_ids.sudo().write({"wage_line_id": False})
             sheet.state = "cancel"
             sheet.message_post(body=self.env._("Cancelled: journal entry %(move)s reversed by %(rev)s; its scans are "
-                                               "free again.", move=sheet.move_id.name, rev=reversal.name))
+                                               "free again.", move=sheet.move_id.sudo().name, rev=reversal.name))
         return True
 
     def action_reset(self):
@@ -227,8 +228,8 @@ class GarmentWageSheet(models.Model):
         home = {emp: lines[i % 3] for i, emp in enumerate(employees)}
         stars = set(employees[2::4])  # a few fast operators earn above the minimum
         line2_team = [e for e in employees if home[e] == lines[1]]
-        chunks = [coupons[: len(coupons) * 3 // 8], coupons[len(coupons) * 3 // 8: len(coupons) * 6 // 8],
-                  coupons[len(coupons) * 6 // 8:]]
+        cut1, cut2 = len(coupons) * 3 // 10, len(coupons) * 6 // 10
+        chunks = [coupons[:cut1], coupons[cut1:cut2], coupons[cut2:]]
         Scan = self.env["garment.scan"]
         for week_start, chunk, team in zip(weeks, chunks, [employees, employees, line2_team]):
             days = [week_start + timedelta(days=d) for d in range(6) if week_start + timedelta(days=d) <= today]
