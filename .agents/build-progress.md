@@ -22,7 +22,7 @@ halfway" prompt.
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
-| 4 | sewing, jobwork | agents running (14:46) |
+| 4 | sewing, jobwork | jobwork **merged** (gate 292/292); sewing core on branch, floor screens left |
 | 5 | wages, pnl, cockpit, portal, connect | – |
 
 ## Log
@@ -81,3 +81,10 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   14:47 stop job replaced by hard stop at 15:12 (segment ends 15:15). Quality still paused.
 - 14:55 jobwork done (11/11; demo orders not linked to a production order: merch demo has no xml ids) → merged
   f3d75d0; gate 8 modules 292/292, clean. wt-jobwork removed (branch kept). Sewing still running.
+- 15:05 sewing WIP 31488d6 (feat/sewing, NOT merged): core done, 8/8 tests, clean install — garment.line wraps
+  mrp.workcenter, bulletin + line balancing wizard, scans with offline sync batch, 'sewn' progress, daily summary and
+  hourly board methods, demo. Not done: client actions for screens 3 (planning board), 4 (scan station with offline
+  queue), 56 (line TV board), 58 (daily summary); screens 54/55 not laid out like the images yet.
+- 15:05 STOP: segment closed early (no agents running, no odoo runs left, 15:12 job cancelled). Main 8 modules gated
+  292/292. Left: quality (paused 39865c0, launch blocked), sewing floor screens, then wave 5.
+  NO BUILD UNTIL RAHUL SAYS. No scheduled jobs.
