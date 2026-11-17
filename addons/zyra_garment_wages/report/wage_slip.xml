@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_wage_slip" model="ir.actions.report">
+        <field name="name">Wage Slips</field>
+        <field name="model">garment.wage.sheet</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_wages.report_wage_slip</field>
+        <field name="report_file">zyra_garment_wages.report_wage_slip</field>
+        <field name="binding_model_id" ref="model_garment_wage_sheet"/>
+    </record>
+    <template id="report_wage_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="sheet">
+                <t t-foreach="sheet.line_ids" t-as="wl">
+                    <t t-call="web.external_layout">
+                        <t t-set="o" t-value="sheet"/>
+                        <div class="page">
+                            <h3>Wage Slip · <span t-field="wl.employee_id"/></h3>
+                            <p><span t-field="sheet.name"/> · <span t-field="sheet.line_id"/> ·
+                                <span t-field="sheet.date_from"/> – <span t-field="sheet.date_to"/></p>
+                            <table class="table table-sm">
+                                <tr><td>Pieces</td><td class="text-end"><span t-field="wl.pieces"/></td></tr>
+                                <tr><td>Minutes Earned</td><td class="text-end"><span t-field="wl.minutes_earned"/></td></tr>
+                                <tr><td>Days Worked</td><td class="text-end"><span t-field="wl.days"/></td></tr>
+                                <tr><td>Efficiency %</td><td class="text-end"><span t-field="wl.efficiency"/></td></tr>
+                                <tr><td>Piece Earnings</td><td class="text-end"><span t-field="wl.piece_earnings"/></td></tr>
+                                <tr><td>Top-up to Minimum</td><td class="text-end"><span t-field="wl.topup"/></td></tr>
+                                <tr><td>Overtime</td><td class="text-end"><span t-field="wl.overtime_pay"/></td></tr>
+                                <tr><td>Incentive</td><td class="text-end"><span t-field="wl.incentive"/></td></tr>
+                                <tr><td>Deduction</td><td class="text-end"><span t-field="wl.deduction"/></td></tr>
+                                <tr class="fw-bold"><td>Net Payable</td><td class="text-end"><span t-field="wl.net_payable"/></td></tr>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_garment_rate_card_list" model="ir.ui.view">
+        <field name="name">garment.rate.card.list</field>
+        <field name="model">garment.rate.card</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="minute_value"/>
+                <field name="hourly_full"/>
+                <field name="min_daily_wage"/>
+                <field name="incentive_threshold"/>
+                <field name="bulletin_count"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_garment_rate_card_form" model="ir.ui.view">
+        <field name="name">garment.rate.card.form</field>
+        <field name="model">garment.rate.card</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <h1><field name="name"/></h1>
+                    <group>
+                        <group>
+                            <field name="minute_value"/>
+                            <field name="hourly_full"/>
+                            <field name="hours_per_day"/>
+                            <field name="min_daily_wage"/>
+                        </group>
+                        <group>
+                            <field name="overtime_multiplier"/>
+                            <field name="incentive_threshold"/>
+                            <field name="incentive_percent"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="bulletin_ids"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_garment_wage_sheet_list" model="ir.ui.view">
+        <field name="name">garment.wage.sheet.list</field>
+        <field name="model">garment.wage.sheet</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="line_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="operator_count"/>
+                <field name="total_pieces"/>
+                <field name="total_net" sum="Total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state == 'posted'"
+                       decoration-info="state == 'computed'"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_garment_wage_sheet_form" model="ir.ui.view">
+        <field name="name">garment.wage.sheet.form</field>
+        <field name="model">garment.wage.sheet</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" type="object" string="Compute from Scans" class="btn-primary"
+                            invisible="state not in ('draft', 'computed')"/>
+                    <button name="action_post" type="object" string="Post" class="btn-primary"
+                            invisible="state != 'computed'"/>
+                    <button name="action_reset" type="object" string="Reset to Draft"
+                            invisible="state != 'computed'"/>
+                    <button name="%(zyra_garment_wages.action_report_wage_slip)d" type="action"
+                            string="Print Wage Slips" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,computed,posted"/>
+                </header>
+                <sheet>
+                    <h1><field name="name"/></h1>
+                    <group>
+                        <group>
+                            <field name="line_id" readonly="state == 'posted'"/>
+                            <field name="rate_card_id" readonly="state == 'posted'"/>
+                            <field name="date_from" readonly="state == 'posted'"/>
+                            <field name="date_to" readonly="state == 'posted'"/>
+                        </group>
+                        <group>
+                            <field name="journal_id" readonly="state == 'posted'"/>
+                            <field name="expense_account_id" readonly="state == 'posted'"/>
+                            <field name="payable_account_id" readonly="state == 'posted'"/>
+                            <field name="move_id"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" readonly="state == 'posted'">
+                        <list editable="bottom" create="0">
+                            <field name="employee_id" readonly="1"/>
+                            <field name="pieces"/>
+                            <field name="minutes_earned"/>
+                            <field name="days"/>
+                            <field name="efficiency"/>
+                            <field name="piece_earnings"/>
+                            <field name="topup"/>
+                            <field name="overtime_hours"/>
+                            <field name="overtime_pay"/>
+                            <field name="incentive"/>
+                            <field name="deduction"/>
+                            <field name="net_payable" sum="Total"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                    <group class="oe_subtotal_footer">
+                        <field name="total_earnings"/>
+                        <field name="total_topup"/>
+                        <field name="total_overtime"/>
+                        <field name="total_incentive"/>
+                        <field name="total_net"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_garment_wage_sheet" model="ir.actions.act_window">
+        <field name="name">Wage Sheets</field>
+        <field name="res_model">garment.wage.sheet</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_garment_rate_card" model="ir.actions.act_window">
+        <field name="name">Rate Cards</field>
+        <field name="res_model">garment.rate.card</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_garment_wage_sheet" parent="zyra_garment_base.menu_garment_wages"
+              action="action_garment_wage_sheet" sequence="10"/>
+    <menuitem id="menu_garment_rate_card" parent="zyra_garment_base.menu_garment_wages"
+              action="action_garment_rate_card" sequence="20"/>
+</odoo>
