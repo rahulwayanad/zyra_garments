@@ -165,3 +165,6 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   buyers, 0 Odoo sample partners or demo users; a second run is refused. Usage in `tools/README.md`.
 - 17 Nov evening: feat/cockpit merged into main (aabf23c, log conflict kept both entries). Final gate on fresh
   zyra_gate via zyra_garment_suite: 15 modules + suite, 431/431, clean. Pushed main to origin (Rahul's request).
+- 17 Nov 19:5x (Rahul, direct request "insert garments demo data to db"): demo loaded into the `garments` DB with
+  Odoo's `force_demo` (all installed modules incl. standard Odoo apps; 0 demo failures, 0 warnings). Full-sale story
+  = PO/2026/0011. Backup before: ~/odoo-backups/garments_before_demo_20261117_1951.dump (+ filestore .tgz).
