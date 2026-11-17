@@ -79,3 +79,5 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
 - 14:46 WAVE 4 START (Rahul via phone session, 14:37 "start next task"; session usage 23%). Worktrees wt-sewing
   (feat/sewing, DB zyra_sewing, port 18105) and wt-jobwork (feat/jobwork, DB zyra_jobwork, port 18106) from main 04756c0.
   14:47 stop job replaced by hard stop at 15:12 (segment ends 15:15). Quality still paused.
+- 14:55 jobwork done (11/11; demo orders not linked to a production order: merch demo has no xml ids) → merged
+  f3d75d0; gate 8 modules 292/292, clean. wt-jobwork removed (branch kept). Sewing still running.
