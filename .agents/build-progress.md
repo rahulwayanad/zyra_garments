@@ -149,3 +149,7 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   Walkthrough `.agents/docs/full-sale-walkthrough.md`. Gaps filed: docs/requests/zyra_garment_shipping.md (Post to
   Stock re-consumes fabric from other orders' rolls incl. a held roll — high; SO stays to deliver/invoice; invoice
   lines untagged), zyra_garment_pnl.md (MO trims not read), zyra_garment_merch.md (freight in planned other on FOB).
+- 17 Nov 14:2x (Rahul: "only garments related demo data"): `tools/load_garment_demo.py` loads the demo of every
+  installed zyra_* module (dependency order, Odoo's own loader) into a DB created without demo — no Odoo sample
+  data. Proved on fresh `zyra_demo`: base demo off, 15 zyra modules with demo, 11 orders / 6 styles / 4 invented
+  buyers, 0 Odoo sample partners or demo users; a second run is refused. Usage in `tools/README.md`.
