@@ -126,3 +126,5 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
 - 16:33 quality done (36 tests, tour skips without websocket-client) → merged; first gate 5 errors in shipping tests
   (quality's final_passed blocked test orders). Integration fix in shipping tests (patch final check except the
   rule's own tests) → gate 12 modules 375/375, clean. wt-quality removed. Wave 3 complete.
+- 16:49 wages done (11/11, screens 77–81 matched, approve step, cancel posted sheet) → merged f076c00; gate 13 modules
+  386/386, clean. wt-wages removed. P&L started.
