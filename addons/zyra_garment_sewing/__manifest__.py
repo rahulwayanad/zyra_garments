@@ -17,6 +17,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/zyra_garment_sewing_security.xml",
         "views/garment_line_views.xml",
         "views/garment_bulletin_views.xml",
         "views/garment_scan_views.xml",

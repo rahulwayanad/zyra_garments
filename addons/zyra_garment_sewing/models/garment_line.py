@@ -14,7 +14,7 @@ class GarmentLine(models.Model):
     workcenter_id = fields.Many2one("mrp.workcenter", string="Work Centre", required=True, ondelete="cascade",
                                     index=True)
     supervisor_id = fields.Many2one("hr.employee", string="Supervisor")
-    employee_ids = fields.Many2many("hr.employee", string="Operators")
+    employee_ids = fields.Many2many("hr.employee", string="Operator List")
     operator_count = fields.Integer(string="Operators", default=20,
                                     help="Operators normally on the line (used when no operator list is kept).")
     machine_count = fields.Integer(string="Machines", default=22)
@@ -35,7 +35,7 @@ class GarmentLine(models.Model):
     def _compute_target(self):
         for line in self:
             sam = line.current_bulletin_id.total_sam
-            line.target_per_hour = int(line.operator_count * 60 * line.target_efficiency / 100 / sam) if sam else 0
+            line.target_per_hour = int(round(line.operator_count * 60 * line.target_efficiency / 100 / sam, 6)) if sam else 0
 
     @api.model
     def _garment_from_workcenter(self, workcenter):

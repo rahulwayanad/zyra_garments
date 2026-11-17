@@ -51,8 +51,8 @@ class GarmentLineBalancing(models.TransientModel):
         allocated = sum(alloc)
         return {
             "pitch": pitch,
-            "target": int(operators * 60 / total),
-            "balanced": int(60 / cycles[neck]),
+            "target": int(round(operators * 60 / total, 6)),
+            "balanced": int(round(60 / cycles[neck], 6)),
             "loss": round((1 - total / (allocated * cycles[neck])) * 100, 1),
             "alloc": alloc, "cycles": cycles, "bottleneck": neck, "allocated": allocated,
         }
@@ -70,7 +70,7 @@ class GarmentLineBalancing(models.TransientModel):
             wiz.bottleneck = lines[res["bottleneck"]].name if res["bottleneck"] >= 0 else False
             wiz.station_ids = [Command.clear()] + [Command.create({
                 "name": line.name, "sam": line.sam, "operators": res["alloc"][i], "cycle": res["cycles"][i],
-                "output": int(60 / res["cycles"][i]) if res["cycles"][i] else 0,
+                "output": int(round(60 / res["cycles"][i], 6)) if res["cycles"][i] else 0,
                 "is_bottleneck": i == res["bottleneck"]}) for i, line in enumerate(lines)] if res["alloc"] else \
                 [Command.clear()]
 

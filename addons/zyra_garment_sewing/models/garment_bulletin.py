@@ -75,4 +75,4 @@ class GarmentBulletinLine(models.Model):
     @api.depends("sam")
     def _compute_target(self):
         for line in self:
-            line.target_per_hour = int(60 / line.sam) if line.sam else 0
+            line.target_per_hour = int(round(60 / line.sam, 6)) if line.sam else 0

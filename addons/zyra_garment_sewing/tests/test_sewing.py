@@ -52,9 +52,10 @@ class TestSewing(CuttingCase):
         self.assertEqual(bulletin.operation_count, 2)
         self.assertAlmostEqual(bulletin.total_sam, 1.2)
         self.assertEqual(bulletin.line_ids.sorted("sequence")[0].target_per_hour, 150)  # 60 / 0.4
-        wiz = self.env["garment.line.balancing"].create({"bulletin_id": bulletin.id, "operators": 3,
+        wiz = self.env["garment.line.balancing"].create({"bulletin_id": bulletin.id, "operators": 2,
                                                          "line_id": self.sew_line.id})
-        self.assertEqual(wiz.target_output, 150)
+        self.assertEqual(wiz.target_output, 100)  # 2 × 60 ÷ 1.2
+        self.assertEqual(wiz.balanced_output, 75)  # 60 ÷ 0.8
         self.assertEqual(wiz.bottleneck, "Attach sleeves")
         self.assertEqual(len(wiz.station_ids), 2)
         wiz.action_apply()

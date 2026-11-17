@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_garment_bulletin_company" model="ir.rule">
+        <field name="name">Bulletin: multi-company</field>
+        <field name="model_id" ref="model_garment_bulletin"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_garment_scan_company" model="ir.rule">
+        <field name="name">Scan: multi-company</field>
+        <field name="model_id" ref="model_garment_scan"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>
