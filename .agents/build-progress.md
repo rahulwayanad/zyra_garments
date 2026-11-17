@@ -120,3 +120,6 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   floor sheet from sewing demo scans (all operators on minimum top-up: demo pieces too low), KPI tiles on sheet form.
   Left: match screens 77–81 to images (not opened yet), richer demo so piece earnings exceed the minimum.
   STOP: no agents, no odoo runs, nothing scheduled. Not pushed. NO BUILD UNTIL RAHUL SAYS.
+- 16:27 FULL RUN (Rahul via phone: "Now, anyway"; 80% cap lifted for this run only). Hard stop job 18:42 (ends 18:45).
+  Wages resumed (screens 77–81, richer demo). Quality launched (this time it was allowed). P&L after wages merges
+  (depends on wages), cockpit after P&L. Portal fixes untouched. No push.
