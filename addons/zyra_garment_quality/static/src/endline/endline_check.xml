@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_quality.EndlineCheck">
+        <div class="o_zyra_endline o_action">
+            <div class="o_zyra_el_frame">
+                <div class="o_zyra_el_head">
+                    <div class="o_zyra_el_logo"/>
+                    <div class="o_zyra_el_titles">
+                        <div class="o_zyra_el_title">
+                            End-line check<t t-if="state.data"> · <t t-esc="state.data.line.name.split(' · ')[0]"/></t>
+                        </div>
+                        <div class="o_zyra_el_sub">
+                            Tap where, tap what · each piece is recorded
+                            <t t-if="state.data and state.data.order"> · <t t-esc="state.data.order.name"/></t>
+                        </div>
+                    </div>
+                    <button t-if="state.data and !initialLine" class="btn btn-link o_zyra_el_change" t-on-click="backToLines">Change line</button>
+                    <span t-if="state.online" class="o_zyra_el_pill o_zyra_el_pill_on">● Online</span>
+                    <span t-else="" class="o_zyra_el_pill o_zyra_el_pill_off">● Offline</span>
+                </div>
+
+                <!-- Line picker -->
+                <div t-if="!state.data" class="o_zyra_el_lines">
+                    <div class="o_zyra_el_caption">Which line are you checking?</div>
+                    <div t-if="!state.lines.length" class="text-muted">No sewing line has an open production order.</div>
+                    <button t-foreach="state.lines" t-as="line" t-key="line.id"
+                            class="o_zyra_el_btn o_zyra_el_line_btn" t-on-click="() => this.openLine(line.id)">
+                        <span t-esc="line.name"/>
+                        <small t-if="line.order" class="d-block text-muted" t-esc="line.order"/>
+                    </button>
+                </div>
+
+                <div t-if="state.data" class="o_zyra_el_body">
+                    <div class="o_zyra_el_card o_zyra_el_garment">
+                        <svg viewBox="0 0 200 200" class="o_zyra_el_svg">
+                            <polygon t-attf-class="o_zyra_el_zone #{state.position == 'left_sleeve' ? 'o_sel' : ''}"
+                                     points="72,42 40,58 22,92 52,104 64,82" t-on-click="() => this.selectPosition('left_sleeve')"/>
+                            <polygon t-attf-class="o_zyra_el_zone #{state.position == 'right_sleeve' ? 'o_sel' : ''}"
+                                     points="128,42 160,58 178,92 148,104 136,82" t-on-click="() => this.selectPosition('right_sleeve')"/>
+                            <path t-attf-class="o_zyra_el_zone #{state.position == 'collar' ? 'o_sel' : ''}"
+                                  d="M72,42 Q100,62 128,42 L120,38 Q100,52 80,38 Z" t-on-click="() => this.selectPosition('collar')"/>
+                            <polygon t-attf-class="o_zyra_el_zone #{state.position == 'front_left' ? 'o_sel' : ''}"
+                                     points="72,42 100,58 100,160 64,160 64,82" t-on-click="() => this.selectPosition('front_left')"/>
+                            <polygon t-attf-class="o_zyra_el_zone #{state.position == 'front_right' ? 'o_sel' : ''}"
+                                     points="128,42 100,58 100,160 136,160 136,82" t-on-click="() => this.selectPosition('front_right')"/>
+                            <rect t-attf-class="o_zyra_el_zone #{state.position == 'hem' ? 'o_sel' : ''}"
+                                  x="64" y="160" width="72" height="12" t-on-click="() => this.selectPosition('hem')"/>
+                        </svg>
+                        <div class="o_zyra_el_hint">Tap where the defect is</div>
+                    </div>
+
+                    <div class="o_zyra_el_pick">
+                        <div class="o_zyra_el_caption">Where</div>
+                        <div class="o_zyra_el_grid">
+                            <button t-foreach="state.data.positions" t-as="pos" t-key="pos.key"
+                                    t-attf-class="o_zyra_el_btn #{state.position == pos.key ? 'o_zyra_el_where_sel' : ''}"
+                                    t-att-data-position="pos.key"
+                                    t-on-click="() => this.selectPosition(pos.key)" t-esc="pos.label"/>
+                        </div>
+                        <div class="o_zyra_el_caption">What</div>
+                        <div class="o_zyra_el_grid">
+                            <button t-foreach="state.data.defects" t-as="d" t-key="d.id"
+                                    t-attf-class="o_zyra_el_btn #{state.defectId == d.id ? 'o_zyra_el_what_sel' : ''}"
+                                    t-att-data-defect="d.id"
+                                    t-on-click="() => this.selectDefect(d.id)" t-esc="d.label"/>
+                        </div>
+                        <div class="o_zyra_el_grid o_zyra_el_actions">
+                            <button class="o_zyra_el_btn o_zyra_el_good" t-att-disabled="state.busy"
+                                    t-on-click="() => this.record(true)">✓ Good piece</button>
+                            <button class="o_zyra_el_btn o_zyra_el_record" t-att-disabled="!canRecord"
+                                    t-on-click="() => this.record(false)">Record defect</button>
+                        </div>
+                    </div>
+
+                    <div class="o_zyra_el_stats">
+                        <div t-attf-class="o_zyra_el_card o_zyra_el_stat #{state.flash == 'good' ? 'o_flash_good' : ''} #{state.flash == 'defect' ? 'o_flash_bad' : ''}">
+                            <div class="o_zyra_el_stat_label">Checked this hour</div>
+                            <div class="o_zyra_el_stat_value o_zyra_el_hour_checked" t-esc="state.data.stats.hour_checked"/>
+                        </div>
+                        <div class="o_zyra_el_card o_zyra_el_stat">
+                            <div class="o_zyra_el_stat_label">DHU this hour</div>
+                            <div t-attf-class="o_zyra_el_stat_value #{dhuClass(state.data.stats.hour_dhu)}"
+                                 t-esc="fmt(state.data.stats.hour_dhu)"/>
+                        </div>
+                        <div class="o_zyra_el_card o_zyra_el_stat">
+                            <div class="o_zyra_el_stat_label">DHU today</div>
+                            <div t-attf-class="o_zyra_el_stat_value #{dhuClass(state.data.stats.today_dhu)}"
+                                 t-esc="fmt(state.data.stats.today_dhu)"/>
+                            <div class="o_zyra_el_stat_note">limit <t t-esc="fmt(state.data.stats.limit)"/></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inline, end-line and final inspections (a failed final on the late order), today's tablet session
+         and the CAPAs (see models/garment_quality_demo.py) -->
+    <function model="garment.quality.demo" name="_load_demo"/>
+</odoo>

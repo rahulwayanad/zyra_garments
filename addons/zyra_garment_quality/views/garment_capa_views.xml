@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_capa_view_list" model="ir.ui.view">
+        <field name="name">garment.capa.list</field>
+        <field name="model">garment.capa</field>
+        <field name="arch" type="xml">
+            <list string="Corrective Actions" sample="1">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="source"/>
+                <field name="raised_from" string="Raised From"/>
+                <field name="occurrences"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="due_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'open'" decoration-warning="state == 'in_progress'"
+                       decoration-success="state in ('verified', 'closed')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_capa_view_search" model="ir.ui.view">
+        <field name="name">garment.capa.search</field>
+        <field name="model">garment.capa</field>
+        <field name="arch" type="xml">
+            <search string="Corrective Actions">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="defect_id"/>
+                <field name="style_id"/>
+                <field name="owner_id"/>
+                <filter name="not_closed" string="Not Closed" domain="[('state', '!=', 'closed')]"/>
+                <filter name="my_capas" string="My CAPAs" domain="[('owner_id', '=', uid)]"/>
+                <filter name="auto_raised" string="Raised Automatically" domain="[('auto_raised', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_defect" string="Defect" context="{'group_by': 'defect_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="garment_capa_view_kanban" model="ir.ui.view">
+        <field name="name">garment.capa.kanban</field>
+        <field name="model">garment.capa</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false" sample="1">
+                <field name="state"/>
+                <t t-name="card">
+                    <main>
+                        <field name="name" class="text-muted small"/>
+                        <field name="title" class="fw-bold"/>
+                        <div class="small"><field name="raised_from"/></div>
+                    </main>
+                    <footer>
+                        <span class="small"><field name="occurrences"/> × · due <field name="due_date"/></span>
+                        <field name="owner_id" widget="many2one_avatar_user" class="ms-auto"/>
+                    </footer>
+                </t>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Corrective action (screen 65) -->
+    <record id="garment_capa_view_form" model="ir.ui.view">
+        <field name="name">garment.capa.form</field>
+        <field name="model">garment.capa</field>
+        <field name="arch" type="xml">
+            <form string="Corrective Action">
+                <header>
+                    <button name="action_start" type="object" string="Start" class="btn-primary" invisible="state != 'open'"/>
+                    <button name="action_verify" type="object" string="Mark Verified" invisible="state != 'in_progress'"/>
+                    <button name="action_close" type="object" string="Close" invisible="state not in ('in_progress', 'verified')"/>
+                    <button name="action_reopen" type="object" string="Reopen" invisible="state != 'closed'"/>
+                    <button name="action_print_report" type="object" string="Print CAPA Report"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="company_id" invisible="1"/>
+                    <field name="due_date" invisible="1"/>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi o_zyra_kpi_bad">
+                            <span class="o_zyra_kpi_label">Occurrences</span>
+                            <span class="o_zyra_kpi_value"><field name="occurrences" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text">
+                            <span class="o_zyra_kpi_label">Source</span>
+                            <span class="o_zyra_kpi_value"><field name="source" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not due_date or due_in_days &gt;= 0 or state in ('verified', 'closed')">
+                            <span class="o_zyra_kpi_label">Due in</span>
+                            <span class="o_zyra_kpi_value"><field name="due_in_days"/> d</span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not due_date or due_in_days &lt; 0 or due_in_days &gt; 3 or state in ('verified', 'closed')">
+                            <span class="o_zyra_kpi_label">Due in</span>
+                            <span class="o_zyra_kpi_value"><field name="due_in_days"/> d</span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="not due_date or (due_in_days &lt;= 3 and state not in ('verified', 'closed'))">
+                            <span class="o_zyra_kpi_label">Due in</span>
+                            <span class="o_zyra_kpi_value"><field name="due_in_days"/> d</span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Lines affected</span>
+                            <span class="o_zyra_kpi_value"><field name="lines_affected"/></span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="title" placeholder="What goes wrong, where"/></h1>
+                    </div>
+                    <group>
+                        <group string="Source" name="source">
+                            <label for="raised_from"/>
+                            <div>
+                                <button name="action_view_inspections" type="object" class="btn-link p-0">
+                                    <field name="raised_from"/>
+                                </button>
+                            </div>
+                            <field name="source"/>
+                            <field name="defect_label" string="Defect" invisible="not defect_id"/>
+                            <field name="defect_id" options="{'no_create': True}"/>
+                            <field name="position"/>
+                            <field name="line_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                            <field name="style_id" options="{'no_create': True}"/>
+                            <field name="order_id" options="{'no_create': True}"/>
+                            <field name="first_seen"/>
+                            <field name="occurrences_label" string="Occurrences"/>
+                            <field name="occurrences" invisible="1"/>
+                            <field name="occurrence_days" invisible="1"/>
+                        </group>
+                        <group string="Action" name="action">
+                            <field name="root_cause"/>
+                            <field name="action"/>
+                            <field name="owner_id" widget="many2one_avatar_user"/>
+                            <field name="due_date" string="Due"/>
+                            <field name="verification"/>
+                            <field name="date_closed" invisible="not date_closed"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_capa" model="ir.actions.act_window">
+        <field name="name">Corrective Actions</field>
+        <field name="res_model">garment.capa</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="garment_capa_view_search"/>
+        <field name="context">{'search_default_not_closed': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No corrective action open</p>
+            <p>A CAPA is raised by itself when the same defect repeats on a line, or from an inspection.</p>
+        </field>
+    </record>
+</odoo>

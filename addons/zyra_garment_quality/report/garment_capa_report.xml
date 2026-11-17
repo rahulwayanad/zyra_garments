@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_capa">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="mb-0">Corrective Action <t t-esc="o.name"/></h2>
+                        <div class="text-muted mb-3"><t t-esc="o.title"/></div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h5>Source</h5>
+                                <div><strong>Raised from:</strong> <t t-esc="o.raised_from"/></div>
+                                <div><strong>Defect:</strong> <t t-esc="o.defect_label"/></div>
+                                <div><strong>Style:</strong> <t t-esc="o.style_id.display_name or ''"/></div>
+                                <div><strong>First seen:</strong> <span t-field="o.first_seen"/></div>
+                                <div><strong>Occurrences:</strong> <t t-esc="o.occurrences_label"/></div>
+                            </div>
+                            <div class="col-6">
+                                <h5>Action</h5>
+                                <div><strong>Root cause:</strong> <span t-field="o.root_cause"/></div>
+                                <div><strong>Action:</strong> <span t-field="o.action"/></div>
+                                <div><strong>Owner:</strong> <t t-esc="o.owner_id.name or ''"/></div>
+                                <div><strong>Due:</strong> <span t-field="o.due_date"/></div>
+                                <div><strong>Verification:</strong> <t t-esc="o.verification or ''"/></div>
+                                <div><strong>Status:</strong> <span t-field="o.state"/></div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

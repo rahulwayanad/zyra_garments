@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_aql_lot_range_view_list" model="ir.ui.view">
+        <field name="name">garment.aql.lot.range.list</field>
+        <field name="model">garment.aql.lot.range</field>
+        <field name="arch" type="xml">
+            <list string="AQL Code Letters" editable="bottom">
+                <field name="level"/>
+                <field name="lot_min"/>
+                <field name="lot_max"/>
+                <field name="code_letter"/>
+                <field name="letter_sample_size"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_garment_aql_lot_range" model="ir.actions.act_window">
+        <field name="name">AQL Code Letters</field>
+        <field name="res_model">garment.aql.lot.range</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <record id="garment_aql_limit_view_list" model="ir.ui.view">
+        <field name="name">garment.aql.limit.list</field>
+        <field name="model">garment.aql.limit</field>
+        <field name="arch" type="xml">
+            <list string="AQL Accept / Reject" editable="bottom">
+                <field name="aql"/>
+                <field name="code_letter"/>
+                <field name="sample_size"/>
+                <field name="accept"/>
+                <field name="reject"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="garment_aql_limit_view_search" model="ir.ui.view">
+        <field name="name">garment.aql.limit.search</field>
+        <field name="model">garment.aql.limit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code_letter"/>
+                <field name="aql"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_aql" string="AQL" context="{'group_by': 'aql'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_garment_aql_limit" model="ir.actions.act_window">
+        <field name="name">AQL Accept / Reject</field>
+        <field name="res_model">garment.aql.limit</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_group_aql': 1}</field>
+    </record>
+
+    <!-- Tablet buttons on the defect library -->
+    <record id="garment_defect_view_list_quality" model="ir.ui.view">
+        <field name="name">garment.defect.list.quality</field>
+        <field name="model">garment.defect</field>
+        <field name="inherit_id" ref="zyra_garment_base.garment_defect_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="endline_button" optional="show"/>
+                <field name="endline_label" optional="hide"/>
+                <field name="endline_sequence" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="garment_defect_view_form_quality" model="ir.ui.view">
+        <field name="name">garment.defect.form.quality</field>
+        <field name="model">garment.defect</field>
+        <field name="inherit_id" ref="zyra_garment_base.garment_defect_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="after">
+                <group string="End-line tablet" name="endline_tablet">
+                    <field name="endline_button"/>
+                    <field name="endline_label" invisible="not endline_button"/>
+                    <field name="endline_sequence" invisible="not endline_button"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_inspection_concession_wizard_view_form" model="ir.ui.view">
+        <field name="name">garment.inspection.concession.wizard.form</field>
+        <field name="model">garment.inspection.concession.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Accept under Concession">
+                <p>The lot failed its final inspection. Accepting it under concession lets it ship; the reason is
+                    logged on the inspection and the order.</p>
+                <group>
+                    <field name="inspection_id" readonly="1"/>
+                    <field name="reason" placeholder="Why the buyer or factory accepts this lot"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Accept under Concession" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

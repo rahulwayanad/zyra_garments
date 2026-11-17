@@ -1,0 +1,18 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_garment_inspection_user,garment.inspection user,model_garment_inspection,base.group_user,1,0,0,0
+access_garment_inspection_quality,garment.inspection quality,model_garment_inspection,zyra_garment_base.group_garment_quality,1,1,1,1
+access_garment_inspection_line,garment.inspection line supervisor,model_garment_inspection,zyra_garment_base.group_garment_line_supervisor,1,1,1,0
+access_garment_inspection_defect_user,garment.inspection.defect user,model_garment_inspection_defect,base.group_user,1,0,0,0
+access_garment_inspection_defect_quality,garment.inspection.defect quality,model_garment_inspection_defect,zyra_garment_base.group_garment_quality,1,1,1,1
+access_garment_inspection_defect_line,garment.inspection.defect line supervisor,model_garment_inspection_defect,zyra_garment_base.group_garment_line_supervisor,1,1,1,0
+access_garment_inspection_hour_user,garment.inspection.hour user,model_garment_inspection_hour,base.group_user,1,0,0,0
+access_garment_inspection_hour_quality,garment.inspection.hour quality,model_garment_inspection_hour,zyra_garment_base.group_garment_quality,1,1,1,1
+access_garment_inspection_hour_line,garment.inspection.hour line supervisor,model_garment_inspection_hour,zyra_garment_base.group_garment_line_supervisor,1,1,1,0
+access_garment_capa_user,garment.capa user,model_garment_capa,base.group_user,1,0,0,0
+access_garment_capa_quality,garment.capa quality,model_garment_capa,zyra_garment_base.group_garment_quality,1,1,1,1
+access_garment_capa_line,garment.capa line supervisor,model_garment_capa,zyra_garment_base.group_garment_line_supervisor,1,1,0,0
+access_garment_aql_lot_range_user,garment.aql.lot.range user,model_garment_aql_lot_range,base.group_user,1,0,0,0
+access_garment_aql_lot_range_quality,garment.aql.lot.range quality,model_garment_aql_lot_range,zyra_garment_base.group_garment_quality,1,1,1,1
+access_garment_aql_limit_user,garment.aql.limit user,model_garment_aql_limit,base.group_user,1,0,0,0
+access_garment_aql_limit_quality,garment.aql.limit quality,model_garment_aql_limit,zyra_garment_base.group_garment_quality,1,1,1,1
+access_garment_inspection_concession_wizard,garment.inspection.concession.wizard quality,model_garment_inspection_concession_wizard,zyra_garment_base.group_garment_quality,1,1,1,1
