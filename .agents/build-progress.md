@@ -23,7 +23,7 @@ halfway" prompt.
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
 | 4 | sewing, jobwork | **merged** (gate 339/339) |
-| 5 | wages, pnl, cockpit, portal, connect | portal **merged** (gate 298/298); connect **merged** (gate 324/324) |
+| 5 | wages, pnl, cockpit, portal, connect | portal + connect **merged** (gate 339/339 with sewing); wages core WIP 302a4d5; pnl, cockpit left |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
@@ -112,3 +112,7 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   Left: quality (paused 39865c0, needs Rahul's OK), wages, pnl, cockpit. Open for Rahul: portal vendor menu +
   Approvals page; connect webhooks bundle.cut/final.failed/shipment.left need emit calls in cutting/quality/shipping.
   NO BUILD UNTIL RAHUL SAYS.
+- 16:19 WAGES SEGMENT (Rahul via phone; usage 68%). 16:23 wages core on feat/wages 302a4d5 (NOT merged, 4/4 tests,
+  clean install): rate card, weekly wage sheet from scans (top-up, overtime, incentive), scan→wage line no double
+  count, balanced journal entry, wage slip PDF. Left: screens 77–81 per images (KPI tiles), demo data.
+  16:24 STOP: no agents, no odoo runs, nothing scheduled. Not pushed. NO BUILD UNTIL RAHUL SAYS.
