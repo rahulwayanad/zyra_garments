@@ -22,7 +22,7 @@ halfway" prompt.
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
-| 4 | sewing, jobwork | jobwork **merged**; sewing WIP 60a3710 (screen 55 + 58 extras left) |
+| 4 | sewing, jobwork | **merged** (gate 339/339) |
 | 5 | wages, pnl, cockpit, portal, connect | portal **merged** (gate 298/298); connect **merged** (gate 324/324) |
 
 ## Log
@@ -105,3 +105,10 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   Next: gate+merge connect; finish sewing (55, 58 extras) → merge; quality (needs Rahul's OK); wages, pnl, cockpit.
 - 15:55 SHORT SEGMENT (Rahul via phone 15:54; usage 61%). Hard stop 16:11. connect merged ce466ea after gate
   10 modules 324/324, clean; wt-connect removed. Sewing agent resumed for screen 55 (saved LB/ record) + 58 extras.
+- 15:57 sewing done (15/15: screen 55 as saved LB/ record, 58 Defects tab + hourly report) → merged 621d8f1; gate
+  11 modules 339/339, clean. wt-sewing removed.
+- 16:00 STOP (segment done early; 16:11 job cancelled). No agents, no odoo runs, nothing scheduled. Not pushed.
+  Merged: base, techpack, costing, merch, materials, cutting, shipping, jobwork, sewing, portal, connect (11/15).
+  Left: quality (paused 39865c0, needs Rahul's OK), wages, pnl, cockpit. Open for Rahul: portal vendor menu +
+  Approvals page; connect webhooks bundle.cut/final.failed/shipment.left need emit calls in cutting/quality/shipping.
+  NO BUILD UNTIL RAHUL SAYS.
