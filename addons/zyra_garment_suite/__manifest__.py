@@ -23,7 +23,7 @@
         "zyra_garment_pnl",
         "zyra_garment_portal",
         "zyra_garment_connect",
-        # "zyra_garment_cockpit",  # add when feat/cockpit is merged
+        "zyra_garment_cockpit",
     ],
     "data": [],
     "application": True,

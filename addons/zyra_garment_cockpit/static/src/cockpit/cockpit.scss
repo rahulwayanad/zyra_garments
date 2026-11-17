@@ -1,0 +1,265 @@
+// Cockpit layout (screens 1, 5–17). Colours come from zyra_garment_theme's --zyra-* tokens.
+.o_zyra_cockpit {
+    background: var(--zyra-page, #f6f5fb);
+    color: var(--zyra-ink, #1d1b2c);
+    padding: 20px 18px 32px;
+
+    .o_zyra_cockpit_head {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .o_zyra_cockpit_icon {
+        flex: 0 0 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--zyra-violet, #6d4ee8), var(--zyra-pink, #d6409f));
+    }
+    .o_zyra_cockpit_eyebrow {
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: var(--zyra-violet, #6d4ee8);
+    }
+    .o_zyra_cockpit_title {
+        font-size: 1.55rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .o_zyra_cockpit_subtitle {
+        color: var(--zyra-muted, #6b6880);
+        font-size: 0.85rem;
+    }
+    .o_zyra_cockpit_chip, .o_zyra_cockpit_select {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border: 1px solid var(--zyra-line, #e9e6f3);
+        border-radius: 8px;
+        background: var(--zyra-card, #fff);
+        color: var(--zyra-ink, #1d1b2c);
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    button.o_zyra_cockpit_chip:hover { border-color: var(--zyra-violet, #6d4ee8); }
+    .o_zyra_cockpit_select {
+        width: auto !important;
+        min-width: 190px;
+        flex: 0 0 auto;
+    }
+    .o_zyra_live_dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--zyra-ink, #1d1b2c);
+        &.o_zyra_live_on { background: var(--zyra-good, #12a37f); }
+    }
+
+    .o_zyra_cockpit_headline {
+        font-size: 1.3rem;
+        margin: 4px 0 14px;
+        .o_zyra_hl_b { font-weight: 700; }
+        .o_zyra_hl_bad { font-weight: 700; color: var(--zyra-bad, #e5484d); }
+        .o_zyra_hl_warn { font-weight: 700; color: var(--zyra-warn, #c77c02); }
+    }
+
+    .o_zyra_kpis { grid-template-columns: repeat(auto-fill, minmax(165px, 175px)); }
+    .o_zyra_kpi_link { cursor: pointer; }
+    .o_zyra_kpi_link:hover { box-shadow: 0 2px 10px rgba(29, 27, 44, 0.08); }
+
+    .o_zyra_cockpit_tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 18px;
+        list-style: none;
+        padding: 0;
+        margin: 0 0 14px;
+        border-bottom: 1px solid var(--zyra-line, #e9e6f3);
+        a {
+            display: inline-block;
+            padding: 6px 0;
+            color: var(--zyra-muted, #6b6880);
+            text-decoration: none;
+            &.active {
+                color: var(--zyra-violet, #6d4ee8);
+                box-shadow: inset 0 -2px 0 var(--zyra-violet, #6d4ee8);
+            }
+        }
+    }
+
+    .o_zyra_cockpit_filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+    .o_zyra_cockpit_seg {
+        display: inline-flex;
+        padding: 3px;
+        border: 1px solid var(--zyra-line, #e9e6f3);
+        border-radius: 8px;
+        background: var(--zyra-card, #fff);
+        button {
+            border: 0;
+            background: transparent;
+            padding: 3px 10px;
+            border-radius: 6px;
+            color: var(--zyra-ink, #1d1b2c);
+            &.active { background: var(--zyra-violet, #6d4ee8); color: #fff; }
+        }
+    }
+    .o_zyra_cockpit_reset { color: var(--zyra-muted, #6b6880); text-decoration: none; }
+
+    .o_zyra_cockpit_panels {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        @media (max-width: 991px) { grid-template-columns: minmax(0, 1fr); }
+    }
+    .o_zyra_cockpit_panel {
+        background: var(--zyra-card, #fff);
+        border: 1px solid var(--zyra-line, #e9e6f3);
+        border-radius: var(--zyra-radius, 12px);
+        padding: 16px 16px 18px;
+        min-height: 240px;
+    }
+    .o_zyra_cockpit_panel_title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding-left: 9px;
+        border-left: 3px solid var(--zyra-violet, #6d4ee8);
+        margin-bottom: 14px;
+    }
+    .o_zyra_cockpit_chart { height: 300px; position: relative; }
+    .o_zyra_cockpit_empty { color: var(--zyra-muted, #6b6880); padding: 8px 0; }
+
+    // doughnut with total in the middle and legend on the right
+    .o_zyra_cockpit_donut {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        padding: 4px 0;
+    }
+    .o_zyra_cockpit_donut_ring {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        flex: 0 0 160px;
+    }
+    .o_zyra_cockpit_donut_total {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        font-weight: 700;
+        pointer-events: none;
+    }
+    .o_zyra_cockpit_legend {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li { padding: 2px 0; }
+        b { margin-left: 8px; }
+    }
+    .o_zyra_dot {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+
+    // ranked horizontal bars
+    .o_zyra_hbar {
+        display: grid;
+        grid-template-columns: minmax(90px, 36%) 1fr;
+        align-items: center;
+        gap: 12px;
+        padding: 5px 0;
+    }
+    .o_zyra_hbar_label { text-align: right; }
+    .o_zyra_hbar_track {
+        position: relative;
+        height: 18px;
+        border-radius: 4px;
+        background: #f0eef7;
+        margin-right: 70px;
+    }
+    .o_zyra_hbar_fill {
+        display: block;
+        height: 100%;
+        border-radius: 4px;
+    }
+    .o_zyra_hbar_text {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.82rem;
+        white-space: nowrap;
+    }
+
+    // tables
+    .o_zyra_cockpit_table {
+        width: 100%;
+        border-collapse: collapse;
+        th {
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--zyra-muted, #6b6880);
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--zyra-line, #e9e6f3);
+        }
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--zyra-line, #e9e6f3);
+            font-variant-numeric: tabular-nums;
+        }
+        .o_zyra_row_bad td { color: var(--zyra-bad, #e5484d); }
+        .o_zyra_row_link { cursor: pointer; }
+        .o_zyra_row_link:hover td { background: #faf9fd; }
+    }
+    .o_zyra_progress {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .o_zyra_progress_track {
+        display: inline-block;
+        width: 70px;
+        height: 5px;
+        border-radius: 3px;
+        background: #ecebf3;
+        overflow: hidden;
+    }
+    .o_zyra_progress_fill { display: block; height: 100%; }
+    .o_zyra_tone_violet { background: var(--zyra-violet, #6d4ee8); }
+    .o_zyra_tone_good { background: var(--zyra-good, #12a37f); }
+    .o_zyra_tone_warn { background: var(--zyra-warn, #c77c02); }
+    .o_zyra_tone_bad { background: var(--zyra-bad, #e5484d); }
+
+    .o_zyra_badge {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+    // ink colours chosen to pass 4.5:1 on their tint
+    .o_zyra_badge_good { background: #e3f6ef; color: #0b6e55; }
+    .o_zyra_badge_warn { background: #fdf0d8; color: #8a5300; }
+    .o_zyra_badge_bad { background: #fde4e4; color: #b42328; }
+    .o_zyra_badge_violet { background: #efeafd; color: #4b2fbf; }
+    .o_zyra_badge_muted { background: #efeef3; color: #4a4760; }
+}
+
+// present mode: the root element is full screen
+.o_zyra_cockpit:fullscreen { overflow: auto; }

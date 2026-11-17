@@ -143,3 +143,13 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   Suite". Spec `.agents/docs/modules/zyra_garment_suite.md`. Fresh DB install of the suite alone: 3/3 suite tests,
   gate 398/398 (361 tagged `zyra` + connect 28 + jobwork 13 — those two modules' tests lack the `zyra` tag), clean.
   Add `zyra_garment_cockpit` to the suite's depends when it merges.
+- 17 Nov 14:1x (Rahul: "Start cockpit") cockpit finished in-session (no subagent): every cockpit (1, 5–17) now has
+  its own layout from the screens — subtitle, coloured headline, tiles, and its panels (stacked/grouped bars with
+  value labels, lines with a dashed limit, doughnuts, ranked bars, tables with progress bars/badges). Buyer and
+  business-model filters apply to all cockpits. Fixed: failed finals counted `result = 'fail'` (never matched;
+  value is `failed`); chart redraw on tab switch; pieces-to-pack no longer goes negative on over-packed orders.
+  Browser check: all 14 tabs open in headless Chrome, no JS errors, screenshots compared with s001, s005–s017.
+  Found: Chrome stores India as `Asia/Calcutta`, which this PostgreSQL (Ubuntu 26.04, no `tzdata-legacy`) rejects
+  → every by-day group crashes (also standard Odoo). Needs `tzdata-legacy` on the server — noted in cockpit README.
+  Cockpit 30/30; added to `zyra_garment_suite`. Gate on fresh DB `zyra_gate` via the suite: 15 modules + suite,
+  426/426, clean. Merged. Not pushed. Left: shift split (Day/Night) not built.
