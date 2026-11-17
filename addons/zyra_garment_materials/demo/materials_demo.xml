@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="partner_supplier_ridgeline_denim" model="res.partner">
+        <field name="name">Ridgeline Denim Co.</field>
+        <field name="is_company" eval="True"/>
+        <field name="country_id" ref="base.in"/>
+        <field name="city">Ahmedabad</field>
+    </record>
+    <record id="partner_supplier_coastal_trims" model="res.partner">
+        <field name="name">Coastal Trims &amp; Labels</field>
+        <field name="is_company" eval="True"/>
+        <field name="country_id" ref="base.in"/>
+        <field name="city">Chennai</field>
+    </record>
+    <function model="garment.materials.demo" name="_load_demo"/>
+</odoo>

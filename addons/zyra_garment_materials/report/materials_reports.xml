@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_fabric_booking" model="ir.actions.report">
+        <field name="name">Fabric Booking</field>
+        <field name="model">garment.fabric.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_materials.report_fabric_booking</field>
+        <field name="report_file">zyra_garment_materials.report_fabric_booking</field>
+        <field name="print_report_name">'Booking - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_fabric_booking"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_report_fabric_inspection" model="ir.actions.report">
+        <field name="name">Fabric Inspection</field>
+        <field name="model">garment.fabric.inspection</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_materials.report_fabric_inspection</field>
+        <field name="report_file">zyra_garment_materials.report_fabric_inspection</field>
+        <field name="print_report_name">'Inspection - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_fabric_inspection"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_report_roll_label" model="ir.actions.report">
+        <field name="name">Roll Label</field>
+        <field name="model">stock.lot</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_materials.report_roll_label</field>
+        <field name="report_file">zyra_garment_materials.report_roll_label</field>
+        <field name="print_report_name">'Roll - %s' % object.name</field>
+    </record>
+
+    <template id="report_fabric_booking">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Fabric booking <span t-field="doc.name"/></h2>
+                        <p>
+                            Order <strong t-esc="doc.order_id.display_name"/> · Buyer <span t-field="doc.buyer_id"/> ·
+                            Style <span t-field="doc.style_id"/><br/>
+                            Booking of <span t-field="doc.booking_of"/> · Needed in house by <span t-field="doc.date_needed"/> ·
+                            Booked by <span t-field="doc.user_id"/> · Status <span t-field="doc.state"/>
+                        </p>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Material</th><th>For colour</th><th class="text-end">Order pieces</th>
+                                    <th class="text-end">Consumption</th><th class="text-end">Wastage %</th>
+                                    <th class="text-end">Required</th><th>Unit</th><th class="text-end">In stock</th>
+                                    <th class="text-end">On open POs</th><th class="text-end">To order</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line">
+                                    <td t-esc="line.product_id.display_name"/>
+                                    <td t-esc="line.colour_label"/>
+                                    <td class="text-end" t-esc="line.order_pieces"/>
+                                    <td class="text-end" t-esc="'%.4f' % line.consumption"/>
+                                    <td class="text-end" t-esc="'%.2f' % line.wastage_pct"/>
+                                    <td class="text-end" t-esc="'%.2f' % line.qty_required"/>
+                                    <td t-esc="line.uom_id.name"/>
+                                    <td class="text-end" t-esc="'%.2f' % line.qty_in_stock"/>
+                                    <td class="text-end" t-esc="'%.2f' % line.qty_open_po"/>
+                                    <td class="text-end" t-esc="'%.2f' % line.qty_to_order"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p>In house <strong t-esc="'%.0f' % doc.in_house_pct + ' %'"/> · Value to order
+                            <strong t-field="doc.value_to_order" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_fabric_inspection">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>4-point inspection <span t-field="doc.name"/> · roll <span t-field="doc.lot_id.name"/></h2>
+                        <p>
+                            Fabric <span t-field="doc.product_id"/> · Supplier <span t-field="doc.supplier_id"/> ·
+                            Dye lot <span t-esc="doc.dye_lot"/><br/>
+                            Inspector <span t-field="doc.inspector_id"/> · Inspected on <span t-field="doc.date_inspected"/><br/>
+                            Inspected length <span t-esc="'%.2f' % doc.inspected_length_yd"/> yd · Cuttable width
+                            <span t-esc="'%.2f' % doc.cuttable_width_in"/> in · GSM <span t-esc="'%.1f' % doc.gsm_measured"/>
+                        </p>
+                        <table class="table table-sm">
+                            <thead><tr><th>At yard</th><th>Defect</th><th>Length</th><th class="text-end">Points</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="doc.defect_line_ids" t-as="line">
+                                    <td t-esc="'%.1f' % line.position_yd"/>
+                                    <td t-esc="line.defect_id.name or ''"/>
+                                    <td t-field="line.length_band"/>
+                                    <td class="text-end" t-esc="line.points"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p>
+                            Penalty points <strong t-esc="doc.penalty_points"/> ·
+                            Points / 100 sq yd <strong t-esc="'%.1f' % doc.points_per_100sqyd"/> ·
+                            Accept limit <strong t-esc="'%.1f' % doc.accept_limit"/> ·
+                            Result <strong t-field="doc.result"/>
+                            <t t-if="doc.reason"><br/>Reason: <span t-esc="doc.reason"/></t>
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_roll_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page" style="page-break-after: always;">
+                    <div style="border: 2px solid #1d1b2c; padding: 12px; width: 90mm;">
+                        <div style="font-size: 28px; font-weight: 700;" t-esc="doc.name"/>
+                        <div t-esc="doc.product_id.display_name"/>
+                        <div>Dye lot <span t-esc="doc.dye_lot or '—'"/> · Shade <span t-esc="doc.shade_group or '—'"/> ·
+                            Shrinkage <span t-esc="doc.shrinkage_group or '—'"/></div>
+                        <div>Length <span t-esc="'%.2f' % doc.roll_received_qty"/> <span t-esc="doc.product_uom_id.name"/> ·
+                            Width <span t-esc="'%.1f' % doc.width_in"/> in · GSM <span t-esc="'%.0f' % doc.gsm"/></div>
+                        <div t-if="doc.garment_order_id">Order <span t-esc="doc.garment_order_id.display_name"/></div>
+                        <img t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', doc.name, 600, 100)"
+                             style="width: 80mm; height: 14mm; margin-top: 8px;" alt="Barcode"/>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

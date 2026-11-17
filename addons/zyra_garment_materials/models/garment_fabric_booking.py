@@ -53,19 +53,21 @@ class GarmentFabricBooking(models.Model):
     roll_ids = fields.One2many("stock.lot", "fabric_booking_id", string="Rolls")
 
     # Figures (live: they follow receipts, purchase orders and roll decisions)
-    materials_count = fields.Integer(string="Materials", compute="_compute_figures")
+    materials_count = fields.Integer(string="Materials Count", compute="_compute_figures")
     materials_in_house_count = fields.Integer(string="Materials In House", compute="_compute_figures")
     materials_short_count = fields.Integer(string="Materials Short", compute="_compute_figures")
     in_house_pct = fields.Float(string="In House %", compute="_compute_figures", digits=(16, 0))
     value_to_order = fields.Monetary(string="Value To Order", compute="_compute_figures")
     qty_required = fields.Float(string="Required", compute="_compute_figures")
     qty_in_house = fields.Float(string="In House", compute="_compute_figures")
-    roll_count = fields.Integer(string="Rolls Received", compute="_compute_roll_count")
+    roll_count = fields.Integer(string="Rolls Received Count", compute="_compute_roll_count")
     purchase_count = fields.Integer(string="Purchase Orders", compute="_compute_purchase_count")
     needed_in_days = fields.Integer(string="Needed In (days)", compute="_compute_needed_in")
     needed_in_label = fields.Char(string="Needed In", compute="_compute_needed_in")
     is_short = fields.Boolean(string="Short", compute="_compute_figures", search="_search_is_short",
                               help="Needed-in-house date has passed and not every material is in house.")
+    shortage = fields.Selection([("ok", "OK"), ("short", "Short")], string="Shortage",
+                                compute="_compute_figures")
     in_house_label = fields.Char(string="In House (materials)", compute="_compute_figures")
 
     _sql_constraints = [
@@ -105,6 +107,7 @@ class GarmentFabricBooking(models.Model):
             booking.is_short = bool(
                 lines and booking.state != "draft" and booking.date_needed
                 and booking.date_needed < today and len(in_house) < len(lines))
+            booking.shortage = "short" if booking.is_short else "ok"
 
     @api.model
     def _formula_in_house_pct(self, covered, required):
@@ -123,7 +126,7 @@ class GarmentFabricBooking(models.Model):
         return [("id", "in" if positive else "not in", short_ids)]
 
     def _compute_roll_count(self):
-        data = self.env["stock.lot"]._read_group([("fabric_booking_id", "in", self.ids)], ["fabric_booking_id"],
+        data = self.env["stock.lot"].sudo()._read_group([("fabric_booking_id", "in", self.ids)], ["fabric_booking_id"],
                                                  ["__count"])
         counts = {booking.id: count for booking, count in data}
         for booking in self:

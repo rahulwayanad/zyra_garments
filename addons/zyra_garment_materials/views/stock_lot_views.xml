@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Roll board (screen 41) -->
+    <record id="stock_lot_view_kanban_garment_roll" model="ir.ui.view">
+        <field name="name">stock.lot.kanban.garment.roll</field>
+        <field name="model">stock.lot</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="roll_status" group_create="0" group_delete="0" group_edit="0"
+                    records_draggable="0" class="o_zyra_roll_board">
+                <field name="roll_colour_hex"/>
+                <field name="product_uom_id"/>
+                <field name="roll_status"/>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="me-3">
+                            <div class="o_zyra_roll_swatch rounded"
+                                 t-attf-style="background-color: #{record.roll_colour_hex.raw_value or '#c9c4dd'}; width: 42px; height: 42px;"/>
+                        </aside>
+                        <main>
+                            <field name="name" class="small" style="color: var(--zyra-violet, #6d4ee8);"/>
+                            <field name="product_id" class="fw-bold" options="{'no_open': True}"/>
+                            <div class="text-muted small">
+                                <field name="product_qty" digits="[16, 2]"/> <t t-esc="record.product_uom_id.value"/> · dye lot <field name="dye_lot"/>
+                            </div>
+                            <div class="text-muted small">
+                                Shade <t t-esc="record.shade_group.raw_value or '—'"/> · <field name="points_per_100sqyd"/> pts / 100 sq yd
+                            </div>
+                            <div class="text-muted small"><field name="garment_order_id"/></div>
+                        </main>
+                        <footer class="pt-1">
+                            <div class="ms-auto">
+                                <field name="roll_user_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Fabric roll (screen 42) -->
+    <record id="stock_lot_view_form_garment_materials_roll" model="ir.ui.view">
+        <field name="name">stock.lot.form.garment.materials.roll</field>
+        <field name="model">stock.lot</field>
+        <field name="mode">primary</field>
+        <field name="priority">95</field>
+        <field name="arch" type="xml">
+            <form string="Fabric Roll">
+                <header>
+                    <button name="action_inspect_again" type="object" string="Inspect Again"/>
+                    <button name="action_start_relaxation" type="object" string="Start Relaxation"
+                            invisible="relaxation_status == 'relaxing'"/>
+                    <button name="action_print_roll_label" type="object" string="Roll Label"/>
+                    <button name="action_roll_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="roll_status not in ('received', 'hold')"/>
+                    <button name="action_roll_hold" type="object" string="Hold"
+                            invisible="roll_status not in ('received', 'approved')"/>
+                    <button name="action_roll_reject" type="object" string="Reject"
+                            invisible="roll_status == 'rejected'"/>
+                    <button name="action_roll_reset" type="object" string="Reset to Received"
+                            invisible="roll_status != 'rejected'"
+                            groups="zyra_garment_base.group_garment_factory_manager"/>
+                    <field name="roll_status" widget="statusbar" statusbar_visible="received,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_roll_inspections" type="object" class="oe_stat_button" icon="fa-search">
+                            <field name="roll_inspection_count" widget="statinfo" string="Inspections"/>
+                        </button>
+                    </div>
+                    <field name="company_id" invisible="1"/>
+                    <field name="is_fabric_roll" invisible="1"/>
+                    <field name="product_uom_id" invisible="1"/>
+                    <field name="roll_over_limit" invisible="1"/>
+                    <div class="o_zyra_kpis o_zyra_kpis_6" name="kpi_strip">
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_good" invisible="roll_status != 'approved'">
+                            <span class="o_zyra_kpi_label">Status</span>
+                            <span class="o_zyra_kpi_value"><field name="roll_status" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_warn" invisible="roll_status != 'hold'">
+                            <span class="o_zyra_kpi_label">Status</span>
+                            <span class="o_zyra_kpi_value"><field name="roll_status" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_bad" invisible="roll_status != 'rejected'">
+                            <span class="o_zyra_kpi_label">Status</span>
+                            <span class="o_zyra_kpi_value"><field name="roll_status" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text" invisible="roll_status != 'received'">
+                            <span class="o_zyra_kpi_label">Status</span>
+                            <span class="o_zyra_kpi_value"><field name="roll_status" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">On hand</span>
+                            <span class="o_zyra_kpi_value"><field name="product_qty" digits="[16, 2]"/> <field name="product_uom_id" readonly="1" options="{'no_open': True}"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="roll_over_limit">
+                            <span class="o_zyra_kpi_label">Points / 100 sq yd</span>
+                            <span class="o_zyra_kpi_value"><field name="points_per_100sqyd" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not roll_over_limit">
+                            <span class="o_zyra_kpi_label">Points / 100 sq yd</span>
+                            <span class="o_zyra_kpi_value"><field name="points_per_100sqyd" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text">
+                            <span class="o_zyra_kpi_label">Shade</span>
+                            <span class="o_zyra_kpi_value"><field name="shade_group" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text">
+                            <span class="o_zyra_kpi_label">Shrinkage</span>
+                            <span class="o_zyra_kpi_value"><field name="shrinkage_group" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text">
+                            <span class="o_zyra_kpi_label">Relaxation</span>
+                            <span class="o_zyra_kpi_value"><field name="relaxation_status"/></span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Fabric roll"/>
+                        <h1><field name="name" placeholder="e.g. R00701"/></h1>
+                    </div>
+                    <group>
+                        <group string="Fabric" name="fabric">
+                            <field name="product_id" string="Fabric" context="{'default_is_storable': True, 'default_tracking': 'lot'}"/>
+                            <field name="dye_lot" string="Supplier Lot / Dye Lot"/>
+                            <field name="roll_supplier_id"/>
+                            <field name="roll_owner_id"/>
+                        </group>
+                        <group string="Receipt" name="receipt">
+                            <field name="roll_received_date"/>
+                            <field name="roll_promised_date"/>
+                            <field name="roll_delivered_on_time"/>
+                            <field name="garment_order_id"/>
+                            <field name="fabric_booking_id"/>
+                            <field name="booking_line_id" invisible="1"/>
+                        </group>
+                        <group string="Measures" name="measures">
+                            <field name="roll_received_qty" string="Received Length"/>
+                            <field name="product_qty" string="On Hand"/>
+                            <field name="width_in"/>
+                            <field name="gsm" string="Measured GSM"/>
+                        </group>
+                        <group string="Quality" name="quality">
+                            <field name="points_per_100sqyd"/>
+                            <field name="roll_inspected_date"/>
+                            <field name="shade_group"/>
+                            <field name="shade_band"/>
+                            <field name="shrinkage_group"/>
+                            <field name="relax_until" invisible="relaxation_status == 'free'"/>
+                            <field name="roll_hold_reason" invisible="roll_status not in ('hold', 'rejected')"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Roll list: add order and received length -->
+    <record id="stock_lot_view_list_garment_roll_materials" model="ir.ui.view">
+        <field name="name">stock.lot.list.garment.roll.materials</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="zyra_garment_base.stock_lot_view_list_garment_roll"/>
+        <field name="arch" type="xml">
+            <field name="dye_lot" position="before">
+                <field name="garment_order_id" optional="show"/>
+            </field>
+            <field name="product_qty" position="before">
+                <field name="roll_received_qty" string="Received" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="stock_lot_view_search_garment_roll_materials" model="ir.ui.view">
+        <field name="name">stock.lot.search.garment.roll.materials</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="zyra_garment_base.stock_lot_view_search_garment_roll"/>
+        <field name="arch" type="xml">
+            <field name="dye_lot" position="after">
+                <field name="garment_order_id"/>
+                <field name="fabric_booking_id"/>
+            </field>
+            <filter name="received" position="before">
+                <filter string="On hand" name="on_hand" domain="[('product_qty', '&gt;', 0)]"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="action_garment_roll_board" model="ir.actions.act_window">
+        <field name="name">Fabric Rolls</field>
+        <field name="res_model">stock.lot</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_fabric_roll', '=', True)]</field>
+        <field name="context">{'default_is_fabric_roll': True, 'search_default_on_hand': 1}</field>
+        <field name="search_view_id" ref="zyra_garment_base.stock_lot_view_search_garment_roll"/>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'kanban', 'view_id': ref('stock_lot_view_kanban_garment_roll')}),
+            Command.create({'view_mode': 'list', 'view_id': ref('zyra_garment_base.stock_lot_view_list_garment_roll')}),
+            Command.create({'view_mode': 'form', 'view_id': ref('stock_lot_view_form_garment_materials_roll')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No fabric rolls on hand</p>
+            <p>Rolls arrive with the receipts of booked purchase orders.</p>
+        </field>
+    </record>
+</odoo>

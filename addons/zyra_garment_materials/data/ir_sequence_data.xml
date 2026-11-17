@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_garment_fabric_booking" model="ir.sequence">
+        <field name="name">Fabric Booking</field>
+        <field name="code">garment.fabric.booking</field>
+        <field name="prefix">FB/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_garment_fabric_inspection" model="ir.sequence">
+        <field name="name">Fabric Inspection</field>
+        <field name="code">garment.fabric.inspection</field>
+        <field name="prefix">FI/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>
