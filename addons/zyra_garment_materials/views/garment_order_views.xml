@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Screen 2: "Fabric in house" tile and the Fabric reconciliation tab on the production order -->
+    <record id="garment_order_view_form_materials" model="ir.ui.view">
+        <field name="name">garment.order.form.materials</field>
+        <field name="model">garment.order</field>
+        <field name="inherit_id" ref="zyra_garment_merch.garment_order_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='kpi_strip']" position="inside">
+                <field name="has_fabric_booking" invisible="1"/>
+                <div name="kpi_fabric_in_house" class="o_zyra_kpi o_zyra_kpi_good"
+                     invisible="not has_fabric_booking or fabric_in_house_pct &lt; 100">
+                    <span class="o_zyra_kpi_label">Fabric in house</span>
+                    <span class="o_zyra_kpi_value"><field name="fabric_in_house_pct"/>%</span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_warn"
+                     invisible="not has_fabric_booking or fabric_in_house_pct &gt;= 100">
+                    <span class="o_zyra_kpi_label">Fabric in house</span>
+                    <span class="o_zyra_kpi_value"><field name="fabric_in_house_pct"/>%</span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_warn" invisible="has_fabric_booking">
+                    <span class="o_zyra_kpi_label">Fabric in house</span>
+                    <span class="o_zyra_kpi_value">Not booked</span>
+                </div>
+            </xpath>
+            <xpath expr="//notebook[@name='order_tabs']/page[@name='breakdown']" position="after">
+                <page string="Fabric Reconciliation" name="fabric_reconciliation" invisible="not has_fabric_booking">
+                    <field name="fabric_booking_line_ids" nolabel="1" readonly="1">
+                        <list>
+                            <field name="booking_id" string="Booking"/>
+                            <field name="product_id"/>
+                            <field name="colour_label" string="For Colour"/>
+                            <field name="qty_required" sum="Total"/>
+                            <field name="qty_in_stock" string="Received" sum="Total"/>
+                            <field name="qty_used" sum="Total"/>
+                            <field name="qty_on_hand" string="Left in Store" sum="Total"/>
+                            <field name="qty_open_po" sum="Total"/>
+                            <field name="qty_to_order" sum="Total"/>
+                            <field name="uom_id" string="Unit"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

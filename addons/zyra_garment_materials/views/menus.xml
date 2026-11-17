@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_fabric_bookings" name="Fabric Bookings" parent="zyra_garment_base.menu_garment_materials"
+              action="action_garment_fabric_booking" sequence="10"
+              groups="zyra_garment_base.group_garment_fabric_store,zyra_garment_base.group_garment_merchandiser"/>
+    <!-- Repoint base's Fabric Rolls menu to the roll board (base README allows it) -->
+    <record id="zyra_garment_base.menu_garment_fabric_rolls" model="ir.ui.menu">
+        <field name="action" ref="action_garment_roll_board"/>
+    </record>
+    <menuitem id="menu_garment_fabric_inspections" name="Fabric Inspections" parent="zyra_garment_base.menu_garment_materials"
+              action="action_garment_fabric_inspection" sequence="60"
+              groups="zyra_garment_base.group_garment_fabric_store,zyra_garment_base.group_garment_quality,zyra_garment_base.group_garment_merchandiser"/>
+    <menuitem id="menu_garment_fabric_inspection_tablet" name="Inspection Tablet" parent="zyra_garment_base.menu_garment_materials"
+              action="action_fabric_inspection_tablet" sequence="70"
+              groups="zyra_garment_base.group_garment_fabric_store,zyra_garment_base.group_garment_quality"/>
+</odoo>

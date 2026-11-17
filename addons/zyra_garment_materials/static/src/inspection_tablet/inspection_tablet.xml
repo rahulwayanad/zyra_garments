@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_materials.FabricInspectionTablet">
+        <div class="o_zyra_tablet o_action h-100 overflow-auto">
+            <div class="o_zyra_tab_frame">
+                <div class="o_zyra_tab_head">
+                    <div class="o_zyra_tab_logo"/>
+                    <div class="flex-grow-1">
+                        <div class="o_zyra_tab_title">
+                            Fabric inspection<t t-if="state.data and state.data.frame"> · <t t-esc="state.data.frame"/></t>
+                        </div>
+                        <div class="o_zyra_tab_sub">4-point system · tap the defect, then its length</div>
+                    </div>
+                    <span t-if="state.online" class="o_zyra_tab_online">● Online</span>
+                    <span t-else="" class="o_zyra_tab_offline">● Offline</span>
+                </div>
+
+                <!-- Queue: pick an open inspection or a roll waiting for one -->
+                <div t-if="!state.data" class="o_zyra_tab_body o_zyra_tab_queue">
+                    <div class="o_zyra_tab_step">Open inspections</div>
+                    <div class="o_zyra_tab_grid">
+                        <t t-foreach="state.queue.inspections" t-as="insp" t-key="insp.id">
+                            <button class="o_zyra_tab_btn o_zyra_tab_open_insp" t-on-click="() => this.openInspection(insp.id)">
+                                <t t-esc="insp.roll"/><small t-esc="insp.fabric"/>
+                            </button>
+                        </t>
+                        <div t-if="!state.queue.inspections.length" class="text-muted">None.</div>
+                    </div>
+                    <div class="o_zyra_tab_step">Rolls waiting for inspection</div>
+                    <div class="o_zyra_tab_grid">
+                        <t t-foreach="state.queue.rolls" t-as="roll" t-key="roll.id">
+                            <button class="o_zyra_tab_btn o_zyra_tab_start_roll" t-on-click="() => this.startRoll(roll.id)">
+                                <t t-esc="roll.name"/><small t-esc="roll.fabric"/>
+                            </button>
+                        </t>
+                        <div t-if="!state.queue.rolls.length" class="text-muted">None.</div>
+                    </div>
+                </div>
+
+                <div t-else="" class="o_zyra_tab_body">
+                    <div class="o_zyra_tab_left">
+                        <div class="o_zyra_tab_step">1 · Pick the defect</div>
+                        <div class="o_zyra_tab_grid">
+                            <t t-foreach="state.defects" t-as="defect" t-key="defect.id">
+                                <button t-att-class="'o_zyra_tab_btn o_zyra_tab_defect' + (state.defectId === defect.id ? ' active' : '')"
+                                        t-att-disabled="state.data.state !== 'in_progress'"
+                                        t-on-click="() => this.pickDefect(defect.id)" t-esc="defect.name"/>
+                            </t>
+                        </div>
+                        <div class="o_zyra_tab_step">2 · Tap its length band at yard <t t-esc="state.data.current_yard"/></div>
+                        <div class="o_zyra_tab_grid">
+                            <t t-foreach="bands" t-as="b" t-key="b.band">
+                                <button class="o_zyra_tab_btn o_zyra_tab_band" t-att-data-band="b.band"
+                                        t-att-disabled="state.data.state !== 'in_progress'"
+                                        t-on-click="() => this.tapBand(b.band)">
+                                    <t t-esc="b.label"/><small t-esc="b.pts"/>
+                                </button>
+                            </t>
+                        </div>
+                        <div class="o_zyra_tab_step">Position and roll</div>
+                        <div class="o_zyra_tab_grid o_zyra_tab_tools">
+                            <button class="o_zyra_tab_btn" t-on-click="() => this.moveYard(-1)" t-att-disabled="state.data.state !== 'in_progress'">− 1 yd</button>
+                            <button class="o_zyra_tab_btn" t-on-click="() => this.moveYard(1)" t-att-disabled="state.data.state !== 'in_progress'">+ 1 yd</button>
+                            <button class="o_zyra_tab_btn" t-on-click="() => this.moveYard(5)" t-att-disabled="state.data.state !== 'in_progress'">+ 5 yd</button>
+                            <button class="o_zyra_tab_btn o_zyra_tab_undo" t-on-click="undo" t-att-disabled="state.data.state !== 'in_progress' or !state.data.defect_count">Undo last</button>
+                            <label class="o_zyra_tab_input">Length (yd)
+                                <input type="number" step="0.1" t-att-value="state.data.length_yd" t-on-change="(ev) => this.setNumber('inspected_length_yd', ev)"
+                                       t-att-disabled="state.data.state !== 'in_progress'"/>
+                            </label>
+                            <label class="o_zyra_tab_input">Cuttable width (in)
+                                <input type="number" step="0.1" t-att-value="state.data.width_in" t-on-change="(ev) => this.setNumber('cuttable_width_in', ev)"
+                                       t-att-disabled="state.data.state !== 'in_progress'"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="o_zyra_tab_right">
+                        <div class="o_zyra_tab_card">
+                            <div class="o_zyra_tab_label">Roll <t t-esc="state.data.roll"/><t t-if="state.data.colour"> · <t t-esc="state.data.colour"/></t></div>
+                            <div class="o_zyra_tab_big"><t t-esc="state.data.current_yard"/> <small>/ <t t-esc="state.data.length_yd"/> yd</small></div>
+                        </div>
+                        <div class="o_zyra_tab_card">
+                            <div class="o_zyra_tab_label">Penalty points</div>
+                            <div class="o_zyra_tab_big o_zyra_tab_points" t-esc="state.data.penalty_points"/>
+                            <div class="o_zyra_tab_note"><t t-esc="state.data.points_per_100sqyd"/> per 100 sq yd · limit <t t-esc="state.data.accept_limit"/></div>
+                        </div>
+                        <div t-att-class="'o_zyra_tab_card o_zyra_tab_verdict ' + verdictClass">
+                            <div class="o_zyra_tab_label"><t t-if="state.data.state === 'done'">Verdict</t><t t-else="">Verdict so far</t></div>
+                            <div class="o_zyra_tab_big" t-esc="state.data.result_label"/>
+                        </div>
+                        <div class="o_zyra_tab_actions">
+                            <button t-if="state.data.state === 'in_progress'" class="o_zyra_tab_btn o_zyra_tab_finish" t-on-click="finish">Finish roll</button>
+                            <button class="o_zyra_tab_btn" t-on-click="openForm">Details</button>
+                            <button class="o_zyra_tab_btn" t-on-click="backToQueue">Next roll</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

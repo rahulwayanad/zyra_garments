@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Fabric bookings list (screen 39) -->
+    <record id="garment_fabric_booking_view_list" model="ir.ui.view">
+        <field name="name">garment.fabric.booking.list</field>
+        <field name="model">garment.fabric.booking</field>
+        <field name="arch" type="xml">
+            <list string="Fabric Bookings" decoration-danger="is_short">
+                <field name="is_short" column_invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="name" string="Booking"/>
+                <field name="order_id" string="Order"/>
+                <field name="buyer_id"/>
+                <field name="booking_of"/>
+                <field name="date_needed" string="Needed In House" widget="date"/>
+                <field name="in_house_pct" string="In House" widget="progressbar"/>
+                <field name="value_to_order" string="Value To Order"/>
+                <field name="shortage" widget="badge" decoration-success="shortage == 'ok'"
+                       decoration-danger="shortage == 'short'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_fabric_booking_view_search" model="ir.ui.view">
+        <field name="name">garment.fabric.booking.search</field>
+        <field name="model">garment.fabric.booking</field>
+        <field name="arch" type="xml">
+            <search string="Fabric Bookings">
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="buyer_id"/>
+                <field name="style_id"/>
+                <filter name="open" string="Open" domain="[('state', '!=', 'in_house')]"/>
+                <filter name="short" string="Short" domain="[('is_short', '=', True)]"/>
+                <separator/>
+                <filter name="fabric" string="Fabric" domain="[('booking_of', '=', 'fabric')]"/>
+                <filter name="trims" string="Trims" domain="[('booking_of', '=', 'trims')]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="ordered" string="Ordered" domain="[('state', '=', 'ordered')]"/>
+                <filter name="in_house" string="In House" domain="[('state', '=', 'in_house')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_buyer" string="Buyer" context="{'group_by': 'buyer_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_booking_of" string="Booking Of" context="{'group_by': 'booking_of'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Fabric booking (screen 40) -->
+    <record id="garment_fabric_booking_view_form" model="ir.ui.view">
+        <field name="name">garment.fabric.booking.form</field>
+        <field name="model">garment.fabric.booking</field>
+        <field name="arch" type="xml">
+            <form string="Fabric Booking">
+                <header>
+                    <button name="action_print" type="object" string="Print"/>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_load_requirements" type="object" string="Load from Tech Pack"
+                            invisible="state != 'draft'"/>
+                    <button name="action_raise_pos" type="object" string="Raise POs" class="btn-primary"
+                            invisible="state not in ('confirmed', 'ordered') or value_to_order &lt;= 0"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_rolls" type="object" class="oe_stat_button" icon="fa-circle-o">
+                            <field name="roll_count" widget="statinfo" string="Rolls"/>
+                        </button>
+                    </div>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="is_short" invisible="1"/>
+                    <field name="materials_count" invisible="1"/>
+                    <field name="materials_in_house_count" invisible="1"/>
+                    <div class="o_zyra_kpis o_zyra_kpis_6" name="kpi_strip">
+                        <div name="kpi_needed" class="o_zyra_kpi o_zyra_kpi_bad" invisible="state == 'in_house' or needed_in_days &gt;= 0">
+                            <span class="o_zyra_kpi_label">Needed in</span>
+                            <span class="o_zyra_kpi_value"><field name="needed_in_label"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" invisible="state != 'in_house' and needed_in_days &lt; 0">
+                            <span class="o_zyra_kpi_label">Needed in</span>
+                            <span class="o_zyra_kpi_value"><field name="needed_in_label"/></span>
+                        </div>
+                        <div name="kpi_materials" class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Materials</span>
+                            <span class="o_zyra_kpi_value"><field name="materials_count"/></span>
+                        </div>
+                        <div name="kpi_in_house" class="o_zyra_kpi o_zyra_kpi_good" invisible="materials_in_house_count &lt; materials_count">
+                            <span class="o_zyra_kpi_label">In house</span>
+                            <span class="o_zyra_kpi_value"><field name="in_house_label"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="materials_in_house_count &gt;= materials_count">
+                            <span class="o_zyra_kpi_label">In house</span>
+                            <span class="o_zyra_kpi_value"><field name="in_house_label"/></span>
+                        </div>
+                        <div name="kpi_short" class="o_zyra_kpi o_zyra_kpi_good" invisible="materials_short_count">
+                            <span class="o_zyra_kpi_label">Short</span>
+                            <span class="o_zyra_kpi_value"><field name="materials_short_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not materials_short_count">
+                            <span class="o_zyra_kpi_label">Short</span>
+                            <span class="o_zyra_kpi_value"><field name="materials_short_count"/></span>
+                        </div>
+                        <div name="kpi_to_order" class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">To order</span>
+                            <span class="o_zyra_kpi_value"><field name="value_to_order" widget="monetary" options="{'currency_field': 'currency_id'}"/></span>
+                        </div>
+                        <div name="kpi_rolls" class="o_zyra_kpi o_zyra_kpi_good">
+                            <span class="o_zyra_kpi_label">Rolls received</span>
+                            <span class="o_zyra_kpi_value"><field name="roll_count"/></span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="order_id" placeholder="Production order" options="{'no_create': True}"
+                                   readonly="state != 'draft'"/></h1>
+                    </div>
+                    <group>
+                        <group string="Order" name="order">
+                            <field name="buyer_id"/>
+                            <field name="style_id"/>
+                            <field name="business_model"/>
+                            <field name="ex_factory_date"/>
+                        </group>
+                        <group string="Booking" name="booking">
+                            <field name="booking_of" readonly="state != 'draft'"/>
+                            <field name="booking_date"/>
+                            <field name="date_needed" string="Needed In House By"/>
+                            <field name="user_id" string="Booked By"/>
+                            <field name="techpack_id" invisible="state != 'draft'" options="{'no_create': True}"/>
+                        </group>
+                        <group string="In House" name="in_house">
+                            <field name="in_house_pct" string="In House %" widget="progressbar"/>
+                            <field name="materials_short_count"/>
+                            <field name="value_to_order"/>
+                            <field name="date_in_house"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Materials" name="materials">
+                            <field name="line_ids" nolabel="1" readonly="state != 'draft'">
+                                <list editable="bottom" decoration-danger="is_short and parent.is_short">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="is_short" column_invisible="1"/>
+                                    <field name="product_id"/>
+                                    <field name="material_kind" optional="hide"/>
+                                    <field name="colour_id" column_invisible="1"/>
+                                    <field name="colour_label" string="For Colour"/>
+                                    <field name="order_pieces"/>
+                                    <field name="consumption"/>
+                                    <field name="wastage_pct"/>
+                                    <field name="qty_required"/>
+                                    <field name="uom_id" string="Unit"/>
+                                    <field name="qty_in_stock"/>
+                                    <field name="qty_open_po"/>
+                                    <field name="qty_to_order"/>
+                                    <field name="price_unit" optional="hide"/>
+                                    <field name="value_to_order" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_fabric_booking" model="ir.actions.act_window">
+        <field name="name">Fabric Bookings</field>
+        <field name="res_model">garment.fabric.booking</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="garment_fabric_booking_view_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Book the fabric and trims of a production order</p>
+            <p>Materials come from the tech pack and the order's size and colour grid.</p>
+        </field>
+    </record>
+</odoo>
