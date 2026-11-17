@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_garment_first_steps_form" model="ir.ui.view">
+        <field name="name">garment.first.steps.form</field>
+        <field name="model">garment.first.steps</field>
+        <field name="arch" type="xml">
+            <form string="First Steps" create="0" edit="0">
+                <sheet>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi o_zyra_kpi_good">
+                            <span class="o_zyra_kpi_label">Steps Done</span>
+                            <span class="o_zyra_kpi_value"><field name="steps_label"/></span>
+                        </div>
+                    </div>
+                    <separator string="From an empty database to the first scanned bundle"/>
+                    <field name="steps_html" nolabel="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_first_steps" model="ir.actions.act_window">
+        <field name="name">First Steps</field>
+        <field name="res_model">garment.first.steps</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="view_garment_connect_cockpit_form" model="ir.ui.view">
+        <field name="name">garment.connect.cockpit.form</field>
+        <field name="model">garment.connect.cockpit</field>
+        <field name="arch" type="xml">
+            <form string="Connect" create="0" edit="0">
+                <sheet>
+                    <div class="text-uppercase small text-muted">Zyra Garment · Cockpit</div>
+                    <h1>Connect</h1>
+                    <div class="text-muted mb-2">API, webhooks, portal and imports</div>
+                    <h3><field name="headline" nolabel="1"/></h3>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">API Calls, 30 d</span>
+                            <span class="o_zyra_kpi_value"><field name="api_calls_30d"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn">
+                            <span class="o_zyra_kpi_label">Refused</span>
+                            <span class="o_zyra_kpi_value"><field name="refused_30d"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn">
+                            <span class="o_zyra_kpi_label">Webhook Retries</span>
+                            <span class="o_zyra_kpi_value"><field name="webhook_retries"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Portal Views</span>
+                            <span class="o_zyra_kpi_value"><field name="portal_views"/></span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Documents to Review</span>
+                            <span class="o_zyra_kpi_value"><field name="documents_to_review"/></span>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Calls by Key">
+                            <field name="key_ids" nolabel="1" colspan="2">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="calls_30d"/>
+                                    <field name="refused_30d"/>
+                                </list>
+                            </field>
+                        </group>
+                        <group string="Webhook Deliveries">
+                            <field name="delivery_ids" nolabel="1" colspan="2">
+                                <list>
+                                    <field name="webhook_id" string="Endpoint"/>
+                                    <field name="event"/>
+                                    <field name="create_date" string="Last"/>
+                                    <field name="state" column_invisible="1"/>
+                                    <field name="result_label" string="Status" widget="badge"
+                                           decoration-success="state == 'delivered'"
+                                           decoration-warning="state in ('retrying', 'pending')"
+                                           decoration-danger="state == 'failed'"/>
+                                </list>
+                            </field>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_connect_cockpit" model="ir.actions.act_window">
+        <field name="name">Connect Cockpit</field>
+        <field name="res_model">garment.connect.cockpit</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+</odoo>

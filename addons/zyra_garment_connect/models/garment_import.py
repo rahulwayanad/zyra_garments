@@ -30,13 +30,14 @@ class GarmentImport(models.Model):
     company_id = fields.Many2one("res.company", required=True, default=lambda self: self.env.company)
     file = fields.Binary(string="CSV File", attachment=False)
     filename = fields.Char()
-    state = fields.Selection([("draft", "Draft"), ("checked", "Dry Run Done"), ("done", "Imported")],
+    state = fields.Selection([("draft", "Uploaded"), ("checked", "Checked"), ("done", "Applied")],
                              default="draft", required=True, tracking=True, copy=False)
     line_ids = fields.One2many("garment.import.line", "import_id", string="Rows")
     row_count = fields.Integer(string="Rows Read", compute="_compute_counts")
-    ok_count = fields.Integer(string="Ready", compute="_compute_counts")
-    error_count = fields.Integer(string="Errors", compute="_compute_counts")
-    created_count = fields.Integer(string="Created", compute="_compute_counts")
+    create_count = fields.Integer(string="Create", compute="_compute_counts")
+    update_count = fields.Integer(string="Update", compute="_compute_counts")
+    error_count = fields.Integer(string="Skip", compute="_compute_counts")
+    created_count = fields.Integer(string="Written", compute="_compute_counts")
 
     @api.depends("target")
     def _compute_columns_hint(self):
@@ -47,9 +48,10 @@ class GarmentImport(models.Model):
     def _compute_counts(self):
         for imp in self:
             imp.row_count = len(imp.line_ids)
-            imp.ok_count = len(imp.line_ids.filtered(lambda l: l.status in ("ok", "created")))
-            imp.error_count = len(imp.line_ids.filtered(lambda l: l.status == "error"))
-            imp.created_count = len(imp.line_ids.filtered(lambda l: l.status == "created"))
+            imp.create_count = len(imp.line_ids.filtered(lambda l: l.status in ("create", "created")))
+            imp.update_count = len(imp.line_ids.filtered(lambda l: l.status in ("update", "updated")))
+            imp.error_count = len(imp.line_ids.filtered(lambda l: l.status == "skip"))
+            imp.created_count = len(imp.line_ids.filtered(lambda l: l.status in ("created", "updated")))
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -75,7 +77,7 @@ class GarmentImport(models.Model):
             raise UserError(_("The file has no data rows. Expected columns: %s", TARGET_COLUMNS[self.target]))
         return rows
 
-    def _garment_process(self, dry_run):
+    def _garment_process(self, dry_run, skip_rows=()):
         self.ensure_one()
         rows = self._garment_rows()
         Model = self.env[TARGET_MODEL[self.target]].with_company(self.company_id)
@@ -83,24 +85,36 @@ class GarmentImport(models.Model):
         results = []
         for idx, row in enumerate(rows, start=2):  # row 1 is the header
             res = {"row_no": idx, "data": ", ".join("%s=%s" % (k, v) for k, v in row.items() if v)}
+            if idx in skip_rows:
+                res.update(status="skip", message=_("Skipped: the dry run refused this row"))
+                results.append(res)
+                continue
             try:
                 vals = vals_fn(row)
+                existing = self._garment_find_existing(Model, vals)
                 if dry_run:
                     try:
                         with self.env.cr.savepoint():
-                            Model.create(vals)
+                            existing.write(vals) if existing else Model.create(vals)
                             raise _DryRunRollback()
                     except _DryRunRollback:
                         pass
-                    res.update(status="ok", message=_("Ready"))
+                    res.update(status="update" if existing else "create",
+                               message=_("%s exists: it will be updated", existing.display_name) if existing
+                               else False)
                 else:
                     with self.env.cr.savepoint():
-                        rec = Model.create(vals)
-                    res.update(status="created", message=rec.display_name, res_id=rec.id)
+                        if existing:
+                            existing.write(vals)
+                            rec = existing
+                        else:
+                            rec = Model.create(vals)
+                    res.update(status="updated" if existing else "created", message=rec.display_name,
+                               res_id=rec.id)
             except (UserError, ValidationError, ValueError) as e:
-                res.update(status="error", message=str(e.args[0] if e.args else e))
+                res.update(status="skip", message=str(e.args[0] if e.args else e))
             except Exception as e:  # database constraint (unique, not null): show it on the row
-                res.update(status="error", message=str(e).splitlines()[0][:250])
+                res.update(status="skip", message=str(e).splitlines()[0][:250])
             results.append(res)
         self.env.invalidate_all()
         self.line_ids.unlink()
@@ -114,14 +128,23 @@ class GarmentImport(models.Model):
             imp._garment_process(dry_run=True)
             imp.state = "checked"
 
-    def action_import(self):
+    def action_apply(self):
+        """Write the rows the dry run accepted; rows marked Skip are left out."""
         for imp in self:
             if imp.state != "checked":
                 raise UserError(_("Run the dry run first and check the rows."))
-            if imp.error_count:
-                raise UserError(_("Fix the %s row(s) with errors and run the dry run again.", imp.error_count))
-            imp._garment_process(dry_run=False)
+            skip_rows = set(imp.line_ids.filtered(lambda l: l.status == "skip").mapped("row_no"))
+            imp._garment_process(dry_run=False, skip_rows=skip_rows)
             imp.state = "done"
+
+    def _garment_find_existing(self, Model, vals):
+        """Record the row updates instead of creating: same roll no. + fabric, or same employee name."""
+        if self.target == "rolls":
+            return Model.search([("name", "=", vals["name"]), ("product_id", "=", vals["product_id"]),
+                                 ("company_id", "=", vals["company_id"])], limit=1)
+        if self.target == "rosters":
+            return Model.search([("name", "=", vals["name"])], limit=1)
+        return Model.browse()
 
     def action_reset(self):
         self.line_ids.unlink()
@@ -203,6 +226,7 @@ class GarmentImportLine(models.Model):
     import_id = fields.Many2one("garment.import", required=True, ondelete="cascade", index=True)
     row_no = fields.Integer(string="Row")
     data = fields.Char(string="Values")
-    status = fields.Selection([("ok", "Ready"), ("error", "Error"), ("created", "Created")], required=True)
-    message = fields.Char(string="Result")
+    status = fields.Selection([("create", "Create"), ("update", "Update"), ("skip", "Skip"),
+                               ("created", "Created"), ("updated", "Updated")], string="Action", required=True)
+    message = fields.Char(string="Note")
     res_id = fields.Integer(string="Record ID")

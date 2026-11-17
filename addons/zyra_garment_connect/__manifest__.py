@@ -15,6 +15,7 @@
         "views/garment_api_key_views.xml",
         "views/garment_webhook_views.xml",
         "views/garment_import_views.xml",
+        "views/garment_connect_cockpit_views.xml",
         "views/menus.xml",
     ],
     "demo": ["demo/connect_demo.xml"],

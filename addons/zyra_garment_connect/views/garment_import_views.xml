@@ -6,10 +6,12 @@
         <field name="arch" type="xml">
             <form string="CSV Import">
                 <header>
+                    <button name="action_apply" string="Apply" type="object" class="btn-primary"
+                            invisible="state != 'checked'"/>
                     <button name="action_dry_run" string="Dry Run" type="object" class="btn-primary"
-                            invisible="state == 'done'"/>
-                    <button name="action_import" string="Import" type="object" class="btn-primary"
-                            invisible="state != 'checked' or error_count"/>
+                            invisible="state != 'draft'"/>
+                    <button name="action_dry_run" string="Dry Run Again" type="object"
+                            invisible="state != 'checked'"/>
                     <button name="action_reset" string="Reset" type="object" invisible="state != 'checked'"/>
                     <field name="state" widget="statusbar"/>
                 </header>
@@ -20,16 +22,16 @@
                             <span class="o_zyra_kpi_value"><field name="row_count"/></span>
                         </div>
                         <div class="o_zyra_kpi o_zyra_kpi_good">
-                            <span class="o_zyra_kpi_label">Ready</span>
-                            <span class="o_zyra_kpi_value"><field name="ok_count"/></span>
-                        </div>
-                        <div class="o_zyra_kpi o_zyra_kpi_bad">
-                            <span class="o_zyra_kpi_label">Errors</span>
-                            <span class="o_zyra_kpi_value"><field name="error_count"/></span>
+                            <span class="o_zyra_kpi_label">Create</span>
+                            <span class="o_zyra_kpi_value"><field name="create_count"/></span>
                         </div>
                         <div class="o_zyra_kpi">
-                            <span class="o_zyra_kpi_label">Created</span>
-                            <span class="o_zyra_kpi_value"><field name="created_count"/></span>
+                            <span class="o_zyra_kpi_label">Update</span>
+                            <span class="o_zyra_kpi_value"><field name="update_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad">
+                            <span class="o_zyra_kpi_label">Skip</span>
+                            <span class="o_zyra_kpi_value"><field name="error_count"/></span>
                         </div>
                     </div>
                     <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
@@ -45,10 +47,13 @@
                         </group>
                     </group>
                     <field name="line_ids" readonly="1">
-                        <list decoration-danger="status == 'error'" decoration-success="status == 'created'">
+                        <list>
                             <field name="row_no"/>
                             <field name="data"/>
-                            <field name="status" widget="badge"/>
+                            <field name="status" widget="badge"
+                                   decoration-success="status in ('create', 'created')"
+                                   decoration-info="status in ('update', 'updated')"
+                                   decoration-danger="status == 'skip'"/>
                             <field name="message"/>
                         </list>
                     </field>
@@ -74,7 +79,7 @@
     </record>
 
     <record id="action_garment_import" model="ir.actions.act_window">
-        <field name="name">CSV Imports</field>
+        <field name="name">Import Jobs</field>
         <field name="res_model">garment.import</field>
         <field name="view_mode">list,form</field>
     </record>

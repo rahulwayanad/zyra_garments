@@ -167,22 +167,24 @@ class TestConnect(TransactionCase):
         imp.action_dry_run()
         self.assertEqual(self.env["hr.employee"].search_count([]), before, "dry run must not create records")
         self.assertFalse(self.env["hr.employee"].search([("name", "in", ["Rekha Dry", "Suma Dry"])]))
-        self.assertEqual((imp.state, imp.row_count, imp.ok_count, imp.error_count), ("checked", 2, 2, 0))
+        self.assertEqual((imp.state, imp.row_count, imp.create_count, imp.error_count), ("checked", 2, 2, 0))
 
     def test_dry_run_reports_each_bad_row(self):
         imp = self._import("name,department\nGood Row,%s\n,%s\nBad Dept,Nowhere\n" % (self.dept.name, self.dept.name))
         imp.action_dry_run()
-        self.assertEqual(imp.line_ids.mapped("status"), ["ok", "error", "error"])
+        self.assertEqual(imp.line_ids.mapped("status"), ["create", "skip", "skip"])
         self.assertEqual(imp.line_ids.mapped("row_no"), [2, 3, 4])
-        with self.assertRaises(UserError):
-            imp.action_import()
+        imp.action_apply()
+        self.assertEqual(imp.line_ids.mapped("status"), ["created", "skip", "skip"],
+                         "apply writes only the rows the dry run accepted")
+        self.assertFalse(self.env["hr.employee"].search([("name", "=", "Bad Dept")]))
 
     def test_import_requires_dry_run_then_creates(self):
         imp = self._import("name,job_title\nLatha Real,Checker\n")
         with self.assertRaises(UserError):
-            imp.action_import()
+            imp.action_apply()
         imp.action_dry_run()
-        imp.action_import()
+        imp.action_apply()
         self.assertEqual(imp.state, "done")
         self.assertEqual(imp.created_count, 1)
         self.assertTrue(self.env["hr.employee"].search([("name", "=", "Latha Real")]))
@@ -192,6 +194,40 @@ class TestConnect(TransactionCase):
         lots = self.env["stock.lot"].search_count([])
         imp = self._import("roll,product,dye_lot,gsm\nR-T-001,JTF,DL9,180\nR-T-002,NOPE,DL9,abc\n", "rolls")
         imp.action_dry_run()
-        self.assertEqual(imp.line_ids.mapped("status"), ["ok", "error"])
+        self.assertEqual(imp.line_ids.mapped("status"), ["create", "skip"])
         self.assertEqual(self.env["stock.lot"].search_count([]), lots)
-        self.assertTrue(product)
+
+    def test_existing_roll_is_updated_not_duplicated(self):
+        product = self.env["product.product"].create({"name": "Twill Test Fabric", "default_code": "TTF"})
+        lot = self.env["stock.lot"].create({"name": "R-U-1", "product_id": product.id, "is_fabric_roll": True,
+                                            "dye_lot": "OLD"})
+        imp = self._import("roll,product,dye_lot\nR-U-1,TTF,NEW\n", "rolls")
+        imp.action_dry_run()
+        self.assertEqual(imp.line_ids.status, "update")
+        self.assertEqual(lot.dye_lot, "OLD", "dry run does not change the existing roll")
+        imp.action_apply()
+        self.assertEqual(lot.dye_lot, "NEW")
+        self.assertEqual(self.env["stock.lot"].search_count([("name", "=", "R-U-1")]), 1)
+
+    # ---------------------------------------------------------------- cockpit and first steps
+    def test_cockpit_counts_calls_refusals_and_retries(self):
+        self.call("GET", "rosters")
+        self.call("GET", "payroll")
+        cockpit = self.env["garment.connect.cockpit"].create({})
+        self.assertGreaterEqual(cockpit.api_calls_30d, 2)
+        self.assertGreaterEqual(cockpit.refused_30d, 1)
+        self.assertIn("calls in 30 days", cockpit.headline)
+
+    def test_first_steps_lists_nine_steps(self):
+        steps = self.env["garment.first.steps"].create({})
+        self.assertEqual(steps.steps_total, 9)
+        self.assertIn("Scan the first coupon", steps.steps_html)
+
+    def test_order_confirmation_queues_webhook(self):
+        self._hook()
+        order = self.env["garment.order"].search([("state", "=", "draft")], limit=1)
+        if not order:
+            self.skipTest("no draft demo order")
+        order.write({"state": "confirmed"})
+        delivery = self.env["garment.webhook.delivery"].search([("event", "=", "order.confirmed")], limit=1)
+        self.assertIn(order.name, delivery.payload)
