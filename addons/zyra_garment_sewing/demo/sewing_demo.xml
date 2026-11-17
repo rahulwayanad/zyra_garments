@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_line_1" model="garment.line">
+        <field name="workcenter_id" ref="zyra_garment_merch.workcenter_line_1"/>
+        <field name="operator_count">24</field>
+        <field name="machine_count">26</field>
+    </record>
+    <record id="garment_line_2" model="garment.line">
+        <field name="workcenter_id" ref="zyra_garment_merch.workcenter_line_2"/>
+        <field name="operator_count">22</field>
+        <field name="machine_count">24</field>
+    </record>
+    <record id="garment_line_3" model="garment.line">
+        <field name="workcenter_id" ref="zyra_garment_merch.workcenter_line_3"/>
+        <field name="operator_count">20</field>
+        <field name="machine_count">22</field>
+    </record>
+    <record id="garment_line_4" model="garment.line">
+        <field name="workcenter_id" ref="zyra_garment_merch.workcenter_line_4"/>
+        <field name="operator_count">18</field>
+        <field name="machine_count">20</field>
+    </record>
+    <record id="minute_rate_param" model="ir.config_parameter">
+        <field name="key">zyra_garment_sewing.minute_rate</field>
+        <field name="value">1.8</field>
+    </record>
+    <function model="garment.bulletin" name="_garment_load_demo"/>
+</odoo>

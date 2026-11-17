@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_sewing.LinePlanningBoard">
+        <div class="o_zyra_pb">
+            <div class="o_zyra_pb_top">
+                <h4 class="mb-0 flex-grow-1">Line Planning Board</h4>
+                <button class="btn btn-secondary" t-on-click="planOrders">Plan Unplanned Orders</button>
+            </div>
+            <t t-if="state.data">
+                <t t-set="d" t-value="state.data"/>
+                <div class="o_zyra_kpis">
+                    <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Orders planned</span><span class="o_zyra_kpi_value" t-esc="d.orders_planned"/></div>
+                    <div class="o_zyra_kpi o_zyra_kpi_bad"><span class="o_zyra_kpi_label">Finish after ex-factory</span><span class="o_zyra_kpi_value" t-esc="d.late"/></div>
+                    <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Clashes</span><span class="o_zyra_kpi_value" t-esc="d.clashes"/></div>
+                    <div class="o_zyra_kpi o_zyra_kpi_good"><span class="o_zyra_kpi_label">Average load</span><span class="o_zyra_kpi_value"><t t-esc="d.average_load"/>%</span></div>
+                </div>
+                <div class="o_zyra_pb_card">
+                    <div class="o_zyra_pb_title">Line planning board · drag a bar to another line or week</div>
+                    <div class="o_zyra_pb_row o_zyra_pb_head">
+                        <div class="o_zyra_pb_name"/>
+                        <div class="o_zyra_pb_track">
+                            <t t-foreach="d.weeks" t-as="week" t-key="week.date">
+                                <div class="o_zyra_pb_week" t-esc="week.label"/>
+                            </t>
+                        </div>
+                    </div>
+                    <t t-foreach="d.lines" t-as="line" t-key="line.id">
+                        <div class="o_zyra_pb_row">
+                            <div class="o_zyra_pb_name">
+                                <div class="fw-bold" t-esc="line.name"/>
+                                <div t-att-class="loadClass(line.load)">Load <t t-esc="line.load"/>% of capacity</div>
+                            </div>
+                            <div class="o_zyra_pb_track">
+                                <t t-foreach="d.weeks" t-as="week" t-key="week.date">
+                                    <div class="o_zyra_pb_cell" t-on-dragover.prevent="() => {}" t-on-drop.prevent="() => this.onDrop(line, week)"/>
+                                </t>
+                                <t t-foreach="line.bars" t-as="bar" t-key="bar.id">
+                                    <div t-attf-class="o_zyra_pb_bar {{ barClass(bar) }}" draggable="true"
+                                         t-att-style="'left:' + bar.left + '%;width:' + bar.width + '%'"
+                                         t-att-title="bar.order + (bar.ex_factory ? ' · ex-factory ' + bar.ex_factory : '')"
+                                         t-on-dragstart="() => this.onDragStart(bar)" t-on-click="() => this.openBar(bar)">
+                                        <t t-esc="bar.label"/>
+                                    </div>
+                                    <div t-if="bar.late" class="o_zyra_pb_exf" t-att-style="'left:' + bar.ex_left + '%'">
+                                        <span>ex-factory <t t-esc="bar.label.split(' ')[0]"/></span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

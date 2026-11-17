@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_line_view_list" model="ir.ui.view">
+        <field name="name">garment.line.list</field>
+        <field name="model">garment.line</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="supervisor_id"/>
+                <field name="operator_count"/>
+                <field name="machine_count"/>
+                <field name="capacity_minutes"/>
+                <field name="current_bulletin_id"/>
+                <field name="target_per_hour"/>
+            </list>
+        </field>
+    </record>
+    <record id="garment_line_view_form" model="ir.ui.view">
+        <field name="name">garment.line.form</field>
+        <field name="model">garment.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_scans" type="object" class="oe_stat_button" icon="fa-qrcode"
+                                string="Scans"/>
+                    </div>
+                    <div class="oe_title"><h1><field name="name" placeholder="Line 1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="supervisor_id"/>
+                            <field name="current_bulletin_id"/>
+                        </group>
+                        <group>
+                            <field name="operator_count"/>
+                            <field name="machine_count"/>
+                            <field name="working_minutes"/>
+                            <field name="capacity_minutes"/>
+                            <field name="target_efficiency"/>
+                            <field name="target_per_hour"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Operators" name="operators">
+                            <field name="employee_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_garment_line" model="ir.actions.act_window">
+        <field name="name">Sewing Lines</field>
+        <field name="res_model">garment.line</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

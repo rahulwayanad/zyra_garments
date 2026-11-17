@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_line_balancing_view_list" model="ir.ui.view">
+        <field name="name">garment.line.balancing.list</field>
+        <field name="model">garment.line.balancing</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="style_id"/>
+                <field name="line_id"/>
+                <field name="balanced_on"/>
+                <field name="balanced_output"/>
+                <field name="balance_loss"/>
+                <field name="state" widget="badge" decoration-success="state == 'applied'"/>
+            </list>
+        </field>
+    </record>
+    <record id="garment_line_balancing_view_form" model="ir.ui.view">
+        <field name="name">garment.line.balancing.form</field>
+        <field name="model">garment.line.balancing</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_propose" type="object" string="Line Layout" invisible="state != 'draft'"/>
+                    <button name="action_apply" type="object" string="Apply to Line" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state == 'cancel'"/>
+                    <button name="action_draft" type="object" string="Reset to Draft" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,applied"/>
+                </header>
+                <sheet>
+                    <div class="o_zyra_kpis">
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Pitch Time</span><span class="o_zyra_kpi_value"><field name="pitch_time" class="d-inline"/> min</span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Target / Hour</span><span class="o_zyra_kpi_value"><field name="target_output" digits="[16, 0]"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Balanced Output / Hour</span><span class="o_zyra_kpi_value"><field name="balanced_output"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good"><span class="o_zyra_kpi_label">Operators Assigned</span><span class="o_zyra_kpi_value"><field name="operators_allocated" class="d-inline"/> / <field name="operators" class="d-inline" digits="[16, 0]"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Balance Loss</span><span class="o_zyra_kpi_value"><field name="balance_loss" class="d-inline"/>%</span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Bottleneck</span><span class="o_zyra_kpi_value"><field name="bottleneck"/></span></div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name"/></div>
+                        <h1><field name="title"/></h1>
+                    </div>
+                    <group>
+                        <group string="Order and Line">
+                            <field name="order_id" readonly="state != 'draft'"/>
+                            <field name="style_id"/>
+                            <field name="bulletin_id" readonly="state != 'draft'"/>
+                            <field name="line_id" readonly="state != 'draft'"/>
+                            <field name="balanced_on"/>
+                            <field name="balanced_by"/>
+                        </group>
+                        <group string="Inputs">
+                            <field name="operators" readonly="state != 'draft'"/>
+                            <field name="planned_efficiency" readonly="state != 'draft'"/>
+                            <field name="total_sam"/>
+                            <field name="pitch_time"/>
+                            <field name="target_output"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Stations" name="stations">
+                            <field name="station_ids" readonly="state != 'draft'">
+                                <list editable="bottom" decoration-danger="is_bottleneck">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="machine_type_id"/>
+                                    <field name="sam"/>
+                                    <field name="needed"/>
+                                    <field name="assigned"/>
+                                    <field name="employee_ids" widget="many2many_tags"/>
+                                    <field name="efficiency"/>
+                                    <field name="capacity"/>
+                                    <field name="is_bottleneck" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_garment_line_balancing" model="ir.actions.act_window">
+        <field name="name">Line Balancing</field>
+        <field name="res_model">garment.line.balancing</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

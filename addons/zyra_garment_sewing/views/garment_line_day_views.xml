@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_line_day_view_list" model="ir.ui.view">
+        <field name="name">garment.line.day.list</field>
+        <field name="model">garment.line.day</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="line_id"/>
+                <field name="order_id"/>
+                <field name="pieces"/>
+                <field name="target"/>
+                <field name="efficiency"/>
+                <field name="lost_minutes"/>
+                <field name="wip_days"/>
+                <field name="state" widget="badge" decoration-success="state == 'closed'"/>
+            </list>
+        </field>
+    </record>
+    <record id="garment_line_day_view_form" model="ir.ui.view">
+        <field name="name">garment.line.day.form</field>
+        <field name="model">garment.line.day</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="%(action_report_line_day_hourly)d" type="action" string="Print Hourly Report"/>
+                    <button name="action_refresh" type="object" string="Refresh Figures" invisible="state == 'closed'"/>
+                    <button name="action_close" type="object" string="Close Day" class="btn-primary" invisible="state == 'closed'"/>
+                    <button name="action_reopen" type="object" string="Reopen" invisible="state == 'open'"
+                            groups="zyra_garment_base.group_garment_factory_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="o_zyra_kpis">
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="pieces &lt; target"><span class="o_zyra_kpi_label">Pieces off Line</span><span class="o_zyra_kpi_value"><field name="pieces"/></span><small>target <field name="target" class="d-inline"/></small></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="pieces &gt;= target"><span class="o_zyra_kpi_label">Pieces off Line</span><span class="o_zyra_kpi_value"><field name="pieces"/></span><small>target <field name="target" class="d-inline"/></small></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Efficiency</span><span class="o_zyra_kpi_value"><field name="efficiency"/>%</span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad"><span class="o_zyra_kpi_label">Lost Minutes</span><span class="o_zyra_kpi_value"><field name="lost_minutes"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">WIP Days</span><span class="o_zyra_kpi_value"><field name="wip_days"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad"><span class="o_zyra_kpi_label">DHU</span><span class="o_zyra_kpi_value"><field name="dhu"/>%</span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Operators</span><span class="o_zyra_kpi_value"><field name="operators"/></span></div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name"/></div>
+                        <h1><field name="title"/></h1>
+                    </div>
+                    <group>
+                        <group string="Line">
+                            <field name="line_id" readonly="state == 'closed'"/>
+                            <field name="supervisor_id"/>
+                            <field name="order_id"/>
+                            <field name="bulletin_id"/>
+                            <field name="date" readonly="state == 'closed'"/>
+                        </group>
+                        <group string="Day">
+                            <field name="working_minutes"/>
+                            <field name="available_minutes"/>
+                            <field name="earned_minutes"/>
+                            <field name="planned_efficiency"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Hours" name="hours">
+                            <field name="hour_ids" readonly="state == 'closed'">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="hour" readonly="1"/>
+                                    <field name="target" readonly="1"/>
+                                    <field name="output" readonly="1"/>
+                                    <field name="efficiency" readonly="1"/>
+                                    <field name="lost_minutes" readonly="1"/>
+                                    <field name="reason"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Downtime" name="downtime">
+                            <field name="downtime_ids" readonly="state == 'closed'">
+                                <list editable="bottom">
+                                    <field name="reason"/>
+                                    <field name="machine_type_id"/>
+                                    <field name="minutes" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Defects" name="defects">
+                            <field name="defect_ids" readonly="state == 'closed'">
+                                <list editable="bottom">
+                                    <field name="defect_id"/>
+                                    <field name="operation"/>
+                                    <field name="employee_id"/>
+                                    <field name="qty" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_garment_line_day" model="ir.actions.act_window">
+        <field name="name">Line Days</field>
+        <field name="res_model">garment.line.day</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

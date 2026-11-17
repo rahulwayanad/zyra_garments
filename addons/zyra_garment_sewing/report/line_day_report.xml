@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_line_day_hourly" model="ir.actions.report">
+        <field name="name">Hourly Report</field>
+        <field name="model">garment.line.day</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_sewing.report_line_day_hourly</field>
+        <field name="report_file">zyra_garment_sewing.report_line_day_hourly</field>
+        <field name="print_report_name">'Hourly report %s' % object.name</field>
+        <field name="binding_model_id" ref="model_garment_line_day"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_line_day_hourly">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="day">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h3><span t-out="day.title"/></h3>
+                        <p><span t-out="day.name"/> · Order <span t-out="day.order_id.name or '-'"/> · Supervisor <span t-out="day.supervisor_id.name or '-'"/></p>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Pieces off line <b t-out="day.pieces"/> (target <t t-out="day.target"/>)</td>
+                                <td>Efficiency <b t-out="'%.0f' % day.efficiency"/>%</td>
+                                <td>Lost minutes <b t-out="'%.0f' % day.lost_minutes"/></td>
+                                <td>WIP days <b t-out="'%.1f' % day.wip_days"/></td>
+                                <td>DHU <b t-out="'%.1f' % day.dhu"/>%</td>
+                                <td>Operators <b t-out="day.operators"/></td>
+                            </tr>
+                        </table>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr><th>Hour</th><th class="text-end">Target</th><th class="text-end">Output</th>
+                                    <th class="text-end">Efficiency</th><th class="text-end">Lost Minutes</th><th>Reason</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="day.hour_ids" t-as="hour">
+                                    <td t-out="hour.hour"/>
+                                    <td class="text-end" t-out="hour.target"/>
+                                    <td class="text-end" t-out="hour.output"/>
+                                    <td class="text-end"><t t-out="'%.0f' % hour.efficiency"/>%</td>
+                                    <td class="text-end" t-out="hour.lost_minutes"/>
+                                    <td t-out="hour.reason or ''"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <t t-if="day.defect_ids">
+                            <h5>Defects</h5>
+                            <table class="table table-sm">
+                                <tr t-foreach="day.defect_ids" t-as="defect">
+                                    <td t-out="defect.defect_id.name"/>
+                                    <td t-out="defect.operation or ''"/>
+                                    <td t-out="defect.employee_id.name or ''"/>
+                                    <td class="text-end" t-out="defect.qty"/>
+                                </tr>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_garment_scan_station" model="ir.actions.client">
+        <field name="name">Scan Station</field>
+        <field name="tag">zyra_garment_scan_station</field>
+    </record>
+    <record id="action_garment_line_tv_board" model="ir.actions.client">
+        <field name="name">Line TV Board</field>
+        <field name="tag">zyra_garment_line_tv_board</field>
+        <field name="target">fullscreen</field>
+    </record>
+    <record id="action_garment_line_planning_board" model="ir.actions.client">
+        <field name="name">Line Planning Board</field>
+        <field name="tag">zyra_garment_line_planning_board</field>
+    </record>
+    <record id="garment_line_plan_view_form" model="ir.ui.view">
+        <field name="name">garment.line.plan.form</field>
+        <field name="model">garment.line.plan</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="order_id"/>
+                        <field name="style_id"/>
+                        <field name="line_id"/>
+                    </group>
+                    <group>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="pieces"/>
+                        <field name="minutes"/>
+                        <field name="is_late"/>
+                        <field name="has_clash"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+</odoo>

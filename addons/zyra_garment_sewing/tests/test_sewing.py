@@ -1,0 +1,237 @@
+import math
+from datetime import timedelta
+
+from odoo import Command, fields
+from odoo.exceptions import UserError
+from odoo.tests import tagged
+
+from odoo.addons.zyra_garment_cutting.tests.common import CuttingCase
+
+
+@tagged("post_install", "-at_install", "zyra")
+class TestSewing(CuttingCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env["ir.config_parameter"].sudo().set_param("zyra_garment_sewing.minute_rate", "2.0")
+        cls.sew_line = cls.env["garment.line"].create({"name": "Sew Test Line", "code": "STL",
+                                                        "operator_count": 10, "working_minutes": 480})
+        cls.operator2 = cls.env["hr.employee"].create({"name": "Sew Test Operator Two"})
+        cls.line_id_other = cls.env["garment.line"].create({"name": "Sew Test Line B", "code": "STB"})
+
+    def _bundle(self):
+        plan = self.make_plan(bundle_size=40)
+        plan.action_propose()
+        plan.action_approve()
+        lay = plan.lay_ids.sorted("lay_no")[0]
+        self.cut_lay(lay)
+        lay.action_create_bundles()
+        bundle = lay.bundle_ids.sorted("id")[0]
+        bundle.action_issue(self.sew_line.workcenter_id)
+        return bundle
+
+    def _payloads(self, bundle):
+        return [c.payload for c in bundle.coupon_ids.sorted("sequence")]
+
+    # --- line balancing maths -------------------------------------------------
+    def test_balancing_rule_half_operator_assignment(self):
+        """Rule: needed = SAM ÷ pitch; assigned rounded to half operators (min 0.5), never above available."""
+        needed, assigned = self.env["garment.line.balancing"]._garment_assign([0.374, 0.78, 0.86], 3)
+        pitch = (0.374 + 0.78 + 0.86) / 3
+        self.assertAlmostEqual(needed[0], 0.374 / pitch)
+        self.assertEqual(assigned, [0.5, 1.0, 1.5])
+        _needed, assigned = self.env["garment.line.balancing"]._garment_assign([0.5, 0.5, 0.5, 0.5], 1)
+        self.assertEqual(assigned, [0.5, 0.5, 0.5, 0.5])  # min 0.5 a station even when short
+
+    def test_balancing_record_figures_and_apply_to_line(self):
+        """Rule: capacity/h = assigned × 60 ÷ SAM × eff; balanced = lowest capacity; loss = 1 − balanced ÷ target."""
+        bulletin = self.env["garment.bulletin"].create({"style_id": self.style.id})
+        bulletin.action_load_from_techpack()
+        self.assertEqual(bulletin.operation_count, 2)
+        self.assertAlmostEqual(bulletin.total_sam, 1.2)
+        self.assertEqual(bulletin.line_ids.sorted("sequence")[0].target_per_hour, 150)  # 60 / 0.4
+        self.assertEqual(bulletin.display_name, "%s · v1" % self.style.code)
+        bulletin.action_approve()
+        self.assertEqual(bulletin.state, "approved")
+        self.assertTrue(bulletin.rates_applied_on)
+        rec = self.env["garment.line.balancing"].browse(bulletin.action_open_balancing()["res_id"])
+        rec.write({"operators": 3, "planned_efficiency": 50, "line_id": self.sew_line.id})
+        rec.action_propose()
+        self.assertTrue(rec.name.startswith("LB/"))
+        self.assertAlmostEqual(rec.pitch_time, 0.4)
+        self.assertAlmostEqual(rec.target_output, 75.0)  # 3 × 60 ÷ 1.2 × 50 %
+        first, second = rec.station_ids.sorted("sequence")
+        self.assertEqual((first.assigned, second.assigned), (1.0, 2.0))
+        self.assertAlmostEqual(first.capacity, 1 * 60 / 0.4 * 0.5)
+        first.efficiency = 30
+        self.assertAlmostEqual(rec.balanced_output, round(60 / 0.4 * 0.3))
+        self.assertEqual(rec.bottleneck, first.name)
+        self.assertAlmostEqual(rec.balance_loss, round((1 - 45 / 75) * 100, 1))
+        self.assertEqual(rec.operators_allocated, 3.0)
+        rec.action_apply()
+        self.assertEqual(rec.state, "applied")
+        self.assertEqual(self.sew_line.current_bulletin_id, bulletin)
+        self.assertEqual(self.sew_line.target_efficiency, 50)
+        new = self.env["garment.bulletin"].browse(bulletin.action_new_version()["res_id"])
+        self.assertEqual((new.version, new.state, bulletin.active), (2, "draft", False))
+        self.assertEqual(new.operation_count, 2)
+
+    # --- scans ------------------------------------------------------------------
+    def test_scan_minutes_and_earnings_rule(self):
+        """Rule: minutes earned = pieces × SAM; earnings = minutes × minute rate."""
+        bundle = self._bundle()
+        scan = self.env["garment.scan"]._garment_scan(self._payloads(bundle)[0], self.operator)
+        self.assertEqual(scan.pieces, bundle.pieces)
+        self.assertAlmostEqual(scan.minutes_earned, bundle.pieces * 0.4)
+        self.assertAlmostEqual(scan.earnings, bundle.pieces * 0.4 * 2.0)
+        self.assertEqual(scan.line_id, self.sew_line)
+        self.assertEqual(bundle.stage, "in_sewing")
+
+    def test_duplicate_coupon_refused(self):
+        bundle = self._bundle()
+        payload = self._payloads(bundle)[0]
+        self.env["garment.scan"]._garment_scan(payload, self.operator)
+        with self.assertRaises(UserError):
+            self.env["garment.scan"]._garment_scan(payload, self.operator2)
+        self.assertEqual(self.env["garment.scan"].search_count([("bundle_id", "=", bundle.id)]), 1)
+
+    def test_last_operation_completes_bundle_and_posts_sewn(self):
+        bundle = self._bundle()
+        sewn_before = self.order.qty_sewn
+        first, last = self._payloads(bundle)
+        self.assertFalse(self.env["garment.scan"]._garment_scan(first, self.operator).is_last_operation)
+        scan = self.env["garment.scan"]._garment_scan(last, self.operator2)
+        self.assertTrue(scan.is_last_operation)
+        self.assertEqual(bundle.stage, "sewn")
+        self.assertEqual(self.order.qty_sewn, sewn_before + bundle.pieces)
+
+    def test_offline_batch_replay_is_idempotent(self):
+        bundle = self._bundle()
+        first, last = self._payloads(bundle)
+        items = [
+            {"uuid": "dev1-1", "payload": first, "employee_id": self.operator.id},
+            {"uuid": "dev1-2", "payload": last, "employee_id": self.operator2.id},
+            {"uuid": "dev1-3", "payload": first, "employee_id": self.operator2.id},  # same coupon again
+            {"uuid": "dev1-4", "payload": "ZG1|1|1|BADBAD", "employee_id": self.operator.id},
+        ]
+        res = self.env["garment.scan"].garment_sync_batch(items)
+        self.assertEqual([r["status"] for r in res], ["ok", "ok", "error", "error"])
+        sewn = self.order.qty_sewn
+        again = self.env["garment.scan"].garment_sync_batch(items[:2])
+        self.assertEqual([r["status"] for r in again], ["duplicate", "duplicate"])
+        self.assertEqual(self.env["garment.scan"].search_count([("bundle_id", "=", bundle.id)]), 2)
+        self.assertEqual(self.order.qty_sewn, sewn)
+
+    def test_daily_summary_efficiency_rule(self):
+        """Rule: efficiency = earned minutes ÷ (operators × minutes per day) × 100."""
+        bundle = self._bundle()
+        for payload in self._payloads(bundle):
+            self.env["garment.scan"]._garment_scan(payload, self.operator)
+        summary = self.sew_line._garment_daily_summary()
+        earned = bundle.pieces * 1.2
+        self.assertAlmostEqual(summary["earned_minutes"], round(earned, 2))
+        self.assertEqual(summary["available_minutes"], 4800)
+        self.assertAlmostEqual(summary["efficiency"], round(earned / 4800 * 100, 1))
+        self.assertAlmostEqual(summary["lost_minutes"], round(4800 - earned, 2))
+        self.assertEqual(summary["pieces"], bundle.pieces)
+        board = self.sew_line._garment_hourly_board(first_hour=0, hours=24)
+        self.assertEqual(sum(h["output"] for h in board["hours"]), bundle.pieces)
+        self.assertEqual(board["top_operator"], self.operator.name)
+
+    def test_scan_without_badge_refused(self):
+        bundle = self._bundle()
+        with self.assertRaises(UserError):
+            self.env["garment.scan"]._garment_scan(self._payloads(bundle)[0], self.env["hr.employee"])
+
+    # --- scan station (screen 4) ------------------------------------------------
+    def test_station_badge_finds_operator_by_barcode(self):
+        self.operator.barcode = "ZS-BADGE-1"
+        self.assertEqual(self.env["garment.scan"].station_badge("ZS-BADGE-1")["id"], self.operator.id)
+        with self.assertRaises(UserError):
+            self.env["garment.scan"].station_badge("NO-SUCH-BADGE")
+
+    def test_station_stats_after_queued_scans(self):
+        """Station sends its queue through garment_sync_batch, then reads the operator's figures."""
+        bundle = self._bundle()
+        first = self._payloads(bundle)[0]
+        self.env["garment.scan"].garment_sync_batch(
+            [{"uuid": "st-1", "payload": first, "employee_id": self.operator.id, "line_id": self.sew_line.id}])
+        stats = self.env["garment.scan"].station_stats(self.operator.id, self.sew_line.id)
+        self.assertEqual(stats["pieces"], bundle.pieces)
+        self.assertAlmostEqual(stats["minutes"], round(bundle.pieces * 0.4, 1))
+        self.assertAlmostEqual(stats["earnings"], round(bundle.pieces * 0.4 * 2.0, 2))
+        self.assertEqual(stats["last"]["bundle"], bundle.name)
+
+    # --- TV board (screen 56) ---------------------------------------------------
+    def test_tv_board_data_from_hourly_board(self):
+        bundle = self._bundle()
+        for payload in self._payloads(bundle):
+            self.env["garment.scan"]._garment_scan(payload, self.operator)
+        data = self.sew_line.garment_tv_board()
+        self.assertEqual(len(data["hours"]), 9)
+        self.assertEqual(data["title"], self.sew_line.name)
+        self.assertEqual(data["top_operator"], self.operator.name)
+        self.assertGreaterEqual(data["max_bar"], 1)
+
+    # --- daily line summary (screen 58) -------------------------------------------
+    def test_line_day_figures_from_scans_and_close(self):
+        bundle = self._bundle()
+        at = fields.Datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)
+        for payload in self._payloads(bundle):
+            self.env["garment.scan"]._garment_scan(payload, self.operator, scanned_at=at)
+        day = self.env["garment.line.day"].create({"line_id": self.sew_line.id})
+        self.assertTrue(day.name.startswith("LD/"))
+        self.assertEqual(day.pieces, bundle.pieces)
+        self.assertEqual(day.available_minutes, 4800)
+        self.assertAlmostEqual(day.earned_minutes, round(bundle.pieces * 1.2, 1), places=1)
+        self.assertTrue(day.hour_ids)
+        day.hour_ids[0].reason = "Late bundle issue"
+        day.action_close()
+        self.assertEqual(day.state, "closed")
+        self.assertEqual(day.hour_ids[0].reason, "Late bundle issue")
+        with self.assertRaises(UserError):
+            day.action_refresh()
+
+    def test_line_day_defects_and_hourly_report_renders(self):
+        defect = self.env["garment.defect"].search([], limit=1) or self.env["garment.defect"].create(
+            {"code": "ZS-D1", "name": "Open seam"})
+        day = self.env["garment.line.day"].create({"line_id": self.sew_line.id})
+        day.defect_ids = [Command.create({"defect_id": defect.id, "operation": "Join shoulders", "qty": 3})]
+        html, _fmt = self.env["ir.actions.report"]._render_qweb_html(
+            "zyra_garment_sewing.action_report_line_day_hourly", day.ids)
+        self.assertIn(day.name, html.decode())
+        self.assertIn(defect.name, html.decode())
+
+    # --- planning board (screen 3) ------------------------------------------------
+    def test_planning_board_load_late_and_clash(self):
+        """Rule: days = minutes ÷ (capacity × target eff); bar after ex-factory is late; overlapping bars clash."""
+        Plan = self.env["garment.line.plan"]
+        today = fields.Date.context_today(Plan)
+        self.order.ex_factory_date = today + timedelta(days=3)
+        plan = Plan.create({"order_id": self.order.id, "line_id": self.sew_line.id, "date_start": today,
+                            "date_end": today + timedelta(days=9), "minutes": 1000})
+        self.assertTrue(plan.is_late)
+        self.assertFalse(plan.has_clash)
+        other = Plan.create({"order_id": self.order.id, "line_id": self.sew_line.id,
+                             "date_start": today + timedelta(days=5), "date_end": today + timedelta(days=6)})
+        plan.invalidate_recordset(["has_clash"])
+        self.assertTrue(plan.has_clash)
+        other.garment_move(self.line_id_other.id, fields.Date.to_string(today + timedelta(days=14)))
+        self.assertEqual(other.line_id, self.line_id_other)
+        self.assertEqual((other.date_end - other.date_start).days, 1)
+        board = Plan.garment_board()
+        self.assertEqual(len(board["weeks"]), 8)
+        row = next(r for r in board["lines"] if r["id"] == self.sew_line.id)
+        self.assertEqual(len(row["bars"]), 1)
+        self.assertGreaterEqual(board["late"], 1)
+
+    def test_plan_orders_uses_style_sam_and_capacity(self):
+        self.order.sewing_line_id = self.sew_line.workcenter_id
+        self.env["garment.line.plan"].search([]).unlink()
+        self.env["garment.line.plan"].garment_plan_orders()
+        plan = self.env["garment.line.plan"].search([("order_id", "=", self.order.id)])
+        self.assertEqual(plan.pieces, self.order.qty_ordered - self.order.qty_sewn)
+        self.assertAlmostEqual(plan.minutes, plan.pieces * 1.2)
+        per_day = 4800 * 0.65
+        self.assertEqual((plan.date_end - plan.date_start).days + 1, max(1, math.ceil(plan.minutes / per_day)))

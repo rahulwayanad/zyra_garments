@@ -1,0 +1,55 @@
+.o_zyra_pb {
+    padding: 16px 20px;
+    background: var(--zyra-page, #f6f5fb);
+    min-height: 100%;
+    .o_zyra_pb_top { display: flex; align-items: center; margin-bottom: 14px; }
+    .o_zyra_pb_card {
+        padding: 18px;
+        background: var(--zyra-card, #fff);
+        border: 1px solid var(--zyra-line, #e9e6f3);
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+    .o_zyra_pb_title {
+        border-left: 3px solid var(--zyra-violet, #6d4ee8);
+        padding-left: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+    .o_zyra_pb_row { display: flex; align-items: center; min-height: 77px; min-width: 900px; }
+    .o_zyra_pb_head { min-height: 36px; }
+    .o_zyra_pb_name { width: 260px; flex: none; }
+    .o_zyra_pb_track { position: relative; display: flex; flex: 1; align-self: stretch; }
+    .o_zyra_pb_week { flex: 1; text-align: center; color: var(--zyra-muted, #6b6880); }
+    .o_zyra_pb_cell { flex: 1; border-left: 1px solid var(--zyra-line, #e9e6f3); }
+    .o_zyra_pb_bar {
+        position: absolute;
+        top: 16px;
+        height: 44px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: grab;
+    }
+    .o_zyra_pb_bar_c0 { background: #e9e4fb; border-color: #6d4ee8; }
+    .o_zyra_pb_bar_c1 { background: #e1ebfb; border-color: #3b7be0; }
+    .o_zyra_pb_bar_c2 { background: #dcf3eb; border-color: #12a37f; }
+    .o_zyra_pb_bar_late { background: #fbe3e4; border-color: var(--zyra-bad, #e5484d); }
+    .o_zyra_pb_bar_clash { background: #fdf0d9; border-color: var(--zyra-warn, #c77c02); }
+    .o_zyra_pb_exf {
+        position: absolute;
+        top: 0;
+        bottom: -14px;
+        border-left: 1px dashed var(--zyra-bad, #e5484d);
+        span { position: absolute; bottom: -4px; left: 6px; color: var(--zyra-bad, #e5484d); font-size: 0.8rem; white-space: nowrap; }
+    }
+    .o_zyra_pb_good { color: var(--zyra-good, #12a37f); }
+    .o_zyra_pb_warn { color: var(--zyra-warn, #c77c02); }
+    .o_zyra_pb_bad { color: var(--zyra-bad, #e5484d); }
+}

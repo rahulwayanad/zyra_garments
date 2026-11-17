@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_garment_line_day" model="ir.sequence">
+        <field name="name">Line Day</field>
+        <field name="code">garment.line.day</field>
+        <field name="prefix">LD/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+    <record id="seq_garment_line_balancing" model="ir.sequence">
+        <field name="name">Line Balancing</field>
+        <field name="code">garment.line.balancing</field>
+        <field name="prefix">LB/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+    <record id="cron_garment_line_day" model="ir.cron">
+        <field name="name">Garment: refresh daily line summaries</field>
+        <field name="model_id" ref="model_garment_line_day"/>
+        <field name="state">code</field>
+        <field name="code">model._garment_cron_daily()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+    </record>
+</odoo>

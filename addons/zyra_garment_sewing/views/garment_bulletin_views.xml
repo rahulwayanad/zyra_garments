@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_bulletin_view_list" model="ir.ui.view">
+        <field name="name">garment.bulletin.list</field>
+        <field name="model">garment.bulletin</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="style_id"/>
+                <field name="version"/>
+                <field name="name"/>
+                <field name="operation_count"/>
+                <field name="total_sam"/>
+                <field name="total_piece_rate"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'"/>
+            </list>
+        </field>
+    </record>
+    <record id="garment_bulletin_view_form" model="ir.ui.view">
+        <field name="name">garment.bulletin.form</field>
+        <field name="model">garment.bulletin</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_new_version" type="object" string="New Version"/>
+                    <button name="action_load_from_techpack" type="object" string="Load from Tech Pack" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_open_balancing" type="object" string="Balance Line" invisible="state != 'approved'"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft" invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <div class="text-muted">v<field name="version" class="d-inline" readonly="1"/></div>
+                        <h1><field name="title"/></h1>
+                    </div>
+                    <group>
+                        <group string="Bulletin">
+                            <field name="style_id" invisible="title" readonly="state != 'draft'"/>
+                            <field name="name" readonly="state != 'draft'"/>
+                            <field name="operation_count"/>
+                            <field name="rate_card"/>
+                            <field name="rates_applied_on"/>
+                            <field name="techpack_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Minutes">
+                            <field name="sewing_sam"/>
+                            <field name="total_sam"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Operations" name="operations">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="library_operation_id"/>
+                                    <field name="name"/>
+                                    <field name="section" widget="badge" decoration-warning="section == 'preparation'" decoration-info="section not in ('preparation', 'finishing')"/>
+                                    <field name="machine_type_id"/>
+                                    <field name="sam" string="SAM (min)"/>
+                                    <field name="target_per_hour"/>
+                                    <field name="piece_rate"/>
+                                    <field name="manual_rate"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_garment_bulletin" model="ir.actions.act_window">
+        <field name="name">Operation Bulletins</field>
+        <field name="res_model">garment.bulletin</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

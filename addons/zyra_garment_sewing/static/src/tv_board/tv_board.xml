@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_sewing.LineTvBoard">
+        <div class="o_zyra_tv">
+            <div class="o_zyra_tv_head">
+                <div class="o_zyra_tv_logo"/>
+                <div class="flex-grow-1">
+                    <div class="o_zyra_tv_title" t-esc="state.data ? state.data.title : ''"/>
+                    <div class="o_zyra_tv_sub" t-esc="state.data ? state.data.subtitle : ''"/>
+                </div>
+                <select class="form-select form-select-sm w-auto me-3" t-on-change="onLine">
+                    <t t-foreach="state.lines" t-as="line" t-key="line.id">
+                        <option t-att-value="line.id" t-att-selected="line.id == state.lineId" t-esc="line.name"/>
+                    </t>
+                </select>
+                <span t-if="state.live" class="o_zyra_tv_live">● Live</span>
+                <span t-else="" class="o_zyra_tv_live o_zyra_tv_off">● Offline</span>
+            </div>
+            <t t-if="state.data">
+                <t t-set="d" t-value="state.data"/>
+                <div class="o_zyra_tv_tiles">
+                    <div class="o_zyra_tv_tile">
+                        <div class="o_zyra_tv_label">Output today</div>
+                        <div t-attf-class="o_zyra_tv_big {{ d.output &gt;= d.target_so_far ? 'o_zyra_tv_good' : 'o_zyra_tv_bad' }}" t-esc="d.output"/>
+                        <div class="o_zyra_tv_sub">target so far <t t-esc="d.target_so_far"/></div>
+                    </div>
+                    <div class="o_zyra_tv_tile">
+                        <div class="o_zyra_tv_label">Efficiency</div>
+                        <div class="o_zyra_tv_big"><t t-esc="Math.round(d.efficiency)"/>%</div>
+                        <div class="o_zyra_tv_sub">target <t t-esc="Math.round(d.target_efficiency)"/>%</div>
+                    </div>
+                    <div class="o_zyra_tv_tile">
+                        <div class="o_zyra_tv_label">Target / hour</div>
+                        <div class="o_zyra_tv_big" t-esc="d.target_per_hour"/>
+                        <div class="o_zyra_tv_sub">this hour so far <t t-esc="d.this_hour"/></div>
+                    </div>
+                    <div class="o_zyra_tv_tile">
+                        <div class="o_zyra_tv_label">Top operator</div>
+                        <div class="o_zyra_tv_name" t-esc="d.top_operator or '–'"/>
+                        <div class="o_zyra_tv_sub" t-if="d.top_operator"><t t-esc="d.top_operator_pct"/>% · <t t-esc="d.top_operator_operation"/></div>
+                    </div>
+                </div>
+                <div class="o_zyra_tv_chart">
+                    <div class="o_zyra_tv_chart_title">Hour by hour · target and output</div>
+                    <div class="o_zyra_tv_bars">
+                        <t t-foreach="d.hours" t-as="row" t-key="row.hour">
+                            <t t-set="past" t-value="hourOf(row) &lt;= d.current_hour"/>
+                            <div class="o_zyra_tv_col">
+                                <div class="o_zyra_tv_pair">
+                                    <div class="o_zyra_tv_bar o_zyra_tv_bar_target" t-att-style="'height:' + barHeight(row.target)"/>
+                                    <div t-if="past and row.output" t-attf-class="o_zyra_tv_bar {{ row.output &gt;= row.target ? 'o_zyra_tv_bar_good' : 'o_zyra_tv_bar_bad' }}" t-att-style="'height:' + barHeight(row.output)"/>
+                                </div>
+                                <div class="o_zyra_tv_hour" t-esc="row.hour.slice(0, 2)"/>
+                                <div class="o_zyra_tv_out" t-esc="past and row.output ? row.output : '–'"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>
