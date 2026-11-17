@@ -23,7 +23,7 @@ halfway" prompt.
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | **merged** (gate 375/375) |
 | 4 | sewing, jobwork | **merged** (gate 339/339) |
-| 5 | wages, pnl, cockpit, portal, connect | **merged** — gate via suite 426/426, all 15 modules + suite, clean |
+| 5 | wages, pnl, cockpit, portal, connect | **merged** — final gate 431/431 (15 modules + suite), pushed |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
@@ -163,3 +163,5 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   installed zyra_* module (dependency order, Odoo's own loader) into a DB created without demo — no Odoo sample
   data. Proved on fresh `zyra_demo`: base demo off, 15 zyra modules with demo, 11 orders / 6 styles / 4 invented
   buyers, 0 Odoo sample partners or demo users; a second run is refused. Usage in `tools/README.md`.
+- 17 Nov evening: feat/cockpit merged into main (aabf23c, log conflict kept both entries). Final gate on fresh
+  zyra_gate via zyra_garment_suite: 15 modules + suite, 431/431, clean. Pushed main to origin (Rahul's request).
