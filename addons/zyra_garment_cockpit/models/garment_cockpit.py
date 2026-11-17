@@ -77,17 +77,38 @@ class GarmentCockpit(models.AbstractModel):
         return [{"key": k, "title": t} for k, t in COCKPITS]
 
     @api.model
-    def get_cockpit(self, key):
+    def get_cockpit(self, key, filters=None):
         if key not in dict(COCKPITS):
             raise UserError(_("There is no cockpit called %s.", key))
+        filters = dict(filters or {})
+        days = int(filters.get("days") or 30)
+        self = self.with_context(cockpit_days=days, cockpit_buyer_id=filters.get("buyer_id") or False,
+                                 cockpit_business_model=filters.get("business_model") or False)
         data = getattr(self, "_cockpit_%s" % key)()
+        today = self._today()
+        Order = self.env["garment.order"]
+        data["filters"] = {
+            "days": days, "buyer_id": filters.get("buyer_id") or False,
+            "business_model": filters.get("business_model") or False,
+            "date_from": fields.Date.to_string(today - timedelta(days=days - 1)),
+            "date_to": fields.Date.to_string(today),
+            "buyers": [{"id": p.id, "name": p.display_name}
+                       for p in Order.search(self._company_domain()).buyer_id],
+            "business_models": [{"key": k, "name": v} for k, v in
+                                Order._fields["business_model"]._description_selection(self.env)],
+        }
         data.update(key=key, title=dict(COCKPITS)[key], cockpits=self.get_cockpit_list(),
                     data_date=fields.Date.to_string(self._today()))
         return data
 
     # --------------------------------------------------------------- cockpits
     def _open_orders_domain(self):
-        return self._company_domain() + [("state", "in", OPEN_ORDER_STATES)]
+        dom = self._company_domain() + [("state", "in", OPEN_ORDER_STATES)]
+        if self.env.context.get("cockpit_buyer_id"):
+            dom.append(("buyer_id", "=", int(self.env.context["cockpit_buyer_id"])))
+        if self.env.context.get("cockpit_business_model"):
+            dom.append(("business_model", "=", self.env.context["cockpit_business_model"]))
+        return dom
 
     def _late_orders_domain(self):
         return self._open_orders_domain() + [("ex_factory_date", "<", self._today())]
@@ -104,7 +125,7 @@ class GarmentCockpit(models.AbstractModel):
         n_due7 = self._count(Order, open_dom + [("ex_factory_date", ">=", today),
                                                  ("ex_factory_date", "<=", today + timedelta(days=7))])
         sewing = self._cockpit_sewing()
-        output_today = sum(r["output"] for r in sewing["lists"][0]["rows"])
+        output_today = sum(r["output"] for r in sewing["lists"][-1]["rows"])
         dhu_today = self._dhu(today)
         fail_dom = self._company_domain() + [("kind", "=", "final"), ("result", "=", "fail")]
         n_failed = self._count("garment.inspection", fail_dom)
@@ -132,8 +153,8 @@ class GarmentCockpit(models.AbstractModel):
                  "labels": [_("Ordered"), _("Cut"), _("Sewn"), _("Packed"), _("Shipped")],
                  "values": [totals[f] for f in ("qty_ordered", "qty_cut", "qty_sewn", "qty_packed",
                                                 "qty_shipped")]},
-                {"key": "output", "title": _("Output by day, last 30 days"), "type": "line",
-                 **self._output_by_day(30)},
+                {"key": "output", "title": _("Output by day, last %s days", self._days()), "type": "line",
+                 **self._output_by_day(self._days())},
             ],
             "lists": [
                 {"key": "readings", "title": _("Department readings"),
@@ -147,6 +168,9 @@ class GarmentCockpit(models.AbstractModel):
                           for o in late]},
             ],
         }
+
+    def _days(self):
+        return self.env.context.get("cockpit_days") or 30
 
     def _dhu(self, day):
         dom = self._company_domain() + [("kind", "=", "inline"),
@@ -178,7 +202,7 @@ class GarmentCockpit(models.AbstractModel):
             if "done" in dict(self.env["garment.fabric.inspection"]._fields["state"].selection) else 0
         fails = self._count("garment.inspection", self._company_domain() + [("kind", "=", "final"),
                                                                              ("result", "=", "fail")])
-        behind = min(sewing["lists"][0]["rows"], key=lambda r: r["pct"], default=None)
+        behind = min(sewing["lists"][-1]["rows"], key=lambda r: r["pct"], default=None)
         lays = self._sum("garment.lay", self._company_domain(), ["fabric_laid"])
         return [
             {"department": _("Merchandising"), "reading": _("%s cost sheets awaiting approval", cs),
@@ -216,8 +240,33 @@ class GarmentCockpit(models.AbstractModel):
         wip = sum(s["wip_pieces"] for s in summaries.values())
         lost = round(sum(s["lost_minutes"] for s in summaries.values()))
         Line = "garment.line"
+        today = self._today()
+        down = self.env["garment.line.day.downtime"].search(
+            [("day_id.date", "=", today), ("day_id.line_id", "in", lines.ids)], order="create_date")
+        stopped_lines = down.day_id.line_id
+        open_stopped = down.filtered(lambda d: d.day_id.state == "open").day_id.line_id
+        machines_down = down.filtered("machine_type_id")
+        DayModel = self.env["garment.line.day"]
+        start = today - timedelta(days=self._days() - 1)
+        eff_rows = dict((d, (e, p)) for d, e, p in DayModel._read_group(
+            [("date", ">=", start), ("line_id", "in", lines.ids)], ["date:day"],
+            ["efficiency:avg", "planned_efficiency:avg"]))
+        eff_labels, eff_vals, std_vals = [], [], []
+        for i in range(self._days()):
+            d = start + timedelta(days=i)
+            e, p = next(((e, p) for k, (e, p) in eff_rows.items() if k and k.date() == d), (None, None))
+            eff_labels.append(d.strftime("%d/%m"))
+            eff_vals.append(round(e, 1) if e is not None else None)
+            std_vals.append(round(p, 1) if p is not None else None)
+        hour_labels, hour_out, hour_tgt = [], {}, {}
+        for r in rows:
+            for h in r["hours"]:
+                if h["hour"] not in hour_out:
+                    hour_labels.append(h["hour"])
+                hour_out[h["hour"]] = hour_out.get(h["hour"], 0) + h["output"]
+                hour_tgt[h["hour"]] = hour_tgt.get(h["hour"], 0) + h["target"]
         return {
-            "headline": {"output": output, "target": target, "behind": behind and behind["line"] or "",
+            "headline": {"output": output, "target": target, "stopped": len(stopped_lines), "behind": behind and behind["line"] or "",
                          "behind_pct": behind and behind["pct"] or 0},
             "tiles": [
                 self._tile("output", _("Output today"), output, "good", Line, []),
@@ -230,14 +279,34 @@ class GarmentCockpit(models.AbstractModel):
                 self._tile("wip", _("Pieces on the lines"), wip, "", "garment.bundle",
                            [("line_id", "!=", False)]),
                 self._tile("lost", _("Lost minutes today"), lost, "warn" if lost else "good", Line, []),
+                self._tile("stopped", _("Lines stopped now"), len(open_stopped), "bad" if open_stopped else "good",
+                           "garment.line.day.downtime", [("id", "in", down.filtered(
+                               lambda d: d.day_id.state == "open").ids)]),
+                self._tile("machines_down", _("Machines down"), len(machines_down),
+                           "bad" if machines_down else "good", "garment.line.day.downtime",
+                           [("id", "in", machines_down.ids)]),
                 self._tile("behind", _("Furthest behind"), behind and behind["line"] or "-",
                            "bad" if behind else "", Line,
                            behind and [("id", "=", behind["id"])] or [], fmt="text"),
             ],
-            "charts": [{"key": "lines", "title": _("Output against target by line"), "type": "bar",
-                        "labels": [r["line"] for r in rows], "values": [r["output"] for r in rows],
-                        "targets": [r["target"] for r in rows]}],
-            "lists": [{"key": "lines", "title": _("Lines"), "model": "garment.line",
+            "charts": [
+                {"key": "lines", "title": _("Target against output today, by line"), "type": "bar",
+                 "labels": [r["line"] for r in rows], "values": [r["output"] for r in rows],
+                 "targets": [r["target"] for r in rows], "label": _("Output"), "target_label": _("Target so far")},
+                {"key": "efficiency", "title": _("Efficiency, last %s days", self._days()), "type": "line",
+                 "labels": eff_labels, "values": eff_vals, "targets": std_vals,
+                 "label": _("Efficiency %"), "target_label": _("On-standard %")},
+                {"key": "hours", "title": _("Pieces per hour by line, %s", today.strftime("%d %b")), "type": "bar",
+                 "labels": hour_labels, "values": [hour_out[h] for h in hour_labels],
+                 "targets": [hour_tgt[h] for h in hour_labels], "label": _("Output"), "target_label": _("Target")},
+            ],
+            "lists": [{"key": "stopped", "title": _("Lines that stopped today"),
+                       "model": "garment.line.day.downtime",
+                       "columns": [_("Line"), _("Reason"), _("Since"), _("Minutes lost")],
+                       "rows": [{"id": d.id, "line": d.day_id.line_id.name, "reason": d.reason,
+                                 "since": fields.Datetime.context_timestamp(self, d.create_date).strftime("%H:%M"),
+                                 "minutes": d.minutes} for d in down]},
+                      {"key": "lines", "title": _("Lines"), "model": "garment.line",
                        "columns": [_("Line"), _("Output"), _("Target"), _("% of target"), _("Efficiency")],
                        "rows": rows}],
         }

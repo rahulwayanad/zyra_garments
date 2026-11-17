@@ -12,6 +12,7 @@
                     <span class="btn btn-light">Data date · <t t-esc="d.data_date"/></span>
                     <span class="btn btn-light" t-if="state.live">● Live</span>
                     <button class="btn btn-light" t-on-click="present">Present</button>
+                    <button class="btn btn-light" t-on-click="toggleShift"><t t-esc="state.shift === 'day' ? 'Day shift' : 'Night shift'"/></button>
                 </div>
             </div>
             <h4 t-if="d.key === 'pulse'" class="mb-3">
@@ -36,8 +37,28 @@
                        t-on-click.prevent="() => this.switchTo(c.key)" t-esc="c.title"/>
                 </li>
             </ul>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3 o_zyra_cockpit_filters">
+                <div class="btn-group">
+                    <t t-foreach="[[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, '12 months']]" t-as="p" t-key="p[0]">
+                        <button t-att-class="'btn ' + (d.filters.days === p[0] ? 'btn-primary' : 'btn-light')"
+                                t-on-click="() => this.setFilter('days', p[0])" t-esc="p[1]"/>
+                    </t>
+                </div>
+                <span class="btn btn-light"><t t-esc="d.filters.date_from"/> → <t t-esc="d.filters.date_to"/></span>
+                <select class="form-select w-auto" t-on-change="(ev) => this.setFilter('buyer_id', parseInt(ev.target.value) || false)">
+                    <option value="">All buyers and lines</option>
+                    <option t-foreach="d.filters.buyers" t-as="b" t-key="b.id" t-att-value="b.id"
+                            t-att-selected="b.id === d.filters.buyer_id" t-esc="b.name"/>
+                </select>
+                <select class="form-select w-auto" t-on-change="(ev) => this.setFilter('business_model', ev.target.value || false)">
+                    <option value="">All business models</option>
+                    <option t-foreach="d.filters.business_models" t-as="m" t-key="m.key" t-att-value="m.key"
+                            t-att-selected="m.key === d.filters.business_model" t-esc="m.name"/>
+                </select>
+                <a href="#" class="ms-auto text-muted" t-on-click.prevent="resetFilters">↺ Reset</a>
+            </div>
             <div class="row g-3">
-                <div class="col-lg-6" t-foreach="d.lists" t-as="l" t-key="l.key">
+                <div t-att-class="'col-lg-6' + (d.key === 'sewing' ? ' order-last' : '')" t-foreach="d.lists" t-as="l" t-key="l.key" t-if="!(d.key === 'sewing' and l.key === 'lines')">
                     <div class="card h-100"><div class="card-body">
                         <h6 class="text-uppercase fw-bold" t-esc="l.title"/>
                         <table class="table table-sm mb-0">
@@ -54,6 +75,12 @@
                                         t-on-click="() => this.openRecord(l.model, r.id)">
                                         <td t-esc="r.order"/><td t-esc="r.style"/><td t-esc="r.ex_factory"/>
                                         <td class="text-end" t-esc="r.days_late"/><td><t t-esc="r.packed_pct"/>%</td>
+                                    </tr>
+                                </t>
+                                <t t-elif="l.key === 'stopped'">
+                                    <tr t-foreach="l.rows" t-as="r" t-key="r.id">
+                                        <td t-esc="r.line"/><td t-esc="r.reason"/><td t-esc="r.since"/>
+                                        <td class="text-end" t-esc="r.minutes"/>
                                     </tr>
                                 </t>
                                 <t t-elif="l.key === 'lines'">

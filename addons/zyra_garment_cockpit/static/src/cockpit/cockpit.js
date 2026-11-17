@@ -13,7 +13,8 @@ export class GarmentCockpit extends Component {
         this.action = useService("action");
         this.root = useRef("root");
         const params = (this.props.action && this.props.action.params) || {};
-        this.state = useState({ key: params.cockpit || "pulse", data: null, live: false });
+        this.state = useState({ key: params.cockpit || "pulse", data: null, live: false, shift: "day",
+            filters: { days: 30, buyer_id: false, business_model: false } });
         this.charts = [];
         onWillStart(async () => {
             await loadBundle("web.chartjs_lib");
@@ -27,13 +28,29 @@ export class GarmentCockpit extends Component {
     }
 
     async load() {
-        this.state.data = await this.orm.call("garment.cockpit", "get_cockpit", [this.state.key]);
+        this.state.data = await this.orm.call("garment.cockpit", "get_cockpit", [this.state.key, this.state.filters]);
     }
 
     async switchTo(key) {
         this.state.key = key;
         await this.load();
         this.drawCharts();
+    }
+
+    async setFilter(name, value) {
+        this.state.filters[name] = value;
+        await this.load();
+        this.drawCharts();
+    }
+
+    async resetFilters() {
+        this.state.filters = { days: 30, buyer_id: false, business_model: false };
+        await this.load();
+        this.drawCharts();
+    }
+
+    toggleShift() {
+        this.state.shift = this.state.shift === "day" ? "night" : "day";
     }
 
     fmt(tile) {
@@ -78,12 +95,19 @@ export class GarmentCockpit extends Component {
         for (const chart of this.state.data.charts || []) {
             const canvas = this.root.el && this.root.el.querySelector(`canvas[data-chart="${chart.key}"]`);
             if (!canvas) continue;
-            const datasets = [{ label: chart.title, data: chart.values, backgroundColor: purple,
-                borderColor: purple, tension: 0.3, pointRadius: 0 }];
-            if (chart.targets) datasets.push({ label: "Target", data: chart.targets, backgroundColor: "#d9d2fb" });
+            const line = chart.type === "line";
+            const datasets = [];
+            if (chart.targets) {
+                datasets.push({ label: chart.target_label || "Target", data: chart.targets,
+                    backgroundColor: line ? "#d97706" : "#c9bff7", borderColor: line ? "#d97706" : "#c9bff7",
+                    tension: 0.3, pointRadius: 0 });
+            }
+            const main = chart.key === "lines" ? "#10a37f" : purple;
+            datasets.push({ label: chart.label || chart.title, data: chart.values, backgroundColor: main,
+                borderColor: main, tension: 0.3, pointRadius: 0 });
             this.charts.push(new window.Chart(canvas, {
                 type: chart.type, data: { labels: chart.labels, datasets },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: !!chart.targets } } },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: "top", align: "end" } } },
             }));
         }
     }

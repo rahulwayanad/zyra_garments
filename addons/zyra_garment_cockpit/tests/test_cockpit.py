@@ -56,7 +56,7 @@ class TestCockpit(TransactionCase):
         lines = self.env["garment.line"].search([])
         expected = sum(line._garment_hourly_board()["output"] for line in lines)
         self.assertEqual({t["key"]: t for t in data["tiles"]}["output"]["value"], expected)
-        rows = data["lists"][0]["rows"]
+        rows = data["lists"][-1]["rows"]
         if rows:
             behind = min(rows, key=lambda r: r["pct"])
             self.assertEqual(data["headline"]["behind"], behind["line"])
@@ -94,3 +94,30 @@ class TestCockpit(TransactionCase):
     def test_unknown_cockpit_is_refused(self):
         with self.assertRaises(Exception):
             self.Cockpit.get_cockpit("nope")
+
+    def test_sewing_lines_stopped_now_are_lines_with_downtime_on_an_open_day(self):
+        line = self.env["garment.line"].search([], limit=1)
+        if not line:
+            self.skipTest("no sewing line in demo data")
+        day = self.env["garment.line.day"].search([("line_id", "=", line.id), ("date", "=", self.today)], limit=1) \
+            or self.env["garment.line.day"].create({"line_id": line.id, "date": self.today})
+        day.state = "open"
+        before = self._tiles("sewing")
+        self.env["garment.line.day.downtime"].create({"day_id": day.id, "reason": "Bottleneck: collar attach",
+                                                      "minutes": 64})
+        data = self.Cockpit.get_cockpit("sewing")
+        tiles = {t["key"]: t for t in data["tiles"]}
+        self.assertGreaterEqual(tiles["stopped"]["value"], 1)
+        self.assertEqual(tiles["machines_down"]["value"], before["machines_down"]["value"])
+        stopped = {r["reason"]: r for r in data["lists"][0]["rows"]}
+        self.assertEqual(stopped["Bottleneck: collar attach"]["minutes"], 64)
+
+    def test_pulse_filter_by_buyer_counts_only_that_buyers_orders(self):
+        order = self.env["garment.order"].search([("state", "in", ("confirmed", "in_production", "packed"))], limit=1)
+        if not order:
+            self.skipTest("no open order")
+        data = self.Cockpit.get_cockpit("pulse", {"buyer_id": order.buyer_id.id, "days": 7})
+        tiles = {t["key"]: t for t in data["tiles"]}
+        self.assertEqual(tiles["orders_open"]["value"], self.env["garment.order"].search_count(
+            [("state", "in", ("confirmed", "in_production", "packed")), ("buyer_id", "=", order.buyer_id.id)]))
+        self.assertEqual(len(data["charts"][1]["values"]), 7)
