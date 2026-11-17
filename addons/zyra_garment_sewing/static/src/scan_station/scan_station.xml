@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_sewing.ScanStation">
+        <div class="o_zyra_station" t-on-click="focus">
+            <div class="o_zyra_station_frame">
+                <div class="o_zyra_station_head">
+                    <div class="o_zyra_station_logo"/>
+                    <div class="flex-grow-1">
+                        <div class="o_zyra_station_title">Scan station · <t t-esc="lineName"/></div>
+                        <div class="o_zyra_station_sub">Badge, then coupons from the bundle ticket</div>
+                    </div>
+                    <select class="form-select form-select-sm w-auto me-2" t-model="state.lineId">
+                        <t t-foreach="state.lines" t-as="line" t-key="line.id">
+                            <option t-att-value="line.id" t-esc="line.name"/>
+                        </t>
+                    </select>
+                    <span t-if="state.online" class="o_zyra_station_pill o_zyra_station_pill_on">Online</span>
+                    <span t-else="" class="o_zyra_station_pill o_zyra_station_pill_off">Offline</span>
+                </div>
+                <div class="o_zyra_station_body">
+                    <div class="o_zyra_station_card o_zyra_station_left">
+                        <div class="o_zyra_station_label">Operator</div>
+                        <div class="o_zyra_station_operator">
+                            <t t-if="state.employee"><t t-if="state.employee.badge"><t t-esc="state.employee.badge"/> · </t><t t-esc="state.employee.name"/></t>
+                            <t t-else="">Scan your badge</t>
+                        </div>
+                        <div class="o_zyra_station_sub" t-if="state.employee">
+                            <t t-esc="lineName"/><t t-if="state.stats and state.stats.operation"> · <t t-esc="state.stats.operation"/></t>
+                        </div>
+                        <label class="o_zyra_station_drop">
+                            <span t-if="state.employee">Scan the next coupon</span>
+                            <span t-else="">Scan your badge</span>
+                            <input t-ref="input" class="o_zyra_station_input" autocomplete="off" t-on-keydown="onKey"/>
+                        </label>
+                        <div t-if="state.message" t-attf-class="o_zyra_station_msg o_zyra_station_msg_{{state.messageKind}}" t-esc="state.message"/>
+                        <div class="o_zyra_station_last" t-if="state.stats and state.stats.last">
+                            <b>Last scan</b> · <t t-esc="state.stats.last.bundle"/> · op <t t-esc="state.stats.last.seq"/> <t t-esc="state.stats.last.operation"/> ·
+                            <span class="o_zyra_station_good"><t t-esc="state.stats.last.pieces"/> pcs · <t t-esc="state.stats.last.minutes"/> min · <t t-esc="money(state.stats.last.earnings)"/></span>
+                        </div>
+                    </div>
+                    <div class="o_zyra_station_right">
+                        <div class="o_zyra_station_card">
+                            <div class="o_zyra_station_label">Pieces today</div>
+                            <div class="o_zyra_station_big" t-esc="state.stats ? state.stats.pieces : 0"/>
+                            <div class="o_zyra_station_sub">target so far <t t-esc="state.stats ? state.stats.target_so_far : 0"/></div>
+                        </div>
+                        <div class="o_zyra_station_card">
+                            <div class="o_zyra_station_label">Minutes earned</div>
+                            <div class="o_zyra_station_big" t-esc="state.stats ? state.stats.minutes : 0"/>
+                            <div class="o_zyra_station_sub">efficiency <t t-esc="state.stats ? state.stats.efficiency : 0"/>%</div>
+                        </div>
+                        <div class="o_zyra_station_card">
+                            <div class="o_zyra_station_label">Earnings today</div>
+                            <div class="o_zyra_station_big o_zyra_station_good" t-esc="money(state.stats ? state.stats.earnings : 0)"/>
+                        </div>
+                        <div class="o_zyra_station_queue" t-if="!state.online or state.pending">
+                            <b>Offline</b> · <t t-esc="state.pending"/> scans kept on this device, sent on reconnect
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

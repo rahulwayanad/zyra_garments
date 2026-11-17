@@ -1,0 +1,45 @@
+.o_zyra_tv {
+    min-height: 100%;
+    padding: 30px 40px;
+    background: #fff;
+    color: var(--zyra-ink, #1d1b2c);
+    .o_zyra_tv_head { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
+    .o_zyra_tv_logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--zyra-violet, #6d4ee8), var(--zyra-pink, #d6409f));
+    }
+    .o_zyra_tv_title { font-size: 2.2rem; font-weight: 800; line-height: 1.1; }
+    .o_zyra_tv_sub { color: var(--zyra-muted, #6b6880); font-size: 1rem; }
+    .o_zyra_tv_live {
+        padding: 2px 12px;
+        border-radius: 999px;
+        background: #e2f6ef;
+        color: #0b7a5c;
+        font-weight: 600;
+    }
+    .o_zyra_tv_off { background: #fdf0d9; color: var(--zyra-warn, #c77c02); }
+    .o_zyra_tv_tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px;
+        @media (max-width: 767px) { grid-template-columns: 1fr 1fr; } }
+    .o_zyra_tv_tile, .o_zyra_tv_chart {
+        padding: 18px;
+        border: 1px solid var(--zyra-line, #e9e6f3);
+        border-radius: 12px;
+    }
+    .o_zyra_tv_label { text-transform: uppercase; color: var(--zyra-muted, #6b6880); font-size: 1rem; }
+    .o_zyra_tv_big { font-size: 4rem; font-weight: 800; line-height: 1.1; }
+    .o_zyra_tv_name { font-size: 2rem; font-weight: 800; margin-top: 18px; }
+    .o_zyra_tv_good { color: var(--zyra-good, #12a37f); }
+    .o_zyra_tv_bad { color: var(--zyra-bad, #e5484d); }
+    .o_zyra_tv_chart_title { font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; }
+    .o_zyra_tv_bars { display: flex; justify-content: space-around; align-items: flex-end; }
+    .o_zyra_tv_col { text-align: center; }
+    .o_zyra_tv_pair { display: flex; gap: 4px; align-items: flex-end; height: 190px; justify-content: center; }
+    .o_zyra_tv_bar { width: 22px; border-radius: 4px; }
+    .o_zyra_tv_bar_target { background: #dcd3f6; }
+    .o_zyra_tv_bar_good { background: var(--zyra-good, #12a37f); }
+    .o_zyra_tv_bar_bad { background: var(--zyra-bad, #e5484d); }
+    .o_zyra_tv_hour { margin-top: 8px; color: var(--zyra-muted, #6b6880); font-size: 1.1rem; }
+    .o_zyra_tv_out { font-weight: 700; font-size: 1.1rem; }
+}

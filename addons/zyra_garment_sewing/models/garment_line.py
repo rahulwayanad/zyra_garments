@@ -121,3 +121,36 @@ class GarmentLine(models.Model):
             "type": "ir.actions.act_window", "name": _("Scans"), "res_model": "garment.scan",
             "view_mode": "list,form", "domain": [("line_id", "=", self.id)],
         }
+
+    # ------------------------------------------------------------------
+    # Line TV board (screen 56) — public RPC entry
+    # ------------------------------------------------------------------
+    def garment_tv_board(self, day=None):
+        """Data of the TV board: header, 4 tiles (output, efficiency, target/hour, top operator) and the
+        hour-by-hour bars from :meth:`_garment_hourly_board`."""
+        self.ensure_one()
+        board = self._garment_hourly_board(day)
+        now = fields.Datetime.now()
+        done_hours = [h for h in board["hours"] if int(h["hour"][:2]) < now.hour]
+        current = next((h for h in board["hours"] if int(h["hour"][:2]) == now.hour), None)
+        bundle = self.env["garment.bundle"].search([("line_id", "=", self.workcenter_id.id),
+                                                    ("stage", "in", ("issued", "in_sewing"))], limit=1)
+        order = bundle.order_id
+        top = board["top_operator"]
+        top_scan = self.env["garment.scan"].search([("line_id", "=", self.id), ("employee_id.name", "=", top)],
+                                                   limit=1) if top else self.env["garment.scan"]
+        worked = max(len(done_hours) * 60 + (now.minute if current else 0), 1)
+        board.update({
+            "title": self.name,
+            "subtitle": " · ".join(filter(None, [order.name, order.style_id.name,
+                                                 fields.Datetime.context_timestamp(self, now).strftime("%d %b, %H:%M")])),
+            "target_so_far": self.target_per_hour * len(done_hours),
+            "target_efficiency": self.target_efficiency,
+            "target_per_hour": self.target_per_hour,
+            "this_hour": current["output"] if current else 0,
+            "top_operator_pct": round(board["top_operator_minutes"] / worked * 100) if top else 0,
+            "top_operator_operation": top_scan.operation_line_id.name or "",
+            "current_hour": now.hour,
+            "max_bar": max([self.target_per_hour] + [h["output"] for h in board["hours"]] + [1]),
+        })
+        return board

@@ -127,3 +127,33 @@ class TestSewing(CuttingCase):
         bundle = self._bundle()
         with self.assertRaises(UserError):
             self.env["garment.scan"]._garment_scan(self._payloads(bundle)[0], self.env["hr.employee"])
+
+    # --- scan station (screen 4) ------------------------------------------------
+    def test_station_badge_finds_operator_by_barcode(self):
+        self.operator.barcode = "ZS-BADGE-1"
+        self.assertEqual(self.env["garment.scan"].station_badge("ZS-BADGE-1")["id"], self.operator.id)
+        with self.assertRaises(UserError):
+            self.env["garment.scan"].station_badge("NO-SUCH-BADGE")
+
+    def test_station_stats_after_queued_scans(self):
+        """Station sends its queue through garment_sync_batch, then reads the operator's figures."""
+        bundle = self._bundle()
+        first = self._payloads(bundle)[0]
+        self.env["garment.scan"].garment_sync_batch(
+            [{"uuid": "st-1", "payload": first, "employee_id": self.operator.id, "line_id": self.sew_line.id}])
+        stats = self.env["garment.scan"].station_stats(self.operator.id, self.sew_line.id)
+        self.assertEqual(stats["pieces"], bundle.pieces)
+        self.assertAlmostEqual(stats["minutes"], round(bundle.pieces * 0.4, 1))
+        self.assertAlmostEqual(stats["earnings"], round(bundle.pieces * 0.4 * 2.0, 2))
+        self.assertEqual(stats["last"]["bundle"], bundle.name)
+
+    # --- TV board (screen 56) ---------------------------------------------------
+    def test_tv_board_data_from_hourly_board(self):
+        bundle = self._bundle()
+        for payload in self._payloads(bundle):
+            self.env["garment.scan"]._garment_scan(payload, self.operator)
+        data = self.sew_line.garment_tv_board()
+        self.assertEqual(len(data["hours"]), 9)
+        self.assertEqual(data["title"], self.sew_line.name)
+        self.assertEqual(data["top_operator"], self.operator.name)
+        self.assertGreaterEqual(data["max_bar"], 1)

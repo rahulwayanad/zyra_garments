@@ -6,4 +6,8 @@
               parent="zyra_garment_base.menu_garment_sewing" action="action_garment_bulletin" sequence="20"/>
     <menuitem id="menu_garment_sewing_lines" name="Sewing Lines" parent="zyra_garment_base.menu_garment_sewing"
               action="action_garment_line" sequence="30"/>
+    <menuitem id="menu_garment_sewing_scan_station" name="Scan Station"
+              parent="zyra_garment_base.menu_garment_sewing" action="action_garment_scan_station" sequence="5"/>
+    <menuitem id="menu_garment_sewing_tv_board" name="Line TV Board"
+              parent="zyra_garment_base.menu_garment_sewing" action="action_garment_line_tv_board" sequence="6"/>
 </odoo>

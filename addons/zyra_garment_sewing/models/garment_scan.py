@@ -120,3 +120,53 @@ class GarmentScan(models.Model):
             except (UserError, ValidationError) as err:
                 results.append({"uuid": uuid, "status": "error", "message": str(err), "scan_id": False})
         return results
+
+    # ------------------------------------------------------------------
+    # Scan station (screen 4)
+    # ------------------------------------------------------------------
+    @api.model
+    def station_lines(self):
+        return [{"id": line.id, "name": line.name} for line in self.env["garment.line"].search([])]
+
+    @api.model
+    def station_badge(self, code):
+        """Find the operator of a badge: employee barcode, then badge id, then exact name."""
+        code = (code or "").strip()
+        Employee = self.env["hr.employee"].sudo()
+        employee = Employee.search([("barcode", "=", code)], limit=1) if code else Employee
+        if not employee and code:
+            employee = Employee.search([("name", "=ilike", code)], limit=1)
+        if not employee:
+            raise UserError(_("Badge %s is not known.", code))
+        return {"id": employee.id, "name": employee.name, "badge": employee.barcode or ""}
+
+    @api.model
+    def station_stats(self, employee_id, line_id=False):
+        """Figures of the operator today: pieces, minutes earned, efficiency, earnings, last scan.
+        Rule: efficiency = minutes earned ÷ minutes worked since the line's first hour (08:00) × 100;
+        target so far = minutes worked × line target efficiency ÷ SAM of the operator's last operation."""
+        line = self.env["garment.line"].browse(line_id).exists()
+        now = fields.Datetime.now()
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        scans = self.search([("employee_id", "=", employee_id), ("scanned_at", ">=", start)])
+        shift_start = start.replace(hour=8)
+        worked = max(min((now - shift_start).total_seconds() / 60, line.working_minutes or 480), 0)
+        minutes = sum(scans.mapped("minutes_earned"))
+        last = scans[:1]
+        target_eff = line.target_efficiency or 65.0
+        currency = self.env.company.currency_id
+        return {
+            "line": line.name or "",
+            "pieces": sum(scans.mapped("pieces")),
+            "target_so_far": int(worked * target_eff / 100 / last.sam) if last.sam else 0,
+            "minutes": round(minutes, 1),
+            "efficiency": round(minutes / worked * 100) if worked else 0,
+            "earnings": round(sum(scans.mapped("earnings")), 2),
+            "currency": currency.symbol or "",
+            "operation": last.operation_line_id.name or "",
+            "last": last and {
+                "bundle": last.bundle_id.name, "seq": last.operation_line_id.sequence,
+                "operation": last.operation_line_id.name, "pieces": last.pieces,
+                "minutes": round(last.minutes_earned, 1), "earnings": round(last.earnings, 2),
+            } or False,
+        }

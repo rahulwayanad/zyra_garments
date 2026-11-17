@@ -21,11 +21,17 @@
         "views/garment_line_views.xml",
         "views/garment_bulletin_views.xml",
         "views/garment_scan_views.xml",
+        "views/sewing_client_actions.xml",
         "wizard/line_balancing_views.xml",
         "views/menus.xml",
     ],
     "demo": [
         "demo/sewing_demo.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "zyra_garment_sewing/static/src/**/*",
+        ],
+    },
     "installable": True,
 }

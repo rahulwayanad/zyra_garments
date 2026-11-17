@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_garment_scan_station" model="ir.actions.client">
+        <field name="name">Scan Station</field>
+        <field name="tag">zyra_garment_scan_station</field>
+    </record>
+    <record id="action_garment_line_tv_board" model="ir.actions.client">
+        <field name="name">Line TV Board</field>
+        <field name="tag">zyra_garment_line_tv_board</field>
+        <field name="target">fullscreen</field>
+    </record>
+</odoo>
