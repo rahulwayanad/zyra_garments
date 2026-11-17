@@ -23,7 +23,7 @@ halfway" prompt.
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
 | 4 | sewing, jobwork | jobwork **merged** (gate 292/292); sewing core on branch, floor screens left |
-| 5 | wages, pnl, cockpit, portal, connect | – |
+| 5 | wages, pnl, cockpit, portal, connect | portal + connect running (15:02) |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
@@ -88,3 +88,7 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
 - 15:05 STOP: segment closed early (no agents running, no odoo runs left, 15:12 job cancelled). Main 8 modules gated
   292/292. Left: quality (paused 39865c0, launch blocked), sewing floor screens, then wave 5.
   NO BUILD UNTIL RAHUL SAYS. No scheduled jobs.
+- 15:02 SEGMENT START (Rahul via phone session, 15:01 "start next task"; session usage 35%, week 67%). Sewing resumed
+  (floor screens 3/4/56/58, layouts 54/55); portal (wt-portal, feat/portal, DB zyra_portal, port 18107) and connect
+  (wt-connect, feat/connect, DB zyra_connect, port 18108) started from main 41a76f0. Hard stop job 15:42 (ends 15:45).
+  Wages may start only if sewing merges before the stop. Quality still paused.
