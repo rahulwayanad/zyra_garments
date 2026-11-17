@@ -4,6 +4,7 @@ import pytz
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import float_round
 
 KINDS = [("inline", "Inline"), ("endline", "End-line"), ("final", "Final")]
 RESULTS = [
@@ -57,7 +58,7 @@ class GarmentInspection(models.Model):
     date = fields.Datetime(default=fields.Datetime.now, required=True, index=True)
 
     pieces_checked = fields.Integer()
-    defect_line_ids = fields.One2many("garment.inspection.defect", "inspection_id", string="Defects", copy=False)
+    defect_line_ids = fields.One2many("garment.inspection.defect", "inspection_id", string="Defect Lines", copy=False)
     hour_ids = fields.One2many("garment.inspection.hour", "inspection_id", string="Hourly Counts", copy=False)
     critical_count = fields.Integer(string="Critical", compute="_compute_counts", store=True)
     major_count = fields.Integer(string="Major", compute="_compute_counts", store=True)
@@ -65,6 +66,8 @@ class GarmentInspection(models.Model):
     defect_count = fields.Integer(string="Defects", compute="_compute_counts", store=True)
     dhu = fields.Float(string="DHU", compute="_compute_counts", store=True, digits=(16, 2), aggregator="avg",
                        help="Defects per hundred units = defects × 100 ÷ pieces checked.")
+
+    dhu_display = fields.Char(string="DHU %", compute="_compute_counts", store=True)
 
     # Sampling plan (final inspections)
     lot_size = fields.Integer(string="Lot Size")
@@ -130,11 +133,12 @@ class GarmentInspection(models.Model):
             insp.minor_count = counts["minor"]
             insp.defect_count = sum(counts.values())
             insp.dhu = self._garment_dhu(insp.defect_count, insp.pieces_checked)
+            insp.dhu_display = "%.1f%%" % float_round(insp.dhu, precision_digits=1)
 
     @api.model
     def _garment_dhu(self, defects, pieces):
         """DHU = defects × 100 ÷ pieces checked (0 when nothing was checked)."""
-        return round(defects * 100.0 / pieces, 2) if pieces else 0.0
+        return float_round(defects * 100.0 / pieces, precision_digits=2) if pieces else 0.0
 
     @api.depends("kind", "lot_size", "aql_major", "aql_minor")
     def _compute_sampling_plan(self):
@@ -290,7 +294,7 @@ class GarmentInspection(models.Model):
             "default_style_id": self.style_id.id,
             "default_line_ids": [self.line_id.id] if self.line_id else [],
             "default_inspection_ids": [self.id],
-            "default_first_seen": fields.Date.to_date(fields.Datetime.context_timestamp(self, self.date)),
+            "default_first_seen": fields.Date.to_string(fields.Datetime.context_timestamp(self, self.date).date()),
         }
         if top:
             ctx.update({
@@ -445,3 +449,14 @@ class GarmentInspection(models.Model):
             self.env["garment.inspection.defect"].create({
                 "inspection_id": session.id, "defect_id": defect_id, "position": position, "qty": 1})
         return self.garment_endline_stats(line.id)
+
+    def _garment_report_defects(self):
+        """Defects found grouped by defect and class, biggest first (printed report)."""
+        self.ensure_one()
+        rows = {}
+        for line in self.defect_line_ids:
+            key = (line.defect_id.id, line.severity)
+            row = rows.setdefault(key, {"name": line.defect_id.name, "severity": line.severity, "qty": 0})
+            row["qty"] += line.qty
+        order = {"critical": 0, "major": 1, "minor": 2}
+        return sorted(rows.values(), key=lambda r: (order.get(r["severity"], 9), -r["qty"], r["name"]))

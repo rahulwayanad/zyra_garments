@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inspections (screen 61) -->
+    <record id="garment_inspection_view_list" model="ir.ui.view">
+        <field name="name">garment.inspection.list</field>
+        <field name="model">garment.inspection</field>
+        <field name="arch" type="xml">
+            <list string="Inspections" sample="1">
+                <field name="name" string="Inspection"/>
+                <field name="kind" string="Type"/>
+                <field name="order_id" string="Order" options="{'no_open': True}"/>
+                <field name="line_id" string="Line"/>
+                <field name="pieces_checked" string="Checked"/>
+                <field name="critical_count"/>
+                <field name="major_count"/>
+                <field name="minor_count"/>
+                <field name="dhu_display" string="DHU" class="text-end"/>
+                <field name="result" widget="badge"
+                       decoration-success="result in ('passed', 'concession')"
+                       decoration-danger="result == 'failed'"
+                       decoration-muted="result == 'pending'"/>
+                <field name="date" optional="hide"/>
+                <field name="inspector_id" optional="hide"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Final inspections (screen 62) -->
+    <record id="garment_inspection_view_list_final" model="ir.ui.view">
+        <field name="name">garment.inspection.list.final</field>
+        <field name="model">garment.inspection</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list string="Final Inspections" decoration-danger="result == 'failed'" sample="1">
+                <field name="name" string="Inspection"/>
+                <field name="order_id" string="Order" options="{'no_open': True}"/>
+                <field name="buyer_id" string="Buyer"/>
+                <field name="lot_size"/>
+                <field name="sample_size" string="Sample"/>
+                <field name="critical_count"/>
+                <field name="major_count"/>
+                <field name="minor_count"/>
+                <field name="result" widget="badge"
+                       decoration-success="result in ('passed', 'concession')"
+                       decoration-danger="result == 'failed'"
+                       decoration-muted="result == 'pending'"/>
+                <field name="date" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_inspection_view_search" model="ir.ui.view">
+        <field name="name">garment.inspection.search</field>
+        <field name="model">garment.inspection</field>
+        <field name="arch" type="xml">
+            <search string="Inspections">
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="style_id"/>
+                <field name="buyer_id"/>
+                <field name="line_id"/>
+                <field name="inspector_id"/>
+                <filter name="last_7_days" string="Last 7 days"
+                        domain="[('date', '&gt;=', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter name="today" string="Today"
+                        domain="[('date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="inline" string="Inline" domain="[('kind', '=', 'inline')]"/>
+                <filter name="endline" string="End-line" domain="[('kind', '=', 'endline')]"/>
+                <filter name="final" string="Final" domain="[('kind', '=', 'final')]"/>
+                <separator/>
+                <filter name="passed" string="Passed" domain="[('result', 'in', ('passed', 'concession'))]"/>
+                <filter name="failed" string="Failed" domain="[('result', '=', 'failed')]"/>
+                <filter name="in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter name="date" string="Date" date="date"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_kind" string="Type" context="{'group_by': 'kind'}"/>
+                    <filter name="group_line" string="Line" context="{'group_by': 'line_id'}"/>
+                    <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
+                    <filter name="group_result" string="Result" context="{'group_by': 'result'}"/>
+                    <filter name="group_day" string="Day" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Inspection form (screen 63) -->
+    <record id="garment_inspection_view_form" model="ir.ui.view">
+        <field name="name">garment.inspection.form</field>
+        <field name="model">garment.inspection</field>
+        <field name="arch" type="xml">
+            <form string="Inspection">
+                <header>
+                    <button name="action_complete" type="object" string="Complete" class="btn-primary"
+                            invisible="state != 'in_progress'"/>
+                    <button name="action_raise_capa" type="object" string="Raise CAPA"
+                            invisible="state != 'completed' or not defect_count"/>
+                    <button name="action_accept_concession" type="object" string="Accept under Concession"
+                            groups="zyra_garment_base.group_garment_factory_manager"
+                            invisible="kind != 'final' or result != 'failed'"/>
+                    <button name="action_reinspect" type="object" string="Re-inspect"
+                            invisible="kind != 'final' or result != 'failed' or reinspection_count"/>
+                    <button name="action_print_report" type="object" string="Print Report"
+                            invisible="kind != 'final'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_reinspections" type="object" class="oe_stat_button" icon="fa-repeat"
+                                invisible="kind != 'final'">
+                            <field name="reinspection_count" widget="statinfo" string="Re-inspections"/>
+                        </button>
+                        <button name="action_view_capas" type="object" class="oe_stat_button" icon="fa-wrench">
+                            <field name="capa_count" widget="statinfo" string="CAPAs"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Failed" bg_color="text-bg-danger" invisible="result != 'failed'"/>
+                    <widget name="web_ribbon" title="Concession" bg_color="text-bg-warning" invisible="result != 'concession'"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="major_over" invisible="1"/>
+                    <field name="minor_over" invisible="1"/>
+                    <field name="plan_error" invisible="1"/>
+
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div name="kpi_result" class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_bad" invisible="result != 'failed'">
+                            <span class="o_zyra_kpi_label">Result</span>
+                            <span class="o_zyra_kpi_value"><field name="result" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_good" invisible="result not in ('passed', 'concession')">
+                            <span class="o_zyra_kpi_label">Result</span>
+                            <span class="o_zyra_kpi_value"><field name="result" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text" invisible="result != 'pending'">
+                            <span class="o_zyra_kpi_label">Result</span>
+                            <span class="o_zyra_kpi_value"><field name="result" readonly="1"/></span>
+                        </div>
+                        <div name="kpi_checked" class="o_zyra_kpi o_zyra_kpi_good" invisible="kind != 'final' or pieces_checked &lt; sample_size">
+                            <span class="o_zyra_kpi_label">Checked / sample</span>
+                            <span class="o_zyra_kpi_value"><field name="pieces_checked" readonly="1"/> / <field name="sample_size"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="kind != 'final' or pieces_checked &gt;= sample_size">
+                            <span class="o_zyra_kpi_label">Checked / sample</span>
+                            <span class="o_zyra_kpi_value"><field name="pieces_checked" readonly="1"/> / <field name="sample_size"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" invisible="kind == 'final'">
+                            <span class="o_zyra_kpi_label">Checked</span>
+                            <span class="o_zyra_kpi_value"><field name="pieces_checked" readonly="1"/></span>
+                        </div>
+                        <div name="kpi_critical" class="o_zyra_kpi o_zyra_kpi_good" invisible="critical_count">
+                            <span class="o_zyra_kpi_label">Critical</span>
+                            <span class="o_zyra_kpi_value"><field name="critical_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not critical_count">
+                            <span class="o_zyra_kpi_label">Critical</span>
+                            <span class="o_zyra_kpi_value"><field name="critical_count"/></span>
+                        </div>
+                        <div name="kpi_major" class="o_zyra_kpi o_zyra_kpi_bad" invisible="kind != 'final' or not major_over">
+                            <span class="o_zyra_kpi_label">Major / accept</span>
+                            <span class="o_zyra_kpi_value"><field name="major_count"/> / <field name="major_accept"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="kind != 'final' or major_over">
+                            <span class="o_zyra_kpi_label">Major / accept</span>
+                            <span class="o_zyra_kpi_value"><field name="major_count"/> / <field name="major_accept"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" invisible="kind == 'final'">
+                            <span class="o_zyra_kpi_label">Major</span>
+                            <span class="o_zyra_kpi_value"><field name="major_count"/></span>
+                        </div>
+                        <div name="kpi_minor" class="o_zyra_kpi o_zyra_kpi_bad" invisible="kind != 'final' or not minor_over">
+                            <span class="o_zyra_kpi_label">Minor / accept</span>
+                            <span class="o_zyra_kpi_value"><field name="minor_count"/> / <field name="minor_accept"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="kind != 'final' or minor_over">
+                            <span class="o_zyra_kpi_label">Minor / accept</span>
+                            <span class="o_zyra_kpi_value"><field name="minor_count"/> / <field name="minor_accept"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" invisible="kind == 'final'">
+                            <span class="o_zyra_kpi_label">Minor</span>
+                            <span class="o_zyra_kpi_value"><field name="minor_count"/></span>
+                        </div>
+                        <div name="kpi_dhu" class="o_zyra_kpi o_zyra_kpi_bad" invisible="result != 'failed'">
+                            <span class="o_zyra_kpi_label">DHU</span>
+                            <span class="o_zyra_kpi_value"><field name="dhu" digits="[16, 1]"/>%</span>
+                        </div>
+                        <div class="o_zyra_kpi" invisible="result == 'failed'">
+                            <span class="o_zyra_kpi_label">DHU</span>
+                            <span class="o_zyra_kpi_value"><field name="dhu" digits="[16, 1]"/>%</span>
+                        </div>
+                    </div>
+
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="order_id" placeholder="Production order" class="w-100"
+                                   options="{'no_create': True}" readonly="state != 'in_progress'"/></h1>
+                    </div>
+                    <group name="header_groups">
+                        <group string="Inspection" name="inspection">
+                            <field name="kind" readonly="state != 'in_progress'"/>
+                            <field name="style_id"/>
+                            <field name="buyer_id"/>
+                            <field name="line_id" options="{'no_create': True}" readonly="state != 'in_progress'"/>
+                        </group>
+                        <group string="Who and when" name="who">
+                            <field name="inspector_id" readonly="state != 'in_progress'"/>
+                            <field name="date" readonly="state != 'in_progress'"/>
+                            <field name="result" widget="badge"
+                                   decoration-success="result in ('passed', 'concession')"
+                                   decoration-danger="result == 'failed'"/>
+                            <field name="fail_reason" invisible="not fail_reason"/>
+                            <field name="concession_reason" invisible="result != 'concession'" readonly="1"/>
+                            <field name="concession_user_id" invisible="result != 'concession'"/>
+                            <field name="reinspection_of_id" invisible="not reinspection_of_id"/>
+                        </group>
+                        <group string="Sampling plan" name="sampling" invisible="kind != 'final'">
+                            <field name="lot_size" readonly="state != 'in_progress'"/>
+                            <field name="aql_major" readonly="state != 'in_progress'"/>
+                            <field name="aql_minor" readonly="state != 'in_progress'"/>
+                            <field name="code_letter" invisible="1"/>
+                            <field name="sample_size"/>
+                            <label for="major_accept" string="Major accept / reject"/>
+                            <div><field name="major_accept" class="oe_inline"/> / <field name="major_reject" class="oe_inline"/></div>
+                            <label for="minor_accept" string="Minor accept / reject"/>
+                            <div><field name="minor_accept" class="oe_inline"/> / <field name="minor_reject" class="oe_inline"/></div>
+                            <div colspan="2" class="text-danger" invisible="not plan_error"><field name="plan_error"/></div>
+                        </group>
+                        <group string="Counts" name="counts">
+                            <field name="pieces_checked" readonly="state != 'in_progress'"/>
+                            <field name="critical_count"/>
+                            <field name="major_count"/>
+                            <field name="minor_count"/>
+                            <field name="dhu" string="DHU %"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Defects Found" name="defects">
+                            <field name="defect_line_ids" readonly="state != 'in_progress'">
+                                <list editable="bottom">
+                                    <field name="defect_id" options="{'no_create': True}"/>
+                                    <field name="severity"/>
+                                    <field name="position"/>
+                                    <field name="qty" sum="Total"/>
+                                    <field name="date" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Hourly Counts" name="hours" invisible="not hour_ids">
+                            <field name="hour_ids" readonly="1">
+                                <list>
+                                    <field name="hour_start" string="Hour"/>
+                                    <field name="pieces" sum="Total"/>
+                                    <field name="defects" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_inspection_view_pivot" model="ir.ui.view">
+        <field name="name">garment.inspection.pivot</field>
+        <field name="model">garment.inspection</field>
+        <field name="arch" type="xml">
+            <pivot string="Inspections">
+                <field name="line_id" type="row"/>
+                <field name="kind" type="col"/>
+                <field name="pieces_checked" type="measure"/>
+                <field name="defect_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_garment_inspection" model="ir.actions.act_window">
+        <field name="name">Inspections</field>
+        <field name="res_model">garment.inspection</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="view_id" ref="garment_inspection_view_list"/>
+        <field name="search_view_id" ref="garment_inspection_view_search"/>
+        <field name="context">{'search_default_last_7_days': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record an inline, end-line or final inspection</p>
+            <p>DHU is defects × 100 ÷ pieces checked; final inspections use the AQL sampling plan.</p>
+        </field>
+    </record>
+
+    <record id="action_garment_inspection_final" model="ir.actions.act_window">
+        <field name="name">Final Inspections</field>
+        <field name="res_model">garment.inspection</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="garment_inspection_view_search"/>
+        <field name="context">{'search_default_final': 1, 'default_kind': 'final'}</field>
+    </record>
+    <record id="action_garment_inspection_final_view_list" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="garment_inspection_view_list_final"/>
+        <field name="act_window_id" ref="action_garment_inspection_final"/>
+    </record>
+    <record id="action_garment_inspection_final_view_form" model="ir.actions.act_window.view">
+        <field name="sequence">2</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="garment_inspection_view_form"/>
+        <field name="act_window_id" ref="action_garment_inspection_final"/>
+    </record>
+
+    <!-- Tablet end-line check (screen 64) -->
+    <record id="action_endline_check" model="ir.actions.client">
+        <field name="name">End-line Check</field>
+        <field name="tag">zyra_garment_endline_check</field>
+    </record>
+</odoo>

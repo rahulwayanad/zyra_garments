@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_final_inspection" model="ir.actions.report">
+        <field name="name">Final Inspection Report</field>
+        <field name="model">garment.inspection</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_quality.report_final_inspection</field>
+        <field name="report_file">zyra_garment_quality.report_final_inspection</field>
+        <field name="print_report_name">'Final inspection - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_inspection"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_report_capa" model="ir.actions.report">
+        <field name="name">CAPA Report</field>
+        <field name="model">garment.capa</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_quality.report_capa</field>
+        <field name="report_file">zyra_garment_quality.report_capa</field>
+        <field name="print_report_name">'CAPA - %s' % object.name.replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_garment_capa"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Printed final inspection report (screen 66) -->
+    <template id="report_final_inspection">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="mb-0">Final Inspection Report <t t-esc="o.name"/></h2>
+                        <div class="text-muted mb-2">
+                            <t t-esc="o.style_id.display_name"/> · <t t-esc="o.order_id.name"/>
+                        </div>
+                        <div class="row border p-2 mb-3 mx-0">
+                            <div class="col-6">
+                                <div><strong>Buyer:</strong> <t t-esc="o.buyer_id.name"/></div>
+                                <div><strong>Inspection date:</strong> <span t-field="o.date" t-options="{'widget': 'date'}"/></div>
+                                <div><strong>Pieces checked:</strong> <t t-esc="o.pieces_checked"/></div>
+                            </div>
+                            <div class="col-6">
+                                <div><strong>Inspector:</strong> <t t-esc="o.inspector_id.name or ''"/></div>
+                                <div><strong>Result:</strong> <t t-esc="dict(o._fields['result'].selection).get(o.result, '').upper()"/></div>
+                                <div t-if="o.fail_reason"><strong>Reason:</strong> <t t-esc="o.fail_reason"/></div>
+                                <div t-if="o.result == 'concession'"><strong>Concession:</strong> <t t-esc="o.concession_reason"/></div>
+                            </div>
+                        </div>
+                        <h5>Sampling plan</h5>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th class="text-end">Lot size</th>
+                                    <th class="text-end">Sample size</th>
+                                    <th class="text-end">AQL major</th>
+                                    <th>Accept / reject</th>
+                                    <th class="text-end">AQL minor</th>
+                                    <th>Accept / reject</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-end"><span t-field="o.lot_size"/></td>
+                                    <td class="text-end"><t t-esc="o.sample_size"/></td>
+                                    <td class="text-end"><t t-esc="'%.1f' % o.aql_major"/></td>
+                                    <td><t t-esc="o.major_accept"/> / <t t-esc="o.major_reject"/></td>
+                                    <td class="text-end"><t t-esc="'%.1f' % o.aql_minor"/></td>
+                                    <td><t t-esc="o.minor_accept"/> / <t t-esc="o.minor_reject"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h5>Defects found</h5>
+                        <t t-set="classes" t-value="dict(o.defect_line_ids._fields['severity'].selection)"/>
+                        <t t-set="rows" t-value="o._garment_report_defects()"/>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr><th>Defect</th><th>Class</th><th class="text-end">Found</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="rows" t-as="r">
+                                    <td><t t-esc="r['name']"/></td>
+                                    <td><t t-esc="classes.get(r['severity'], '')"/></td>
+                                    <td class="text-end"><t t-esc="r['qty']"/></td>
+                                </tr>
+                                <tr t-if="not rows"><td colspan="3" class="text-muted">No defects found.</td></tr>
+                            </tbody>
+                        </table>
+                        <h5>Decision</h5>
+                        <div t-if="o.result == 'failed'" class="border border-danger text-danger fw-bold p-2">
+                            Lot rejected. Re-inspection required before shipment.
+                        </div>
+                        <div t-elif="o.result == 'concession'" class="border border-warning fw-bold p-2">
+                            Lot accepted under concession.
+                        </div>
+                        <div t-elif="o.result == 'passed'" class="border border-success text-success fw-bold p-2">
+                            Lot accepted. Released for shipment.
+                        </div>
+                        <div t-else="" class="border p-2">Inspection in progress.</div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- "Final inspection" tile on the production order (screen 2) -->
+    <record id="garment_order_view_form_quality" model="ir.ui.view">
+        <field name="name">garment.order.form.quality</field>
+        <field name="model">garment.order</field>
+        <field name="inherit_id" ref="zyra_garment_merch.garment_order_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='kpi_strip']" position="inside">
+                <field name="final_inspection_state" invisible="1"/>
+                <div name="kpi_final_inspection" class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_bad"
+                     invisible="final_inspection_state != 'failed'">
+                    <span class="o_zyra_kpi_label">Final inspection</span>
+                    <span class="o_zyra_kpi_value"><field name="final_inspection_state" readonly="1"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_text o_zyra_kpi_good" invisible="final_inspection_state != 'passed'">
+                    <span class="o_zyra_kpi_label">Final inspection</span>
+                    <span class="o_zyra_kpi_value"><field name="final_inspection_state" readonly="1"/></span>
+                </div>
+                <div class="o_zyra_kpi o_zyra_kpi_text" invisible="final_inspection_state != 'none'">
+                    <span class="o_zyra_kpi_label">Final inspection</span>
+                    <span class="o_zyra_kpi_value"><field name="final_inspection_state" readonly="1"/></span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="garment_order_view_search_quality" model="ir.ui.view">
+        <field name="name">garment.order.search.quality</field>
+        <field name="model">garment.order</field>
+        <field name="inherit_id" ref="zyra_garment_merch.garment_order_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='late']" position="after">
+                <filter name="final_failed" string="Final Inspection Failed"
+                        domain="[('final_inspection_state', '=', 'failed')]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

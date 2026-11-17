@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ISO 2859-1 single sampling, normal inspection. Table 1 (general level II) and Table II-A
+         resolved for AQL 2.5 and 4.0 (arrows already followed). Editable under Quality › Configuration. -->
+    <data noupdate="1">
+        <record id="aql_range_ii_a" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">2</field>
+            <field name="lot_max">8</field>
+            <field name="code_letter">A</field>
+            <field name="letter_sample_size">2</field>
+        </record>
+        <record id="aql_range_ii_b" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">9</field>
+            <field name="lot_max">15</field>
+            <field name="code_letter">B</field>
+            <field name="letter_sample_size">3</field>
+        </record>
+        <record id="aql_range_ii_c" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">16</field>
+            <field name="lot_max">25</field>
+            <field name="code_letter">C</field>
+            <field name="letter_sample_size">5</field>
+        </record>
+        <record id="aql_range_ii_d" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">26</field>
+            <field name="lot_max">50</field>
+            <field name="code_letter">D</field>
+            <field name="letter_sample_size">8</field>
+        </record>
+        <record id="aql_range_ii_e" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">51</field>
+            <field name="lot_max">90</field>
+            <field name="code_letter">E</field>
+            <field name="letter_sample_size">13</field>
+        </record>
+        <record id="aql_range_ii_f" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">91</field>
+            <field name="lot_max">150</field>
+            <field name="code_letter">F</field>
+            <field name="letter_sample_size">20</field>
+        </record>
+        <record id="aql_range_ii_g" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">151</field>
+            <field name="lot_max">280</field>
+            <field name="code_letter">G</field>
+            <field name="letter_sample_size">32</field>
+        </record>
+        <record id="aql_range_ii_h" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">281</field>
+            <field name="lot_max">500</field>
+            <field name="code_letter">H</field>
+            <field name="letter_sample_size">50</field>
+        </record>
+        <record id="aql_range_ii_j" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">501</field>
+            <field name="lot_max">1200</field>
+            <field name="code_letter">J</field>
+            <field name="letter_sample_size">80</field>
+        </record>
+        <record id="aql_range_ii_k" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">1201</field>
+            <field name="lot_max">3200</field>
+            <field name="code_letter">K</field>
+            <field name="letter_sample_size">125</field>
+        </record>
+        <record id="aql_range_ii_l" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">3201</field>
+            <field name="lot_max">10000</field>
+            <field name="code_letter">L</field>
+            <field name="letter_sample_size">200</field>
+        </record>
+        <record id="aql_range_ii_m" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">10001</field>
+            <field name="lot_max">35000</field>
+            <field name="code_letter">M</field>
+            <field name="letter_sample_size">315</field>
+        </record>
+        <record id="aql_range_ii_n" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">35001</field>
+            <field name="lot_max">150000</field>
+            <field name="code_letter">N</field>
+            <field name="letter_sample_size">500</field>
+        </record>
+        <record id="aql_range_ii_p" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">150001</field>
+            <field name="lot_max">500000</field>
+            <field name="code_letter">P</field>
+            <field name="letter_sample_size">800</field>
+        </record>
+        <record id="aql_range_ii_q" model="garment.aql.lot.range">
+            <field name="level">II</field>
+            <field name="lot_min">500001</field>
+            <field name="lot_max">999999999</field>
+            <field name="code_letter">Q</field>
+            <field name="letter_sample_size">1250</field>
+        </record>
+        <record id="aql_limit_2_5_a" model="garment.aql.limit">
+            <field name="code_letter">A</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">5</field>
+            <field name="accept">0</field>
+            <field name="reject">1</field>
+        </record>
+        <record id="aql_limit_2_5_b" model="garment.aql.limit">
+            <field name="code_letter">B</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">5</field>
+            <field name="accept">0</field>
+            <field name="reject">1</field>
+        </record>
+        <record id="aql_limit_2_5_c" model="garment.aql.limit">
+            <field name="code_letter">C</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">5</field>
+            <field name="accept">0</field>
+            <field name="reject">1</field>
+        </record>
+        <record id="aql_limit_2_5_d" model="garment.aql.limit">
+            <field name="code_letter">D</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">5</field>
+            <field name="accept">0</field>
+            <field name="reject">1</field>
+        </record>
+        <record id="aql_limit_2_5_e" model="garment.aql.limit">
+            <field name="code_letter">E</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">20</field>
+            <field name="accept">1</field>
+            <field name="reject">2</field>
+        </record>
+        <record id="aql_limit_2_5_f" model="garment.aql.limit">
+            <field name="code_letter">F</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">20</field>
+            <field name="accept">1</field>
+            <field name="reject">2</field>
+        </record>
+        <record id="aql_limit_2_5_g" model="garment.aql.limit">
+            <field name="code_letter">G</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">32</field>
+            <field name="accept">2</field>
+            <field name="reject">3</field>
+        </record>
+        <record id="aql_limit_2_5_h" model="garment.aql.limit">
+            <field name="code_letter">H</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">50</field>
+            <field name="accept">3</field>
+            <field name="reject">4</field>
+        </record>
+        <record id="aql_limit_2_5_j" model="garment.aql.limit">
+            <field name="code_letter">J</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">80</field>
+            <field name="accept">5</field>
+            <field name="reject">6</field>
+        </record>
+        <record id="aql_limit_2_5_k" model="garment.aql.limit">
+            <field name="code_letter">K</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">125</field>
+            <field name="accept">7</field>
+            <field name="reject">8</field>
+        </record>
+        <record id="aql_limit_2_5_l" model="garment.aql.limit">
+            <field name="code_letter">L</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">200</field>
+            <field name="accept">10</field>
+            <field name="reject">11</field>
+        </record>
+        <record id="aql_limit_2_5_m" model="garment.aql.limit">
+            <field name="code_letter">M</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">315</field>
+            <field name="accept">14</field>
+            <field name="reject">15</field>
+        </record>
+        <record id="aql_limit_2_5_n" model="garment.aql.limit">
+            <field name="code_letter">N</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">500</field>
+            <field name="accept">21</field>
+            <field name="reject">22</field>
+        </record>
+        <record id="aql_limit_2_5_p" model="garment.aql.limit">
+            <field name="code_letter">P</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">500</field>
+            <field name="accept">21</field>
+            <field name="reject">22</field>
+        </record>
+        <record id="aql_limit_2_5_q" model="garment.aql.limit">
+            <field name="code_letter">Q</field>
+            <field name="aql">2.5</field>
+            <field name="sample_size">500</field>
+            <field name="accept">21</field>
+            <field name="reject">22</field>
+        </record>
+        <record id="aql_limit_4_0_a" model="garment.aql.limit">
+            <field name="code_letter">A</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">3</field>
+            <field name="accept">0</field>
+            <field name="reject">1</field>
+        </record>
+        <record id="aql_limit_4_0_b" model="garment.aql.limit">
+            <field name="code_letter">B</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">3</field>
+            <field name="accept">0</field>
+            <field name="reject">1</field>
+        </record>
+        <record id="aql_limit_4_0_c" model="garment.aql.limit">
+            <field name="code_letter">C</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">3</field>
+            <field name="accept">0</field>
+            <field name="reject">1</field>
+        </record>
+        <record id="aql_limit_4_0_d" model="garment.aql.limit">
+            <field name="code_letter">D</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">13</field>
+            <field name="accept">1</field>
+            <field name="reject">2</field>
+        </record>
+        <record id="aql_limit_4_0_e" model="garment.aql.limit">
+            <field name="code_letter">E</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">13</field>
+            <field name="accept">1</field>
+            <field name="reject">2</field>
+        </record>
+        <record id="aql_limit_4_0_f" model="garment.aql.limit">
+            <field name="code_letter">F</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">20</field>
+            <field name="accept">2</field>
+            <field name="reject">3</field>
+        </record>
+        <record id="aql_limit_4_0_g" model="garment.aql.limit">
+            <field name="code_letter">G</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">32</field>
+            <field name="accept">3</field>
+            <field name="reject">4</field>
+        </record>
+        <record id="aql_limit_4_0_h" model="garment.aql.limit">
+            <field name="code_letter">H</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">50</field>
+            <field name="accept">5</field>
+            <field name="reject">6</field>
+        </record>
+        <record id="aql_limit_4_0_j" model="garment.aql.limit">
+            <field name="code_letter">J</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">80</field>
+            <field name="accept">7</field>
+            <field name="reject">8</field>
+        </record>
+        <record id="aql_limit_4_0_k" model="garment.aql.limit">
+            <field name="code_letter">K</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">125</field>
+            <field name="accept">10</field>
+            <field name="reject">11</field>
+        </record>
+        <record id="aql_limit_4_0_l" model="garment.aql.limit">
+            <field name="code_letter">L</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">200</field>
+            <field name="accept">14</field>
+            <field name="reject">15</field>
+        </record>
+        <record id="aql_limit_4_0_m" model="garment.aql.limit">
+            <field name="code_letter">M</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">315</field>
+            <field name="accept">21</field>
+            <field name="reject">22</field>
+        </record>
+        <record id="aql_limit_4_0_n" model="garment.aql.limit">
+            <field name="code_letter">N</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">315</field>
+            <field name="accept">21</field>
+            <field name="reject">22</field>
+        </record>
+        <record id="aql_limit_4_0_p" model="garment.aql.limit">
+            <field name="code_letter">P</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">315</field>
+            <field name="accept">21</field>
+            <field name="reject">22</field>
+        </record>
+        <record id="aql_limit_4_0_q" model="garment.aql.limit">
+            <field name="code_letter">Q</field>
+            <field name="aql">4.0</field>
+            <field name="sample_size">315</field>
+            <field name="accept">21</field>
+            <field name="reject">22</field>
+        </record>
+    </data>
+</odoo>
