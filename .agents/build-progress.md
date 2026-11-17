@@ -21,7 +21,7 @@ halfway" prompt.
 | 0 | repo, docs/screens, CLAUDE.md, theme installs | done (commit 7f9791c) |
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
-| 3 | materials, cutting, quality, shipping | agents running |
+| 3 | materials, cutting, quality, shipping | cutting + materials **merged** (gate 238/238); shipping running; quality paused |
 | 4 | sewing, jobwork | – |
 | 5 | wages, pnl, cockpit, portal, connect | – |
 
@@ -35,3 +35,41 @@ halfway" prompt.
 - 03:14 techpack done (38/38 tests, contract met; BOM price_unit is Float not Monetary for sub-cent trims). Merged to main; wt-techpack kept until costing/merch finish (they test against it).
 - costing done (29/29; added `rejected` state from screen 31; overheads/commission/margin as % of FOB). Merged. Incident: shared scratch dir let costing run merch's script once (dropped zyra_merch; merch recreates it each run) → preamble now gives each agent its own scratch dir.
 - 03:31 merch done (58/58; progress API in its README). Merged. Wave 2 gate: base+techpack+costing+merch, 156/156, clean. Wave 3 started (quality exposes garment.order.final_passed; shipping soft-reads it).
+- ~04:00 usage limit hit again (reset 07:30); all 4 wave-3 agents stopped mid-way. 07:31 Rahul said restart; all 4 resumed.
+- Rahul: when everything is complete, push to git@github.com:rahulwayanad/zyra_garments.git (remote `origin` added).
+- Remote origin/main has only 'Initial commit' (README.md, .gitignore). Plan at the end: merge origin/main with --allow-unrelated-histories (union .gitignore, keep their README content), then normal push of main (no force); leave 'release' untouched.
+
+## Working-hours schedule (Rahul, 17 Nov 07:45)
+Build runs only 18:00–09:00; Rahul needs his tokens 09:00–18:00.
+- 08:55 one-shot: stop still-running wave-3 agents, commit WIP, log. No new work until evening.
+- Daily 18:05 (fires ~18:35 with scheduler jitter): resume paused agents, continue waves, final gate, push to origin/main.
+- Wave-3 agent ids for SendMessage resume: materials ad101fdcd2c44fcc6 · cutting a4396cb54d0ce18ee ·
+  quality afe4500bdbe59b673 · shipping a66cac3ccd2c545c6
+- Hourly :17 check-in removed (it would have restarted work in working hours).
+
+## Usage budget (Rahul, 17 Nov ~07:55) — supersedes the working-hours schedule above
+Rahul must keep >=20% of every 5-hour usage window for office work. Claude cannot read the usage meter, so a
+fixed budget is used: measured ~4 agent-hours ≈ one full window → per segment max 3 agents for 60 min
+(~2.5 agent-hours incl. orchestration), then 5 h rest. Never build 09:00–18:00.
+- Today: pause at 08:10 (4 agents ran from 07:31).
+- Segments start 18:05, 23:05, 04:05 (scheduler jitter: ~+30 min); each schedules its own pause 60 min later.
+- Wave 5 (5 modules) runs as 3 + 2.
+- Expected finish: ~4 segments → around 05:00 on 18 Nov, then push to GitHub.
+- ~07:58 Rahul: usage at 53% (window from 07:30). Recalibrated: 4 agents × ~27 min ≈ 53%. Paused all 4 wave-3
+  agents immediately; WIP commits: materials 14d49ae, cutting 07ddcd9 (2 tests failing, was fixing),
+  quality 39865c0, shipping 8dc92b0. New segment rule: max 3 agents × 35 min, starts 18:05/23:05/04:05
+  (next fire 18:07), pause scheduled by each segment. 08:10 pause job cancelled (already paused).
+- ~08:05 Rahul controls restarts from his phone (Remote Control). All automatic segment jobs cancelled; build only runs on his command. Sleep blocked for 3 days so the PC stays reachable.
+- 08:05 Rahul: "start my garments" (usage 56% session, resets 12:29). Short segment: fresh agents resumed cutting
+  (port 8092) and materials (port 8091) from their WIP commits, hard stop 08:33. Quality and shipping stay paused.
+- 08:08 segment (requested from Rahul's phone session): cutting + materials resumed, hard stop 08:33 (one-shot job). Quality, shipping stay paused (usage 56%).
+- 08:10 STOP (from Rahul's phone session): usage 71% and rising. cutting + materials stopped, no odoo test runs left, WIP committed, 08:33 job cancelled. NO BUILD UNTIL RAHUL SAYS (Rahul 08:12).
+- 08:12 scheduled one-shot 18:00 segment (fires ~17:59): cutting+materials+quality (max 3), shipping when one finishes; 40-min cap with self-scheduled hard stop; then wait for Rahul.
+- 08:13 18:00 restart cancelled (Rahul: "I will tell when need to start"). NO BUILD UNTIL RAHUL SAYS (Rahul 08:12). No scheduled jobs.
+- 14:04 START (Rahul via phone session: "start now"; session usage 2%, resets 17:50; week 62%; office-hours run allowed).
+  Fresh agents resumed cutting (port 18102) and materials (port 18101) from their WIP commits. Quality agent launch
+  was blocked by the permission classifier, so quality and shipping stay paused. Hard stop job at 14:47 (segment ends 14:50).
+- 14:10 cutting done (47/47, coupon payload contract in its README) → merged dbb8252; gate base..cutting 203/203, clean.
+  Shipping agent started in cutting's slot (port 18104).
+- 14:15 materials done (41 tests; browser tour skipped: websocket-client missing from the venv) → merged 821078d;
+  gate base..materials 238/238, clean. Quality still paused (launch blocked; waiting for Rahul's OK to retry).
