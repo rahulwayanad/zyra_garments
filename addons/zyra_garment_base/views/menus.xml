@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_garment_root" name="Garment" sequence="35"
+    <menuitem id="menu_garment_root" name="Garment Suite" sequence="35"
               web_icon="zyra_garment_base,static/description/icon.png"
               groups="group_garment_merchandiser,group_garment_techpack_designer,group_garment_costing,group_garment_fabric_store,group_garment_cutting,group_garment_line_supervisor,group_garment_quality,group_garment_packing_shipping,group_garment_wages"/>
 

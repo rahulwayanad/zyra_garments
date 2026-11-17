@@ -138,3 +138,8 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   Merged 14/15: base, techpack, costing, merch, materials, cutting, quality, shipping, sewing, jobwork, wages, pnl,
   portal, connect — gate 395/395. Open for Rahul: portal vendor menu + Approvals page; connect webhook emits in
   cutting/quality/shipping; browser check of all screens. NO BUILD UNTIL RAHUL SAYS.
+- 17 Nov 19:4x (Rahul, direct request): new umbrella app `zyra_garment_suite` ("Garment Suite") depends on all 14
+  merged modules + theme; base no longer `application`; root menu and Settings app renamed "Garment" → "Garment
+  Suite". Spec `.agents/docs/modules/zyra_garment_suite.md`. Fresh DB install of the suite alone: 3/3 suite tests,
+  gate 398/398 (361 tagged `zyra` + connect 28 + jobwork 13 — those two modules' tests lack the `zyra` tag), clean.
+  Add `zyra_garment_cockpit` to the suite's depends when it merges.
