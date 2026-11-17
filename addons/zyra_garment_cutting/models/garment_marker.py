@@ -21,7 +21,7 @@ class GarmentMarker(models.Model):
     colour_id = fields.Many2one("garment.colour", string="Colourway",
                                 help="Leave empty when the marker is used for every colourway of the style.")
     fabric_id = fields.Many2one("product.product", string="Fabric", check_company=True)
-    line_ids = fields.One2many("garment.marker.line", "marker_id", string="Size Ratio", copy=True)
+    line_ids = fields.One2many("garment.marker.line", "marker_id", string="Size Ratios", copy=True)
     ratio_text = fields.Char(string="Size Ratio", compute="_compute_ratio", store=True)
     ratio_short = fields.Char(string="Ratio", compute="_compute_ratio", store=True)
     pieces_per_ply = fields.Integer(compute="_compute_ratio", store=True,

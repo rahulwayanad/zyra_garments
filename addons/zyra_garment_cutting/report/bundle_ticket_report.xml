@@ -20,8 +20,7 @@
                         <table style="width: 100%; border: 1px solid #222; border-collapse: collapse;">
                             <tr>
                                 <td style="width: 70px; padding: 8px; vertical-align: middle;">
-                                    <span t-field="bundle.name"
-                                          t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 120, 'height': 120, 'img_style': 'width: 60px; height: 60px;'}"/>
+                                    <img t-att-src="bundle._garment_qr_src(bundle.name)" style="width: 60px; height: 60px;"/>
                                 </td>
                                 <td style="padding: 8px 4px; vertical-align: middle;">
                                     <div style="font-size: 20px; font-weight: bold;" t-out="bundle.name"/>
@@ -44,8 +43,7 @@
                                     <td style="padding: 6px;" t-out="bundle.name"/>
                                     <td style="padding: 6px; white-space: nowrap;"><t t-out="bundle.pieces"/> pcs</td>
                                     <td style="width: 64px; padding: 4px;">
-                                        <span t-field="coupon.payload"
-                                              t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 120, 'height': 120, 'img_style': 'width: 54px; height: 54px;'}"/>
+                                        <img t-att-src="bundle._garment_qr_src(coupon.payload)" style="width: 54px; height: 54px;"/>
                                     </td>
                                 </tr>
                             </t>

@@ -132,4 +132,4 @@ class TestBundle(CuttingCase):
         html = html.decode()
         self.assertIn(bundle.name, html)
         self.assertIn("Join shoulders", html)
-        self.assertGreaterEqual(html.count("data:image/png;base64"), 1 + bundle.operation_count)
+        self.assertGreaterEqual(html.count("data:image/"), 1 + bundle.operation_count)

@@ -49,7 +49,7 @@ class GarmentCutPlan(models.Model):
 
     size_line_ids = fields.One2many("garment.cut.plan.size", "plan_id", string="Sizes", copy=False)
     proposal_ids = fields.One2many("garment.cut.plan.proposal", "plan_id", string="Proposed Lays", copy=False)
-    lay_ids = fields.One2many("garment.lay", "plan_id", string="Lays", copy=False)
+    lay_ids = fields.One2many("garment.lay", "plan_id", string="Lay Records", copy=False)
 
     qty_ordered = fields.Integer(string="Ordered", compute="_compute_totals", store=True)
     qty_to_cut = fields.Integer(string="To Cut", compute="_compute_totals", store=True)

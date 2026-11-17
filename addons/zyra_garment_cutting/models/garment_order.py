@@ -5,7 +5,7 @@ from odoo.exceptions import UserError
 class GarmentOrder(models.Model):
     _inherit = "garment.order"
 
-    cut_plan_ids = fields.One2many("garment.cut.plan", "order_id", string="Cut Plans")
+    cut_plan_ids = fields.One2many("garment.cut.plan", "order_id", string="Cut Plan Records")
     cut_plan_count = fields.Integer(compute="_compute_cutting_counts", string="Cut Plans")
     bundle_count = fields.Integer(compute="_compute_cutting_counts", string="Bundles")
 

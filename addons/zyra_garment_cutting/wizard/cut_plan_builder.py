@@ -13,7 +13,7 @@ class GarmentCutPlanBuilder(models.TransientModel):
 
     plan_id = fields.Many2one("garment.cut.plan", required=True, ondelete="cascade")
     name = fields.Char(compute="_compute_name")
-    line_ids = fields.One2many("garment.cut.plan.builder.line", "builder_id", string="Proposed Lays")
+    line_ids = fields.One2many("garment.cut.plan.builder.line", "builder_id", string="Proposed Lay Lines")
     left_to_plan = fields.Integer(compute="_compute_figures")
     lay_count = fields.Integer(string="Proposed Lays", compute="_compute_figures")
     pieces = fields.Integer(string="Pieces Proposed", compute="_compute_figures")

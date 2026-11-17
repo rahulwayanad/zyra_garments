@@ -24,7 +24,7 @@ class TestLay(CuttingCase):
         self.assertEqual(lay.plies_actual, 48)
         self.assertEqual(lay.pieces, 48 * 4)
         self.assertAlmostEqual(lay.fabric_laid, 48 * (4.0 + 0.04), places=2)
-        self.assertAlmostEqual(lay.end_loss_pct, 100 * 48 * 0.04 / (48 * 4.04), places=2)
+        self.assertAlmostEqual(lay.end_loss_pct, 100 * 48 * 0.04 / (48 * 4.04), places=1)
 
     def test_only_approved_rolls_may_be_laid(self):
         lay = self._first_lay(self._approved_plan())

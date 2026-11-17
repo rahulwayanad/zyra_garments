@@ -1,8 +1,12 @@
+import base64
 import hashlib
 import hmac
+import logging
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+
+_logger = logging.getLogger(__name__)
 
 BUNDLE_STAGES = [
     ("cut", "Cut"),
@@ -47,7 +51,7 @@ class GarmentBundle(models.Model):
     shade = fields.Char(related="roll_id.shade_group", store=True, string="Shade")
     ply_from = fields.Integer(required=True, default=1)
     ply_to = fields.Integer(required=True, default=1)
-    plies_label = fields.Char(string="Plies", compute="_compute_pieces")
+    plies_label = fields.Char(string="Plies", compute="_compute_plies_label")
     pieces = fields.Integer(compute="_compute_pieces", store=True)
     stage = fields.Selection(BUNDLE_STAGES, default="cut", required=True, tracking=True, copy=False,
                              group_expand="_expand_stages")
@@ -86,6 +90,10 @@ class GarmentBundle(models.Model):
     def _compute_pieces(self):
         for bundle in self:
             bundle.pieces = max(bundle.ply_to - bundle.ply_from + 1, 0)
+
+    @api.depends("ply_from", "ply_to")
+    def _compute_plies_label(self):
+        for bundle in self:
             bundle.plies_label = "%s – %s" % (bundle.ply_from, bundle.ply_to)
 
     @api.depends("stage")
@@ -210,6 +218,23 @@ class GarmentBundle(models.Model):
         bundle, operation = self._garment_parse_coupon(payload)
         return bundle.coupon_ids.filtered(lambda c: c.operation_line_id == operation)[:1]
 
+    @api.model
+    def _garment_qr_src(self, value, size=120):
+        """Data URI of a QR code for the ticket: Odoo's report barcode (PNG); when the server's reportlab has
+        no PNG renderer, the same reportlab QR drawing rendered as SVG."""
+        if not value:
+            return ""
+        try:
+            png = self.env["ir.actions.report"].barcode("QR", value, width=size, height=size)
+            return "data:image/png;base64,%s" % base64.b64encode(png).decode()
+        except Exception:  # noqa: BLE001 - missing renderPM backend on this server
+            from reportlab.graphics import renderSVG
+            from reportlab.graphics.barcode import createBarcodeDrawing
+            drawing = createBarcodeDrawing("QR", value=value, width=size, height=size, barBorder=0)
+            svg = renderSVG.drawToString(drawing)
+            svg = svg.encode() if isinstance(svg, str) else svg
+            return "data:image/svg+xml;base64,%s" % base64.b64encode(svg).decode()
+
     # ------------------------------------------------------------------
     # Stages
     # ------------------------------------------------------------------
@@ -319,7 +344,7 @@ class GarmentBundleCoupon(models.Model):
     payload = fields.Char(compute="_compute_payload", help="Text in the QR code (contract: README).")
     scanned = fields.Boolean(readonly=True, copy=False, index=True)
     employee_id = fields.Many2one("hr.employee", string="Operator", readonly=True, copy=False)
-    scanned_at = fields.Datetime(string="Scanned", readonly=True, copy=False)
+    scanned_at = fields.Datetime(string="Scanned On", readonly=True, copy=False)
     pieces = fields.Integer(string="Pieces", readonly=True, copy=False)
     rejected_qty = fields.Integer(string="Rejected", copy=False)
     reject_reason = fields.Char(copy=False)

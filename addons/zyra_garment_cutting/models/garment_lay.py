@@ -61,7 +61,7 @@ class GarmentLay(models.Model):
     cutter_id = fields.Many2one("hr.employee", string="Cutter")
     bundle_size = fields.Integer(string="Pieces per Bundle", default=40)
 
-    bundle_ids = fields.One2many("garment.bundle", "lay_id", string="Bundles")
+    bundle_ids = fields.One2many("garment.bundle", "lay_id", string="Bundle Records")
     bundle_count = fields.Integer(compute="_compute_bundle_count", string="Bundles")
     move_ids = fields.One2many("stock.move", "garment_lay_id", string="Fabric Moves")
     proposal_id = fields.Many2one("garment.cut.plan.proposal", compute="_compute_proposal")
