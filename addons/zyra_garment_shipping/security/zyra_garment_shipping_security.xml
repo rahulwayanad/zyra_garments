@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="rule_garment_pack_plan_company" model="ir.rule">
+            <field name="name">Pack plans: own companies</field>
+            <field name="model_id" ref="model_garment_pack_plan"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_pack_plan_ratio_company" model="ir.rule">
+            <field name="name">Pack plan ratios: own companies</field>
+            <field name="model_id" ref="model_garment_pack_plan_ratio"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_carton_company" model="ir.rule">
+            <field name="name">Cartons: own companies</field>
+            <field name="model_id" ref="model_garment_carton"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_carton_line_company" model="ir.rule">
+            <field name="name">Carton content: own companies</field>
+            <field name="model_id" ref="model_garment_carton_line"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_shipment_company" model="ir.rule">
+            <field name="name">Shipments: own companies</field>
+            <field name="model_id" ref="model_garment_shipment"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_lc_company" model="ir.rule">
+            <field name="name">Letters of credit: own companies</field>
+            <field name="model_id" ref="model_garment_lc"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_garment_lc_drawing_company" model="ir.rule">
+            <field name="name">LC drawings: own companies</field>
+            <field name="model_id" ref="model_garment_lc_drawing"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+</odoo>

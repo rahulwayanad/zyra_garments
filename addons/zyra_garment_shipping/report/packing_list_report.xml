@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Printed packing list (screen 76). `data` = garment.carton._packing_list_rows(...) -->
+    <template id="packing_list_table">
+        <h5 style="margin-top: 14px;">Cartons</h5>
+        <table class="table table-sm" style="font-size: 12px;">
+            <thead style="border-bottom: 2px solid #2d2a4a;">
+                <tr>
+                    <th>Cartons</th>
+                    <th>Colour</th>
+                    <t t-foreach="data['sizes']" t-as="size"><th class="text-end" t-esc="size.name"/></t>
+                    <th class="text-end">Pcs / ctn</th>
+                    <th class="text-end">Pieces</th>
+                    <th class="text-end">Net kg</th>
+                    <th class="text-end">Gross kg</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr t-foreach="data['rows']" t-as="row">
+                    <td t-esc="row['range']"/>
+                    <td t-esc="row['colour']"/>
+                    <t t-foreach="data['sizes']" t-as="size">
+                        <td class="text-end" t-esc="row['by_size'].get(size.id) or ''"/>
+                    </t>
+                    <td class="text-end" t-esc="row['pcs']"/>
+                    <td class="text-end" t-esc="row['pieces']"/>
+                    <td class="text-end" t-esc="'%.2f' % row['net']"/>
+                    <td class="text-end" t-esc="'%.2f' % row['gross']"/>
+                </tr>
+            </tbody>
+        </table>
+        <h5>Totals</h5>
+        <div class="row" style="border: 1px solid #ddd; padding: 8px; margin: 0;">
+            <div class="col-6">
+                <div><strong>Pieces:</strong> <t t-esc="data['pieces']"/></div>
+                <div><strong>Cartons:</strong> <t t-esc="data['cartons']"/></div>
+            </div>
+            <div class="col-6">
+                <div><strong>Net weight:</strong> <t t-esc="'%.1f' % data['net']"/> kg</div>
+                <div><strong>Gross weight:</strong> <t t-esc="'%.1f' % data['gross']"/> kg</div>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_packing_list">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="data" t-value="o._packing_list_data()"/>
+                    <div class="page">
+                        <h2 style="margin-bottom: 0;">Packing List <span t-field="o.name"/></h2>
+                        <div class="text-muted">
+                            <span t-field="o.buyer_id.name"/>
+                            <t t-foreach="o.order_ids" t-as="order"> · <t t-esc="order.display_name"/></t>
+                        </div>
+                        <div style="border-top: 2px solid #2d2a4a; margin: 8px 0 10px;"/>
+                        <div class="row" style="border: 1px solid #ddd; padding: 8px; margin: 0; font-size: 12px;">
+                            <div class="col-6">
+                                <div><strong>Shipment:</strong> <span t-field="o.name"/></div>
+                                <div><strong>Port of loading:</strong> <span t-field="o.port_loading"/></div>
+                                <div><strong>Cartons:</strong> <t t-esc="data['cartons']"/></div>
+                            </div>
+                            <div class="col-6">
+                                <div><strong>Mode:</strong> <span t-field="o.mode"/><t t-if="o.vessel_flight"> · <span t-field="o.vessel_flight"/></t></div>
+                                <div><strong>Port of discharge:</strong> <span t-field="o.port_discharge"/></div>
+                                <div><strong>Volume:</strong> <t t-esc="'%.2f' % data['cbm']"/> CBM</div>
+                            </div>
+                        </div>
+                        <t t-call="zyra_garment_shipping.packing_list_table"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_pack_plan_packing_list">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="data" t-value="o.env['garment.carton']._packing_list_rows(o.carton_ids.filtered(lambda c: c.state != 'planned'))"/>
+                    <div class="page">
+                        <h2 style="margin-bottom: 0;">Packing List <span t-field="o.name"/></h2>
+                        <div class="text-muted"><span t-field="o.buyer_id.name"/> · <t t-esc="o.order_id.display_name"/></div>
+                        <div style="border-top: 2px solid #2d2a4a; margin: 8px 0 10px;"/>
+                        <div class="row" style="border: 1px solid #ddd; padding: 8px; margin: 0; font-size: 12px;">
+                            <div class="col-6">
+                                <div><strong>Pack kind:</strong> <span t-field="o.pack_kind"/></div>
+                                <div><strong>Pieces per carton:</strong> <span t-field="o.pieces_per_carton"/></div>
+                            </div>
+                            <div class="col-6">
+                                <div><strong>Cartons packed:</strong> <span t-field="o.cartons_packed"/> / <span t-field="o.cartons_planned"/></div>
+                                <div><strong>Volume:</strong> <t t-esc="'%.2f' % data['cbm']"/> CBM</div>
+                            </div>
+                        </div>
+                        <t t-call="zyra_garment_shipping.packing_list_table"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

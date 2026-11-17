@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Buyers, orders, pack plans, cartons, shipments and credits (see models/shipping_demo.py) -->
+    <function model="garment.shipping.demo" name="_load_demo"/>
+</odoo>

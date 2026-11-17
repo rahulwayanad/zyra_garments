@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_pack_plans" name="Pack Plans" parent="zyra_garment_base.menu_garment_shipping"
+              action="action_garment_pack_plan" sequence="10"/>
+    <menuitem id="menu_garment_cartons" name="Cartons" parent="zyra_garment_base.menu_garment_shipping"
+              action="action_garment_carton" sequence="20"/>
+    <menuitem id="menu_garment_shipments" name="Shipments" parent="zyra_garment_base.menu_garment_shipping"
+              action="action_garment_shipment" sequence="30"/>
+    <menuitem id="menu_garment_lcs" name="Letters of Credit" parent="zyra_garment_base.menu_garment_shipping"
+              action="action_garment_lc" sequence="40"/>
+</odoo>

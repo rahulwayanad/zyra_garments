@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_garment_pack_plan" model="ir.sequence">
+            <field name="name">Pack Plan</field>
+            <field name="code">garment.pack.plan</field>
+            <field name="prefix">PP/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_garment_shipment" model="ir.sequence">
+            <field name="name">Garment Shipment</field>
+            <field name="code">garment.shipment</field>
+            <field name="prefix">SHP/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <!-- SSCC serial reference: digits only, padded by the company prefix length at use -->
+        <record id="seq_garment_carton_sscc" model="ir.sequence">
+            <field name="name">Carton SSCC Serial</field>
+            <field name="code">garment.carton.sscc</field>
+            <field name="padding">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

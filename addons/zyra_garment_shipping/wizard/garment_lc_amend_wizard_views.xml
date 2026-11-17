@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_lc_amend_wizard_view_form" model="ir.ui.view">
+        <field name="name">garment.lc.amend.wizard.form</field>
+        <field name="model">garment.lc.amend.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Amend Letter of Credit">
+                <field name="lc_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <group>
+                    <group>
+                        <field name="amount"/>
+                        <field name="tolerance_pct"/>
+                    </group>
+                    <group>
+                        <field name="latest_shipment_date"/>
+                        <field name="expiry_date"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="reason" placeholder="e.g. Expiry extended to 15 Nov at the buyer's request"/>
+                </group>
+                <footer>
+                    <button name="action_amend" type="object" string="Amend" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
