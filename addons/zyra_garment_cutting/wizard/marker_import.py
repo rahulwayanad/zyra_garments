@@ -63,9 +63,14 @@ class GarmentMarkerImport(models.TransientModel):
             ratio = self._parse_ratio(row.get("ratio"), self.style_id)
             vals = {
                 "name": row["name"], "style_id": self.style_id.id, "colour_id": self.colour_id.id,
-                "fabric_id": self.fabric_id.id, "length_m": length, "width_cm": width, "efficiency_pct": efficiency,
+                "fabric_id": self.fabric_id.id, "length_m": length,
                 "line_ids": [(5, 0, 0)] + [(0, 0, {"size_id": s.id, "ratio": r}) for s, r in ratio],
             }
+            # a CSV without the column keeps what the marker already has
+            if row.get("width_cm"):
+                vals["width_cm"] = width
+            if row.get("efficiency_pct"):
+                vals["efficiency_pct"] = efficiency
             marker = Marker.search([("style_id", "=", self.style_id.id), ("name", "=", row["name"])], limit=1)
             if marker:
                 marker.write(vals)

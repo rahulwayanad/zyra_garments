@@ -270,6 +270,7 @@ class GarmentCutPlan(models.Model):
                 if proposal.plies > plan.max_plies:
                     raise UserError(_("Lay %(seq)s has %(plies)s plies; the plan allows %(max)s per lay.",
                                       seq=proposal.sequence, plies=proposal.plies, max=plan.max_plies))
+            new.marker_id._garment_check_usable()
             new._create_lay()
             if plan.state == "draft":
                 plan.state = "approved"

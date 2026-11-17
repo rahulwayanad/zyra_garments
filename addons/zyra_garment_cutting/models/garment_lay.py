@@ -117,6 +117,39 @@ class GarmentLay(models.Model):
             lay.name = "%s-C%02d" % (tail, lay.lay_no)
         return lays
 
+    @api.onchange("marker_id")
+    def _onchange_marker_id(self):
+        if self.marker_id:
+            self.lay_length = self.marker_id.length_m
+
+    @api.constrains("lay_length", "marker_id")
+    def _check_lay_length(self):
+        """Rule: the lay length is the marker length (within 5 %, at least 10 cm, for table allowances)."""
+        for lay in self:
+            marker = lay.marker_id.length_m
+            if marker and abs(lay.lay_length - marker) > max(0.10, marker * 0.05):
+                raise ValidationError(_(
+                    "Lay %(lay)s is %(length).2f m long but marker %(marker)s is %(mlength).2f m. The lay length is "
+                    "the marker length; end allowance is entered separately.",
+                    lay=lay.name, length=lay.lay_length, marker=lay.marker_id.name, mlength=marker))
+
+    @api.constrains("plies_planned", "roll_line_ids", "plan_id")
+    def _check_plies(self):
+        """Rule: planned plies stay within the plan's maximum, and no more plies are spread than planned."""
+        for lay in self:
+            if lay.state in ("cut", "bundled", "cancel"):
+                continue
+            if lay.plan_id.max_plies and lay.plies_planned > lay.plan_id.max_plies:
+                raise ValidationError(_(
+                    "Lay %(lay)s plans %(plies)s plies; cut plan %(plan)s allows at most %(max)s plies per lay.",
+                    lay=lay.name, plies=lay.plies_planned, plan=lay.plan_id.name, max=lay.plan_id.max_plies))
+            spread = sum(lay.roll_line_ids.mapped("plies"))
+            if spread > lay.plies_planned:
+                raise ValidationError(_(
+                    "Lay %(lay)s has %(spread)s plies on its rolls but only %(plies)s planned. Spread no more than "
+                    "planned, or raise the planned plies (at most %(max)s).",
+                    lay=lay.name, spread=spread, plies=lay.plies_planned, max=lay.plan_id.max_plies))
+
     def write(self, vals):
         locked = {"marker_id", "plies_planned", "lay_length", "end_allowance_m"}
         if set(vals) & locked and self.filtered(lambda l: l.state in ("cut", "bundled")):
@@ -138,6 +171,8 @@ class GarmentLay(models.Model):
         for lay in self:
             if lay.state != "planned":
                 raise UserError(_("Only a planned lay can be spread."))
+            lay.marker_id._garment_check_usable()
+            lay._check_rolls()
             lay.state = "spread"
         return True
 
@@ -170,6 +205,7 @@ class GarmentLay(models.Model):
                 raise UserError(_("Lay %s is already cut.", lay.name))
             if lay.plan_id.state not in ("approved", "cutting"):
                 raise UserError(_("Approve cut plan %s before cutting its lays.", lay.plan_id.name))
+            lay.marker_id._garment_check_usable()
             lay._check_rolls()
             lay._consume_fabric()
             for size_id, ratio in lay.marker_id._ratio_by_size().items():

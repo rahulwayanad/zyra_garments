@@ -53,7 +53,7 @@ class CuttingCase(TransactionCase):
 
         Marker = env["garment.marker"]
         cls.marker_mix = Marker.create({
-            "name": "MIX", "style_id": cls.style.id, "length_m": 4.0, "efficiency_pct": 82.0,
+            "name": "MIX", "style_id": cls.style.id, "length_m": 4.0, "width_cm": 180.0, "efficiency_pct": 82.0,
             "line_ids": [Command.create({"size_id": cls.s.id, "ratio": 1}),
                          Command.create({"size_id": cls.m.id, "ratio": 2}),
                          Command.create({"size_id": cls.l.id, "ratio": 1})],
@@ -61,7 +61,7 @@ class CuttingCase(TransactionCase):
         cls.single = {}
         for size in (cls.s, cls.m, cls.l):
             cls.single[size] = Marker.create({
-                "name": "ONE-%s" % size.name, "style_id": cls.style.id, "length_m": 1.1, "efficiency_pct": 75.0,
+                "name": "ONE-%s" % size.name, "style_id": cls.style.id, "length_m": 1.1, "width_cm": 180.0, "efficiency_pct": 75.0,
                 "line_ids": [Command.create({"size_id": size.id, "ratio": 1})],
             })
 

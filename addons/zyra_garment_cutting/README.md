@@ -57,12 +57,22 @@ Posting `sewn` progress on the order is left to the caller (sewing).
 - `garment.bundle.coupon` — one per tech pack operation of the bundle, with scan data.
 - `garment.order` (inherited) — "Propose cut plan" (one plan per colourway) and bundle count.
 
+## Guard rails against typing errors (added 17 Nov 2026, after a lay of 1,000 plies × 1,000 m)
+
+| Rule | When |
+|---|---|
+| A marker is at most **4 m per piece** (length ÷ pieces per ply; `MAX_METRES_PER_PIECE`) | saving a marker |
+| A marker needs its **width** and **efficiency** before it is used (CSV import may still bring length only; a re-import without those columns keeps the values) | approving a cut plan, spreading or cutting a lay |
+| **Lay length = marker length**, within 5 % (at least 10 cm). It is filled from the marker; end allowance is separate | saving a lay |
+| **Planned plies ≤ the plan's maximum plies**, and **plies on the rolls ≤ planned plies** | saving a lay |
+| Rolls approved, of the plan's fabric and with **enough metres** — now checked at **Start Spreading** as well as at Confirm Cut | spreading, cutting |
+
 ## Report
 
 `Bundle ticket` (screen 53): header + one tear-off QR coupon per operation. QR via Odoo's report barcode, with
 an SVG fallback when the server's reportlab has no PNG renderer.
 
-## Tests (`tests/`) — 47, all green
+## Tests (`tests/`) — 53, all green
 
 Cut plan (lay proposal covers sizes exactly, max plies, no overcut, builder), lay (fabric formula, roll
 rules, cut progress, fabric consumption, rights), bundle (split by plies/roll/bundle size, coupons per

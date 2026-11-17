@@ -127,3 +127,41 @@ class TestLay(CuttingCase):
         lay.action_create_bundles()
         self.assertEqual(lay.state, "bundled")
         self.assertEqual(self.order.qty_cut, 320)
+
+    # ------------------------------------------------------------------ guard rails (17 Nov 2026)
+    def test_marker_longer_than_four_metres_a_piece_is_refused(self):
+        with self.assertRaises(ValidationError):
+            self.env["garment.marker"].create({
+                "name": "TYPO", "style_id": self.style.id, "length_m": 10.0, "width_cm": 180.0,
+                "efficiency_pct": 80.0, "line_ids": [Command.create({"size_id": self.s.id, "ratio": 1}),
+                                                     Command.create({"size_id": self.m.id, "ratio": 1})]})
+
+    def test_marker_without_width_or_efficiency_cannot_be_cut_with(self):
+        self.env["garment.marker"].search([("style_id", "=", self.style.id)]).width_cm = 0.0
+        plan = self.make_plan()
+        plan.action_propose()
+        with self.assertRaises(UserError):
+            plan.action_approve()
+
+    def test_lay_length_must_match_the_marker_length(self):
+        lay = self._first_lay(self._approved_plan())
+        with self.assertRaises(ValidationError):
+            lay.lay_length = 1000.0
+        lay.lay_length = lay.marker_id.length_m + 0.05  # small table allowance is accepted
+
+    def test_more_plies_spread_than_planned_is_refused(self):
+        lay = self._first_lay(self._approved_plan())
+        with self.assertRaises(ValidationError):
+            lay.roll_line_ids = [Command.create({"lot_id": self.roll_a.id, "plies": lay.plies_planned + 1})]
+
+    def test_planned_plies_above_the_plan_maximum_are_refused(self):
+        lay = self._first_lay(self._approved_plan())
+        with self.assertRaises(ValidationError):
+            lay.plies_planned = lay.plan_id.max_plies + 1
+
+    def test_spreading_checks_the_rolls_have_enough_fabric(self):
+        lay = self._first_lay(self._approved_plan())
+        lay.roll_line_ids = [Command.create({"lot_id": self.roll_small.id, "plies": lay.plies_planned})]
+        with self.assertRaises(UserError):
+            lay.action_spread()
+        self.assertEqual(lay.state, "planned")

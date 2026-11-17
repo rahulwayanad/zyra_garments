@@ -1,5 +1,8 @@
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
+
+# Longest marker length per garment accepted (a long coat is about 3 m); anything above is a typing error.
+MAX_METRES_PER_PIECE = 4.0
 
 
 class GarmentMarker(models.Model):
@@ -36,6 +39,27 @@ class GarmentMarker(models.Model):
         ("efficiency_range", "CHECK(efficiency_pct >= 0 AND efficiency_pct <= 100)",
          "Marker efficiency is a percentage between 0 and 100."),
     ]
+
+    @api.constrains("length_m", "line_ids")
+    def _check_length_per_piece(self):
+        """Rule: a marker cannot be longer than MAX_METRES_PER_PIECE per garment of its ratio (catches typos)."""
+        for marker in self:
+            pieces = sum(marker.line_ids.mapped("ratio"))
+            if pieces and marker.length_m / pieces > MAX_METRES_PER_PIECE:
+                raise ValidationError(_(
+                    "Marker %(marker)s is %(length).2f m long for %(pieces)s pieces (%(per).2f m a piece). "
+                    "A marker is at most %(max).1f m a piece: check the length.",
+                    marker=marker.name, length=marker.length_m, pieces=pieces,
+                    per=marker.length_m / pieces, max=MAX_METRES_PER_PIECE))
+
+    def _garment_check_usable(self):
+        """Rule: a marker used for cutting needs its width and efficiency (from the CAD marker)."""
+        for marker in self:
+            missing = [label for label, value in ((_("width"), marker.width_cm),
+                                                  (_("efficiency"), marker.efficiency_pct)) if value <= 0]
+            if missing:
+                raise UserError(_("Marker %(marker)s has no %(missing)s. Fill it in from the CAD marker before "
+                                  "cutting with it.", marker=marker.display_name, missing=_(" and ").join(missing)))
 
     @api.depends("line_ids.ratio", "line_ids.size_id", "line_ids.size_id.name", "line_ids.size_id.sequence")
     def _compute_ratio(self):
