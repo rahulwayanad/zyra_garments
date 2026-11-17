@@ -21,7 +21,7 @@ halfway" prompt.
 | 0 | repo, docs/screens, CLAUDE.md, theme installs | done (commit 7f9791c) |
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
-| 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
+| 3 | materials, cutting, quality, shipping | **merged** (gate 375/375) |
 | 4 | sewing, jobwork | **merged** (gate 339/339) |
 | 5 | wages, pnl, cockpit, portal, connect | portal + connect **merged** (gate 339/339 with sewing); wages core WIP 302a4d5; pnl, cockpit left |
 
@@ -123,3 +123,6 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
 - 16:27 FULL RUN (Rahul via phone: "Now, anyway"; 80% cap lifted for this run only). Hard stop job 18:42 (ends 18:45).
   Wages resumed (screens 77–81, richer demo). Quality launched (this time it was allowed). P&L after wages merges
   (depends on wages), cockpit after P&L. Portal fixes untouched. No push.
+- 16:33 quality done (36 tests, tour skips without websocket-client) → merged; first gate 5 errors in shipping tests
+  (quality's final_passed blocked test orders). Integration fix in shipping tests (patch final check except the
+  rule's own tests) → gate 12 modules 375/375, clean. wt-quality removed. Wave 3 complete.
