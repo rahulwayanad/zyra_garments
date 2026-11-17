@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Shared layout: top bar (company, nav, "<partner> · buyer portal", user initials), breadcrumb, title. -->
+    <template id="portal_garment_layout" name="Garment Portal Layout">
+        <t t-call="portal.frontend_layout">
+            <div class="o_zyra_portal">
+                <header class="o_zp_topbar">
+                    <span class="o_zp_logo" t-esc="company_initials"/>
+                    <span class="o_zp_company" t-esc="company_name"/>
+                    <nav class="o_zp_nav">
+                        <a href="/my/garment" t-att-class="'active' if page == 'home' else ''">Home</a>
+                        <t t-if="kind == 'vendor'">
+                            <a href="/my/garment/jobwork" t-att-class="'active' if page == 'jobwork' else ''">Job work</a>
+                        </t>
+                        <t t-else="">
+                            <a href="/my/garment/orders" t-att-class="'active' if page == 'orders' else ''">Orders</a>
+                            <a href="/my/garment/styles" t-att-class="'active' if page == 'styles' else ''">Styles</a>
+                            <a href="/my/garment/approvals" t-att-class="'active' if page == 'approvals' else ''">Approvals</a>
+                        </t>
+                    </nav>
+                    <span class="o_zp_who">
+                        <t t-esc="portal_partner.name"/> ·
+                        <t t-if="kind == 'vendor'">vendor portal</t><t t-else="">buyer portal</t>
+                    </span>
+                    <a class="o_zp_avatar" href="/my" t-esc="user_initials" title="My account"/>
+                </header>
+                <main class="o_zp_main">
+                    <div class="o_zp_breadcrumb">
+                        <a href="/my/garment">Home</a> / <t t-esc="crumb"/>
+                    </div>
+                    <h1 class="o_zp_title" t-esc="title"/>
+                    <t t-out="0"/>
+                </main>
+            </div>
+        </t>
+    </template>
+
+    <!-- Screen 122: buyer home -->
+    <template id="portal_garment_home" name="Garment Portal: Home">
+        <t t-call="zyra_garment_portal.portal_garment_layout">
+            <t t-set="title">Home</t>
+            <t t-set="crumb">Home</t>
+            <div class="o_zp_kpis">
+                <div class="o_zp_kpi"><span class="o_zp_kpi_label">Open orders</span><span class="o_zp_kpi_value" t-esc="kpi_open"/></div>
+                <div t-attf-class="o_zp_kpi #{'o_zp_kpi_bad' if kpi_late else ''}"><span class="o_zp_kpi_label">Late</span><span class="o_zp_kpi_value" t-esc="kpi_late"/></div>
+                <div class="o_zp_kpi"><span class="o_zp_kpi_label">Styles</span><span class="o_zp_kpi_value" t-esc="kpi_styles"/></div>
+                <div class="o_zp_kpi"><span class="o_zp_kpi_label">Next ex-factory</span><span class="o_zp_kpi_value" t-esc="kpi_next"/></div>
+            </div>
+            <div class="o_zp_cols">
+                <section class="o_zp_card o_zp_wide">
+                    <h2 class="o_zp_section">Your production orders</h2>
+                    <table class="o_zp_table">
+                        <thead><tr><th>Order</th><th>Style</th><th>Ex-factory</th><th>Packed</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="orders" t-as="o">
+                                <td><a t-attf-href="/my/garment/orders/#{o.id}" t-esc="o.name"/></td>
+                                <td t-esc="o.style_id.name"/>
+                                <td t-esc="short_date(o.ex_factory_date)"/>
+                                <td class="o_zp_bar_cell">
+                                    <span class="o_zp_bar"><span t-attf-style="width: #{min(o.packed_pct, 100)}%"/></span>
+                                    <t t-esc="str(round(o.packed_pct)) + '%'"/>
+                                </td>
+                                <td><span class="o_zp_pill o_zp_pill_info" t-esc="dict(o._fields['state']._description_selection(o.env))[o.state]"/></td>
+                            </tr>
+                            <tr t-if="not orders"><td colspan="5" class="o_zp_empty">No open orders.</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="o_zp_card">
+                    <h2 class="o_zp_section">Styles</h2>
+                    <table class="o_zp_table">
+                        <thead><tr><th>Style</th><th>Season</th><th>Tech pack</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="styles" t-as="s">
+                                <td t-esc="s.name"/>
+                                <td t-esc="s.season_id.code or '—'"/>
+                                <td t-esc="('v%s' % s.current_techpack_id.revision) if s.current_techpack_id else '—'"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Screen 123: orders list -->
+    <template id="portal_garment_orders" name="Garment Portal: Orders">
+        <t t-call="zyra_garment_portal.portal_garment_layout">
+            <t t-set="title">Orders</t>
+            <t t-set="crumb">Orders</t>
+            <section class="o_zp_card">
+                <table class="o_zp_table">
+                    <thead><tr><th>Order</th><th>Your PO</th><th>Style</th><th class="text-end">Ordered</th>
+                        <th class="text-end">Packed</th><th class="text-end">Shipped</th><th>Ex-factory</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr t-foreach="orders" t-as="o">
+                            <t t-set="st" t-value="order_status(o)"/>
+                            <td><a t-attf-href="/my/garment/orders/#{o.id}" t-esc="o.name"/></td>
+                            <td t-esc="o.buyer_po or '—'"/>
+                            <td t-esc="o.style_id.name"/>
+                            <td class="text-end" t-esc="fmt(o.qty_ordered)"/>
+                            <td class="text-end" t-esc="fmt(o.qty_packed)"/>
+                            <td class="text-end" t-esc="fmt(o.qty_shipped)"/>
+                            <td t-esc="short_date(o.ex_factory_date)"/>
+                            <td><span t-attf-class="o_zp_pill o_zp_pill_#{st[0]}" t-esc="st[1]"/></td>
+                        </tr>
+                        <tr t-if="not orders"><td colspan="8" class="o_zp_empty">No orders yet.</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </t>
+    </template>
+
+    <!-- Screen 124: one order -->
+    <template id="portal_garment_order" name="Garment Portal: Order">
+        <t t-call="zyra_garment_portal.portal_garment_layout">
+            <t t-set="title" t-value="'%s · %s' % (order.name, order.style_id.name)"/>
+            <t t-set="crumb" t-value="title"/>
+            <div class="o_zp_kpis">
+                <div class="o_zp_kpi"><span class="o_zp_kpi_label">Ordered</span><span class="o_zp_kpi_value" t-esc="fmt(order.qty_ordered)"/></div>
+                <div class="o_zp_kpi o_zp_kpi_good"><span class="o_zp_kpi_label">Sewn</span><span class="o_zp_kpi_value" t-esc="fmt(order.qty_sewn)"/></div>
+                <div class="o_zp_kpi o_zp_kpi_warn"><span class="o_zp_kpi_label">Packed</span><span class="o_zp_kpi_value" t-esc="fmt(order.qty_packed)"/></div>
+                <div t-attf-class="o_zp_kpi #{'o_zp_kpi_bad' if order.is_late else ''}"><span class="o_zp_kpi_label">Ex-factory</span><span class="o_zp_kpi_value" t-esc="short_date(order.ex_factory_date)"/></div>
+            </div>
+            <div class="o_zp_cols o_zp_cols_even">
+                <section class="o_zp_card">
+                    <h2 class="o_zp_section">Progress by colourway</h2>
+                    <table class="o_zp_table">
+                        <thead><tr><th>Stage</th><th t-foreach="colours" t-as="c" class="text-end" t-esc="c.name"/><th class="text-end">Total</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="rows" t-as="r">
+                                <td t-esc="r['label']"/>
+                                <td t-foreach="r['cells']" t-as="cell" class="text-end" t-esc="fmt(cell)"/>
+                                <td class="text-end" t-esc="fmt(r['total'])"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="o_zp_card">
+                    <h2 class="o_zp_section">Time and action</h2>
+                    <table class="o_zp_table">
+                        <thead><tr><th>Milestone</th><th>Planned</th><th>Actual</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="milestones" t-as="m">
+                                <td t-esc="m.name"/>
+                                <td t-esc="short_date(m.planned_date)"/>
+                                <td t-esc="short_date(m.actual_date)"/>
+                            </tr>
+                            <tr t-if="not milestones"><td colspan="3" class="o_zp_empty">No milestones planned.</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_garment_styles" name="Garment Portal: Styles">
+        <t t-call="zyra_garment_portal.portal_garment_layout">
+            <t t-set="title">Styles</t>
+            <t t-set="crumb">Styles</t>
+            <section class="o_zp_card">
+                <table class="o_zp_table">
+                    <thead><tr><th>Style</th><th>Season</th><th>Tech pack</th><th class="text-end">Open orders</th></tr></thead>
+                    <tbody>
+                        <tr t-foreach="styles" t-as="s">
+                            <td t-esc="s.name"/>
+                            <td t-esc="s.season_id.code or '—'"/>
+                            <td t-esc="('v%s' % s.current_techpack_id.revision) if s.current_techpack_id else '—'"/>
+                            <td class="text-end" t-esc="s.open_order_count"/>
+                        </tr>
+                        <tr t-if="not styles"><td colspan="4" class="o_zp_empty">No styles yet.</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </t>
+    </template>
+
+    <!-- Samples and approval cards waiting for the buyer's decision -->
+    <template id="portal_garment_approvals" name="Garment Portal: Approvals">
+        <t t-call="zyra_garment_portal.portal_garment_layout">
+            <t t-set="title">Approvals</t>
+            <t t-set="crumb">Approvals</t>
+            <div t-if="message" class="alert alert-warning" t-esc="message"/>
+            <section class="o_zp_card">
+                <h2 class="o_zp_section">Samples with you</h2>
+                <table class="o_zp_table">
+                    <thead><tr><th>Sample</th><th>Type</th><th>Style</th><th>Colourway</th><th>Round</th><th>Sent</th><th>Your decision</th></tr></thead>
+                    <tbody>
+                        <tr t-foreach="samples" t-as="s">
+                            <td t-esc="s.name"/>
+                            <td t-esc="dict(s._fields['sample_type']._description_selection(s.env))[s.sample_type]"/>
+                            <td t-esc="s.style_id.name"/>
+                            <td t-esc="s.colour_id.name or '—'"/>
+                            <td t-esc="s.round"/>
+                            <td t-esc="short_date(s.sent_date)"/>
+                            <td>
+                                <form t-attf-action="/my/garment/sample/#{s.id}/decide" method="post" class="o_zp_decide">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="text" name="comment" placeholder="Comment" class="form-control form-control-sm"/>
+                                    <button name="decision" value="approve" class="btn btn-sm btn-success">Approve</button>
+                                    <button name="decision" value="reject" class="btn btn-sm btn-outline-danger">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr t-if="not samples"><td colspan="7" class="o_zp_empty">No samples waiting for you.</td></tr>
+                    </tbody>
+                </table>
+            </section>
+            <section class="o_zp_card mt-3">
+                <h2 class="o_zp_section">Lab dips and approval cards</h2>
+                <table class="o_zp_table">
+                    <thead><tr><th>Card</th><th>Kind</th><th>Style</th><th>Colourway</th><th>Submission</th><th>Options</th><th>Your decision</th></tr></thead>
+                    <tbody>
+                        <tr t-foreach="approvals" t-as="a">
+                            <td t-esc="a.name"/>
+                            <td t-esc="dict(a._fields['kind']._description_selection(a.env))[a.kind]"/>
+                            <td t-esc="a.style_id.name or '—'"/>
+                            <td t-esc="a.colour_id.name or '—'"/>
+                            <td t-esc="a.submission"/>
+                            <td t-esc="a.options_sent or '—'"/>
+                            <td>
+                                <form t-attf-action="/my/garment/approval/#{a.id}/decide" method="post" class="o_zp_decide">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <select t-if="a.option_ids" name="option_id" class="form-select form-select-sm">
+                                        <option t-foreach="a.option_ids" t-as="opt" t-att-value="opt.id" t-esc="opt.name"/>
+                                    </select>
+                                    <input type="text" name="comment" placeholder="Comment" class="form-control form-control-sm"/>
+                                    <button name="decision" value="approve" class="btn btn-sm btn-success">Approve</button>
+                                    <button name="decision" value="reject" class="btn btn-sm btn-outline-danger">Resubmit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr t-if="not approvals"><td colspan="7" class="o_zp_empty">No cards waiting for you.</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </t>
+    </template>
+
+    <!-- Screen 125: job-work vendor -->
+    <template id="portal_garment_jobwork" name="Garment Portal: Job Work">
+        <t t-call="zyra_garment_portal.portal_garment_layout">
+            <t t-set="title">Job work</t>
+            <t t-set="crumb">Job work</t>
+            <section class="o_zp_card">
+                <table class="o_zp_table">
+                    <thead><tr><th>Job</th><th>Work</th><th>Order</th><th>Sent</th><th>Expected back</th>
+                        <th class="text-end">Pending pieces</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr t-foreach="jobs" t-as="j">
+                            <td t-esc="j.name"/>
+                            <td><t t-esc="process_labels.get(j.process)"/><t t-if="j.note"> · <t t-esc="j.note"/></t></td>
+                            <td t-esc="j.production_order_id.name or '—'"/>
+                            <td t-esc="short_date(j.date_issue)"/>
+                            <td t-esc="short_date(j.date_expected)"/>
+                            <td class="text-end" t-esc="fmt(j.qty_pending)"/>
+                            <td>
+                                <span t-if="j.is_overdue" class="o_zp_pill o_zp_pill_late">Overdue</span>
+                                <span t-else="" class="o_zp_pill o_zp_pill_info">Due</span>
+                            </td>
+                        </tr>
+                        <tr t-if="not jobs"><td colspan="7" class="o_zp_empty">No jobs with you.</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </t>
+    </template>
+
+    <!-- Entry on the standard /my page -->
+    <template id="portal_my_home_garment" inherit_id="portal.portal_my_home" name="Garment Portal Entry">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <div class="alert alert-light border mb-3">
+                <a href="/my/garment" class="fw-bold">Garment portal</a>:
+                <span>your orders, styles, approvals and job work</span>
+            </div>
+        </xpath>
+    </template>
+</odoo>

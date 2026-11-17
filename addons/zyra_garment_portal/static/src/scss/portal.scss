@@ -1,0 +1,66 @@
+// Light portal look of screens 122–125 (Zyra palette: violet accent, soft grey page).
+$zp-accent: #6d4ae8;
+$zp-ink: #1f1d2b;
+$zp-muted: #6b6a78;
+$zp-line: #e7e6ee;
+$zp-good: #12a37b;
+$zp-warn: #c58a0a;
+$zp-bad: #e5484d;
+
+.o_zyra_portal {
+    background: #f4f4f9;
+    min-height: 100vh;
+    color: $zp-ink;
+    .o_zp_topbar {
+        display: flex; align-items: center; gap: 16px; background: #fff;
+        border-bottom: 1px solid $zp-line; padding: 14px 40px;
+    }
+    .o_zp_logo {
+        width: 34px; height: 34px; border-radius: 8px; background: $zp-accent; color: #fff;
+        display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;
+    }
+    .o_zp_company { font-weight: 700; font-size: 16px; }
+    .o_zp_nav a { color: $zp-muted; margin-right: 16px; text-decoration: none; font-size: 14px;
+        &.active, &:hover { color: $zp-ink; } }
+    .o_zp_who { margin-left: auto; color: $zp-muted; font-size: 14px; }
+    .o_zp_avatar {
+        width: 28px; height: 28px; border-radius: 7px; background: $zp-good; color: #fff; font-size: 12px;
+        font-weight: 700; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+    }
+    .o_zp_main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 60px; }
+    .o_zp_breadcrumb { color: $zp-muted; font-size: 13px; a { color: $zp-muted; text-decoration: none; } }
+    .o_zp_title { font-size: 24px; font-weight: 700; margin: 8px 0 18px; }
+    .o_zp_kpis { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+    .o_zp_kpi {
+        background: #fff; border: 1px solid $zp-line; border-radius: 8px; padding: 12px 14px; min-width: 150px;
+        display: flex; flex-direction: column;
+        .o_zp_kpi_label { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700;
+            color: $zp-muted; &::before { content: "●"; color: $zp-accent; margin-right: 6px; font-size: 8px; } }
+        .o_zp_kpi_value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+        &.o_zp_kpi_good { border-color: lighten($zp-good, 35%); .o_zp_kpi_value, .o_zp_kpi_label::before { color: $zp-good; } }
+        &.o_zp_kpi_warn { border-color: lighten($zp-warn, 35%); .o_zp_kpi_value, .o_zp_kpi_label::before { color: $zp-warn; } }
+        &.o_zp_kpi_bad { border-color: lighten($zp-bad, 25%); background: #fff7f7;
+            .o_zp_kpi_value, .o_zp_kpi_label::before { color: $zp-bad; } }
+    }
+    .o_zp_cols { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px;
+        &.o_zp_cols_even { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 768px) { grid-template-columns: 1fr !important; } }
+    .o_zp_card { background: #fff; border: 1px solid $zp-line; border-radius: 10px; padding: 16px; overflow-x: auto; }
+    .o_zp_section { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+        border-left: 3px solid $zp-accent; padding-left: 8px; margin: 0 0 12px; }
+    .o_zp_table { width: 100%; font-size: 14px;
+        th { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: $zp-muted; font-weight: 700;
+            padding: 8px 10px; border-bottom: 1px solid $zp-line; }
+        td { padding: 9px 10px; border-bottom: 1px solid $zp-line; }
+        a { color: $zp-ink; text-decoration: none; }
+        .o_zp_empty { color: $zp-muted; text-align: center; } }
+    .o_zp_bar { display: inline-block; width: 70px; height: 5px; background: #eeedf3; border-radius: 3px;
+        vertical-align: middle; margin-right: 6px;
+        > span { display: block; height: 5px; background: $zp-warn; border-radius: 3px; } }
+    .o_zp_pill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 9px; }
+    .o_zp_pill_info { background: #efeafd; color: $zp-accent; }
+    .o_zp_pill_on_track { background: #e3f6ef; color: $zp-good; }
+    .o_zp_pill_shipped { background: #ececf2; color: $zp-muted; }
+    .o_zp_pill_late { background: #fde8e8; color: $zp-bad; }
+    .o_zp_decide { display: flex; gap: 6px; align-items: center; .form-control, .form-select { width: 130px; } }
+}

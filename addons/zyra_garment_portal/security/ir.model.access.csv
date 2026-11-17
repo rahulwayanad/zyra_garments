@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_portal_garment_order,portal garment.order,zyra_garment_merch.model_garment_order,base.group_portal,1,0,0,0
+access_portal_garment_order_line,portal garment.order.line,zyra_garment_merch.model_garment_order_line,base.group_portal,1,0,0,0
+access_portal_garment_tna_milestone,portal garment.tna.milestone,zyra_garment_merch.model_garment_tna_milestone,base.group_portal,1,0,0,0
+access_portal_garment_sample,portal garment.sample,zyra_garment_merch.model_garment_sample,base.group_portal,1,0,0,0
+access_portal_garment_approval,portal garment.approval,zyra_garment_merch.model_garment_approval,base.group_portal,1,0,0,0
+access_portal_garment_approval_option,portal garment.approval.option,zyra_garment_merch.model_garment_approval_option,base.group_portal,1,0,0,0
+access_portal_garment_style,portal garment.style,zyra_techpack.model_garment_style,base.group_portal,1,0,0,0
+access_portal_garment_jobwork_order,portal garment.jobwork.order,zyra_garment_jobwork.model_garment_jobwork_order,base.group_portal,1,0,0,0

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- A portal user sees only the records of their own company (commercial partner). -->
+    <record id="rule_portal_garment_order" model="ir.rule">
+        <field name="name">Portal: own production orders</field>
+        <field name="model_id" ref="zyra_garment_merch.model_garment_order"/>
+        <field name="domain_force">[('buyer_id', 'child_of', [user.commercial_partner_id.id]), ('state', '!=', 'draft')]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+    <record id="rule_portal_garment_order_line" model="ir.rule">
+        <field name="name">Portal: grid of own orders</field>
+        <field name="model_id" ref="zyra_garment_merch.model_garment_order_line"/>
+        <field name="domain_force">[('order_id.buyer_id', 'child_of', [user.commercial_partner_id.id]), ('order_id.state', '!=', 'draft')]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+    <record id="rule_portal_garment_tna_milestone" model="ir.rule">
+        <field name="name">Portal: T&amp;A of own orders</field>
+        <field name="model_id" ref="zyra_garment_merch.model_garment_tna_milestone"/>
+        <field name="domain_force">[('order_id.buyer_id', 'child_of', [user.commercial_partner_id.id]), ('order_id.state', '!=', 'draft')]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+    <record id="rule_portal_garment_sample" model="ir.rule">
+        <field name="name">Portal: own samples</field>
+        <field name="model_id" ref="zyra_garment_merch.model_garment_sample"/>
+        <field name="domain_force">[('buyer_id', 'child_of', [user.commercial_partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+    <record id="rule_portal_garment_approval" model="ir.rule">
+        <field name="name">Portal: own approval cards</field>
+        <field name="model_id" ref="zyra_garment_merch.model_garment_approval"/>
+        <field name="domain_force">[('buyer_id', 'child_of', [user.commercial_partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+    <record id="rule_portal_garment_approval_option" model="ir.rule">
+        <field name="name">Portal: options of own approval cards</field>
+        <field name="model_id" ref="zyra_garment_merch.model_garment_approval_option"/>
+        <field name="domain_force">[('approval_id.buyer_id', 'child_of', [user.commercial_partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+    <record id="rule_portal_garment_style" model="ir.rule">
+        <field name="name">Portal: own styles</field>
+        <field name="model_id" ref="zyra_techpack.model_garment_style"/>
+        <field name="domain_force">[('buyer_id', 'child_of', [user.commercial_partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+    <record id="rule_portal_garment_jobwork_order" model="ir.rule">
+        <field name="name">Portal: jobs held by own company</field>
+        <field name="model_id" ref="zyra_garment_jobwork.model_garment_jobwork_order"/>
+        <field name="domain_force">[('vendor_id', 'child_of', [user.commercial_partner_id.id]), ('state', '!=', 'draft')]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+</odoo>
