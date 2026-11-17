@@ -147,7 +147,7 @@
                             <field name="scan_count" widget="statinfo" string="Scans Paid"/>
                         </button>
                         <button name="action_open_move" type="object" class="oe_stat_button" icon="fa-book"
-                                invisible="not move_id">
+                                invisible="not move_id" groups="account.group_account_readonly">
                             <field name="move_count" widget="statinfo" string="Journal Entry"/>
                         </button>
                     </div>
@@ -200,7 +200,7 @@
                                     <field name="journal_id" readonly="state in ('posted', 'cancel')"/>
                                     <field name="expense_account_id" readonly="state in ('posted', 'cancel')"/>
                                     <field name="payable_account_id" readonly="state in ('posted', 'cancel')"/>
-                                    <field name="move_id"/>
+                                    <field name="move_id" groups="account.group_account_readonly"/>
                                     <field name="total_incentive"/>
                                     <field name="company_id" groups="base.group_multi_company"/>
                                     <field name="currency_id" invisible="1"/>

@@ -269,8 +269,9 @@ class GarmentWageSheetLine(models.Model):
     state = fields.Selection(related="sheet_id.state")
     currency_id = fields.Many2one(related="sheet_id.currency_id")
     employee_id = fields.Many2one("hr.employee", string="Operator", required=True)
-    badge = fields.Char(related="employee_id.barcode", string="Badge", store=True)
-    department_id = fields.Many2one(related="employee_id.department_id")
+    badge = fields.Char(string="Badge", compute="_compute_employee_info", store=True, compute_sudo=True)
+    department_name = fields.Char(string="Department", compute="_compute_employee_info", store=True,
+                                  compute_sudo=True)
     garment_line_id = fields.Many2one("garment.line", string="Line", compute="_compute_wage", store=True)
     paid_by = fields.Selection([("piece", "Piece rate"), ("time", "Time rate")], string="Paid By",
                                default="piece", required=True)
@@ -288,6 +289,13 @@ class GarmentWageSheetLine(models.Model):
     overtime_pay = fields.Monetary(string="Overtime", compute="_compute_wage", store=True)
     incentive = fields.Monetary(compute="_compute_wage", store=True)
     net_payable = fields.Monetary(string="Net Pay", compute="_compute_wage", store=True)
+
+    @api.depends("employee_id.barcode", "employee_id.department_id.name")
+    def _compute_employee_info(self):
+        # badge and department are HR-officer fields: copied here so the wages role can read them
+        for line in self:
+            line.badge = line.employee_id.barcode or False
+            line.department_name = line.employee_id.department_id.name or False
 
     @api.model
     def _garment_wage_figures(self, card, day_minutes, overtime_hours=0.0, deduction=0.0, paid_by="piece"):

@@ -16,7 +16,7 @@
             <div class="page">
                 <h2 class="mb-0">Wage Slip · <t t-esc="sheet.period_label.split(' · ')[0]"/></h2>
                 <div class="text-muted mb-2">
-                    <t t-esc="' · '.join(p for p in [wl.badge or '', wl.employee_id.name, (wl.garment_line_id.name or '').split(' · ')[0], wl.department_id.name or ''] if p)"/>
+                    <t t-esc="' · '.join(p for p in [wl.badge or '', wl.employee_id.name, (wl.garment_line_id.name or '').split(' · ')[0], wl.department_name or ''] if p)"/>
                 </div>
                 <div class="row border p-2 mx-0 mb-3">
                     <div class="col-6">

@@ -222,7 +222,7 @@ class TestWages(CuttingCase):
     def test_wages_clerk_runs_the_week_without_accounting_rights(self):
         """Rule: the wages role computes, approves, posts and prints without HR or accounting rights."""
         clerk = self.env["res.users"].create({
-            "name": "Wage Clerk", "login": "wage_clerk_test",
+            "name": "Wage Clerk", "login": "wage_clerk_test", "email": "clerk@example.com",
             "groups_id": [(6, 0, [self.env.ref("base.group_user").id,
                                   self.env.ref("zyra_garment_base.group_garment_wages").id])]})
         self._scanned_bundle()
@@ -233,3 +233,7 @@ class TestWages(CuttingCase):
         self.assertEqual(sheet.state, "posted")
         self.assertEqual(sheet.sudo().move_id.state, "posted")
         self.assertTrue(sheet.line_ids.read(["badge", "employee_id", "net_payable", "efficiency_ratio"]))
+        spec = {name: {} for name in ("name", "period_label", "state", "total_net", "scan_count")}
+        spec.update({name: {"fields": {"display_name": {}}} for name in
+                     ("journal_id", "rate_card_id", "expense_account_id", "payable_account_id", "approved_by_id")})
+        self.assertTrue(sheet.web_read(spec))

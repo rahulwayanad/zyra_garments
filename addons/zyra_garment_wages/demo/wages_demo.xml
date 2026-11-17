@@ -37,7 +37,7 @@
         <field name="min_daily_wage">550</field>
         <field name="topup_period">weekly</field>
         <field name="overtime_multiplier">2</field>
-        <field name="incentive_threshold">80</field>
+        <field name="incentive_threshold">70</field>
         <field name="incentive_percent">10</field>
         <field name="valid_from" eval="(DateTime.today() - relativedelta(months=5)).strftime('%Y-%m-%d')"/>
         <field name="state">active</field>
