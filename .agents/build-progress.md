@@ -23,7 +23,7 @@ halfway" prompt.
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
 | 4 | sewing, jobwork | jobwork **merged**; sewing WIP 60a3710 (screen 55 + 58 extras left) |
-| 5 | wages, pnl, cockpit, portal, connect | portal **merged** (gate 298/298); connect done on branch, gate pending |
+| 5 | wages, pnl, cockpit, portal, connect | portal **merged** (gate 298/298); connect **merged** (gate 324/324) |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
@@ -103,3 +103,5 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   (_garment_emit; request file still to write), cockpit line chart, screen 118 columns, AI reading 116–117 (optional).
 - 15:17 STOP: no agents, no odoo runs, no scheduled jobs. Wages not started. NO BUILD UNTIL RAHUL SAYS.
   Next: gate+merge connect; finish sewing (55, 58 extras) → merge; quality (needs Rahul's OK); wages, pnl, cockpit.
+- 15:55 SHORT SEGMENT (Rahul via phone 15:54; usage 61%). Hard stop 16:11. connect merged ce466ea after gate
+  10 modules 324/324, clean; wt-connect removed. Sewing agent resumed for screen 55 (saved LB/ record) + 58 extras.
