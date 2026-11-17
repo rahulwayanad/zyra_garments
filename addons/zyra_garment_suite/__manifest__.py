@@ -26,6 +26,7 @@
         # "zyra_garment_cockpit",  # add when feat/cockpit is merged
     ],
     "data": [],
+    "demo": ["demo/suite_story_demo.xml"],
     "application": True,
     "installable": True,
 }

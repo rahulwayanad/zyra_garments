@@ -143,3 +143,9 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   Suite". Spec `.agents/docs/modules/zyra_garment_suite.md`. Fresh DB install of the suite alone: 3/3 suite tests,
   gate 398/398 (361 tagged `zyra` + connect 28 + jobwork 13 — those two modules' tests lack the `zyra` tag), clean.
   Add `zyra_garment_cockpit` to the suite's depends when it merges.
+- 17 Nov 19:xx (Rahul, direct request "Create garments demo data, give me a deep workflow of one full sale"): demo
+  story in `zyra_garment_suite` (`models/suite_story_demo.py`, `demo/suite_story_demo.xml`, 5 tests): Coastline
+  Outfitters, ST-0201, 1,100 pcs, enquiry → paid → wages → P&L → completed, all through the modules' own APIs.
+  Walkthrough `.agents/docs/full-sale-walkthrough.md`. Gaps filed: docs/requests/zyra_garment_shipping.md (Post to
+  Stock re-consumes fabric from other orders' rolls incl. a held roll — high; SO stays to deliver/invoice; invoice
+  lines untagged), zyra_garment_pnl.md (MO trims not read), zyra_garment_merch.md (freight in planned other on FOB).

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- One full sale, enquiry to payment: Coastline Outfitters, ST-0201 Organic Crew Tee, 1,200 pieces.
+         Runs after every module's own demo. Walkthrough: .agents/docs/full-sale-walkthrough.md -->
+    <function model="garment.suite.story.demo" name="_load_demo"/>
+</odoo>
