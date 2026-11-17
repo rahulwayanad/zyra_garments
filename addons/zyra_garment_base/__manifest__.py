@@ -35,6 +35,6 @@
             "zyra_garment_base/static/src/scss/garment_base.scss",
         ],
     },
-    "application": True,
+    "application": False,
     "installable": True,
 }
