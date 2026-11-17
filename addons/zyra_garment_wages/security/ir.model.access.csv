@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rate_card_wages,rate card wages,model_garment_rate_card,zyra_garment_base.group_garment_wages,1,1,1,1
+access_rate_card_mgr,rate card manager,model_garment_rate_card,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_wage_sheet_wages,wage sheet wages,model_garment_wage_sheet,zyra_garment_base.group_garment_wages,1,1,1,1
+access_wage_sheet_mgr,wage sheet manager,model_garment_wage_sheet,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_wage_line_wages,wage line wages,model_garment_wage_sheet_line,zyra_garment_base.group_garment_wages,1,1,1,1
+access_wage_line_mgr,wage line manager,model_garment_wage_sheet_line,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_account_journal_wages,account.journal wages,account.model_account_journal,zyra_garment_base.group_garment_wages,1,0,0,0

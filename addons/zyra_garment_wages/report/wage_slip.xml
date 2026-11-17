@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Screen 81: printed wage slip, one page per operator -->
+    <record id="action_report_wage_slip" model="ir.actions.report">
+        <field name="name">Wage Slip</field>
+        <field name="model">garment.wage.sheet.line</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_wages.report_wage_slip</field>
+        <field name="report_file">zyra_garment_wages.report_wage_slip</field>
+        <field name="print_report_name">'Wage Slip - %s - %s' % (object.sheet_id.name, object.employee_id.name)</field>
+        <field name="binding_model_id" ref="model_garment_wage_sheet_line"/>
+    </record>
+    <template id="report_wage_slip_document">
+        <t t-call="web.external_layout">
+            <t t-set="sheet" t-value="wl.sheet_id"/>
+            <div class="page">
+                <h2 class="mb-0">Wage Slip · <t t-esc="sheet.period_label.split(' · ')[0]"/></h2>
+                <div class="text-muted mb-2">
+                    <t t-esc="' · '.join(p for p in [wl.badge or '', wl.employee_id.name, (wl.garment_line_id.name or '').split(' · ')[0], wl.department_name or ''] if p)"/>
+                </div>
+                <div class="row border p-2 mx-0 mb-3">
+                    <div class="col-6">
+                        <div><strong>Period:</strong> <span t-field="sheet.date_from"/> – <span t-field="sheet.date_to"/></div>
+                        <div><strong>Days attended:</strong> <t t-esc="'%g' % wl.days"/></div>
+                    </div>
+                    <div class="col-6">
+                        <div><strong>Paid by:</strong> <span t-field="wl.paid_by"/></div>
+                        <div><strong>Efficiency:</strong> <t t-esc="'%.1f' % wl.efficiency"/>%</div>
+                    </div>
+                </div>
+                <h5>Work done</h5>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Order</th><th>Operation</th><th class="text-end">Pieces</th>
+                            <th class="text-end">SAM</th><th class="text-end">Minutes</th><th class="text-end">Earnings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="wl._garment_work_done()" t-as="row">
+                            <td t-esc="row['order']"/>
+                            <td t-esc="row['operation']"/>
+                            <td class="text-end" t-esc="row['pieces']"/>
+                            <td class="text-end" t-esc="'%.3f' % row['sam']"/>
+                            <td class="text-end" t-esc="'%.1f' % row['minutes']"/>
+                            <td class="text-end"><span t-esc="row['earnings']" t-options="{'widget': 'monetary', 'display_currency': wl.currency_id}"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h5>Pay</h5>
+                <div class="row border p-2 mx-0">
+                    <div class="col-6">
+                        <div><strong>Piece earnings:</strong> <span t-field="wl.piece_earnings"/></div>
+                        <div><strong>Overtime:</strong> <span t-field="wl.overtime_pay"/></div>
+                        <div t-if="wl.deduction"><strong>Deduction:</strong> <span t-field="wl.deduction"/></div>
+                        <div><strong>Net payable:</strong> <span t-field="wl.net_payable"/></div>
+                    </div>
+                    <div class="col-6">
+                        <div><strong>Minimum top-up:</strong> <span t-field="wl.topup"/></div>
+                        <div><strong>Incentive:</strong> <span t-field="wl.incentive"/></div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="report_wage_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="wl">
+                <t t-set="o" t-value="wl"/>
+                <t t-call="zyra_garment_wages.report_wage_slip_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>
