@@ -14,7 +14,7 @@
                 <field name="planned_cost" sum="Total"/>
                 <field name="actual_cost" sum="Total"/>
                 <field name="cost_variance" sum="Total"/>
-                <field name="margin_pct" string="Margin %" digits="[16, 1]"/>
+                <field name="margin_ratio" string="Margin %" widget="percentage" digits="[16, 1]"/>
                 <field name="cost_pc" string="Cost / PC"/>
             </list>
         </field>

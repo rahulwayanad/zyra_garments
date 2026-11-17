@@ -57,6 +57,8 @@ class GarmentOrderPnl(models.Model):
     cost_variance = fields.Monetary(readonly=True, help="Actual cost − planned cost (positive = over plan).")
     margin = fields.Monetary(readonly=True)
     margin_pct = fields.Float(string="Margin %", readonly=True, digits=(16, 2), aggregator="avg")
+    margin_ratio = fields.Float(compute="_compute_margin_ratio", store=True, string="Margin Ratio",
+                                aggregator="avg", help="Margin % ÷ 100, for the percentage widget.")
     revenue_pc = fields.Monetary(string="Revenue / pc", readonly=True, aggregator="avg")
     cost_pc = fields.Monetary(string="Cost / pc", readonly=True, aggregator="avg")
     margin_pc = fields.Monetary(string="Margin / pc", readonly=True, aggregator="avg")
@@ -65,6 +67,11 @@ class GarmentOrderPnl(models.Model):
     cost_line_ids = fields.One2many("garment.order.pnl.cost", "pnl_id", string="Other Costs")
 
     _sql_constraints = [("order_unique", "unique(order_id)", "An order has one P&L.")]
+
+    @api.depends("margin_pct")
+    def _compute_margin_ratio(self):
+        for rec in self:
+            rec.margin_ratio = rec.margin_pct / 100.0
 
     @api.depends("order_id.name", "order_id.style_id.code")
     def _compute_name(self):
