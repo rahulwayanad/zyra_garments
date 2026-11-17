@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="zyra_garment_cockpit.Cockpit">
+        <div class="o_zyra_cockpit o_action h-100 overflow-auto p-4" t-ref="root">
+            <t t-set="d" t-value="state.data"/>
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <div>
+                    <div class="o_zyra_cockpit_eyebrow">ZYRA GARMENT · COCKPIT</div>
+                    <h1 class="mb-0" t-esc="d.title"/>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="btn btn-light">Data date · <t t-esc="d.data_date"/></span>
+                    <span class="btn btn-light" t-if="state.live">● Live</span>
+                    <button class="btn btn-light" t-on-click="present">Present</button>
+                </div>
+            </div>
+            <h4 t-if="d.key === 'pulse'" class="mb-3">
+                <b t-esc="d.headline.open"/> orders open for <b t-esc="d.headline.pieces.toLocaleString()"/> pieces.
+                <span class="text-danger"><t t-esc="d.headline.late"/> past their ex-factory date</span>,
+                <t t-esc="d.headline.due7"/> due within 7 days.
+            </h4>
+            <h4 t-if="d.key === 'sewing'" class="mb-3">
+                <b t-esc="d.headline.output"/> pieces off the lines against a target of <b t-esc="d.headline.target"/> so far.
+                <span t-if="d.headline.behind"><span class="text-danger" t-esc="d.headline.behind"/> is furthest behind at <span class="text-danger"><t t-esc="d.headline.behind_pct"/>%</span> of its target.</span>
+            </h4>
+            <div class="o_zyra_kpis mb-3">
+                <div t-foreach="d.tiles" t-as="tile" t-key="tile.key" t-att-class="tileClass(tile)"
+                     style="cursor:pointer" t-on-click="() => this.openTile(tile)">
+                    <div class="o_zyra_kpi_label" t-esc="tile.label"/>
+                    <div class="o_zyra_kpi_value" t-esc="fmt(tile)"/>
+                </div>
+            </div>
+            <ul class="nav nav-tabs mb-3">
+                <li class="nav-item" t-foreach="d.cockpits" t-as="c" t-key="c.key">
+                    <a href="#" t-att-class="'nav-link' + (c.key === d.key ? ' active' : '')"
+                       t-on-click.prevent="() => this.switchTo(c.key)" t-esc="c.title"/>
+                </li>
+            </ul>
+            <div class="row g-3">
+                <div class="col-lg-6" t-foreach="d.lists" t-as="l" t-key="l.key">
+                    <div class="card h-100"><div class="card-body">
+                        <h6 class="text-uppercase fw-bold" t-esc="l.title"/>
+                        <table class="table table-sm mb-0">
+                            <thead><tr><th t-foreach="l.columns" t-as="col" t-key="col_index" t-esc="col"/></tr></thead>
+                            <tbody>
+                                <t t-if="l.key === 'readings'">
+                                    <tr t-foreach="l.rows" t-as="r" t-key="r_index">
+                                        <td t-esc="r.department"/><td t-esc="r.reading"/>
+                                        <td><span t-att-class="'badge ' + (r.status === 'good' ? 'text-bg-success' : r.status === 'watch' ? 'text-bg-warning' : 'text-bg-danger')" t-esc="r.status"/></td>
+                                    </tr>
+                                </t>
+                                <t t-elif="l.key === 'late'">
+                                    <tr t-foreach="l.rows" t-as="r" t-key="r.id" class="text-danger" style="cursor:pointer"
+                                        t-on-click="() => this.openRecord(l.model, r.id)">
+                                        <td t-esc="r.order"/><td t-esc="r.style"/><td t-esc="r.ex_factory"/>
+                                        <td class="text-end" t-esc="r.days_late"/><td><t t-esc="r.packed_pct"/>%</td>
+                                    </tr>
+                                </t>
+                                <t t-elif="l.key === 'lines'">
+                                    <tr t-foreach="l.rows" t-as="r" t-key="r.id" style="cursor:pointer"
+                                        t-att-class="r.pct &lt; 85 ? 'text-danger' : ''"
+                                        t-on-click="() => this.openRecord(l.model, r.id)">
+                                        <td t-esc="r.line"/><td t-esc="r.output"/><td t-esc="r.target"/>
+                                        <td><t t-esc="r.pct"/>%</td><td><t t-esc="r.efficiency"/>%</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div></div>
+                </div>
+                <div class="col-lg-6" t-foreach="d.charts" t-as="ch" t-key="d.key + ch.key">
+                    <div class="card h-100"><div class="card-body">
+                        <h6 class="text-uppercase fw-bold" t-esc="ch.title"/>
+                        <div style="height:300px"><canvas t-att-data-chart="ch.key"/></div>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

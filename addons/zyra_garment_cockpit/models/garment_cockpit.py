@@ -202,21 +202,30 @@ class GarmentCockpit(models.AbstractModel):
                          "pct": round(board["output"] * 100.0 / target) if target else 0,
                          "efficiency": board["efficiency"], "operators": line.operator_count,
                          "top_operator": board["top_operator"], "hours": board["hours"]})
+        summaries = {line.id: line._garment_daily_summary() for line in lines}
         output = sum(r["output"] for r in rows)
         target = sum(r["target"] for r in rows)
         behind = min(rows, key=lambda r: r["pct"], default=None)
         eff = round(sum(r["efficiency"] for r in rows) / len(rows), 1) if rows else 0.0
+        wip = sum(s["wip_pieces"] for s in summaries.values())
+        lost = round(sum(s["lost_minutes"] for s in summaries.values()))
+        Line = "garment.line"
         return {
-            "headline": {"output": output, "target": target, "behind": behind and behind["line"] or ""},
+            "headline": {"output": output, "target": target, "behind": behind and behind["line"] or "",
+                         "behind_pct": behind and behind["pct"] or 0},
             "tiles": [
-                self._tile("output", _("Output today"), output, "good", "garment.line", []),
-                self._tile("target", _("Target today"), target, "", "garment.line", []),
-                self._tile("pct", _("Against target"), round(output * 100.0 / target) if target else 0,
-                           "good" if target and output >= target else "warn", "garment.line", [], fmt="pct"),
-                self._tile("efficiency", _("Efficiency"), eff, "warn" if eff < 60 else "good",
-                           "garment.line", [], fmt="pct"),
+                self._tile("output", _("Output today"), output, "good", Line, []),
+                self._tile("target", _("Target so far"), target, "", Line, []),
+                self._tile("pct", _("Target achieved"), round(output * 100.0 / target, 1) if target else 0,
+                           "good" if target and output >= target else "warn", Line, [], fmt="pct"),
+                self._tile("efficiency", _("Efficiency today"), eff, "warn" if eff < 60 else "good",
+                           Line, [], fmt="pct"),
+                self._tile("operators", _("Operators sewing"), sum(lines.mapped("operator_count")), "", Line, []),
+                self._tile("wip", _("Pieces on the lines"), wip, "", "garment.bundle",
+                           [("line_id", "!=", False)]),
+                self._tile("lost", _("Lost minutes today"), lost, "warn" if lost else "good", Line, []),
                 self._tile("behind", _("Furthest behind"), behind and behind["line"] or "-",
-                           "bad" if behind else "", "garment.line",
+                           "bad" if behind else "", Line,
                            behind and [("id", "=", behind["id"])] or [], fmt="text"),
             ],
             "charts": [{"key": "lines", "title": _("Output against target by line"), "type": "bar",
