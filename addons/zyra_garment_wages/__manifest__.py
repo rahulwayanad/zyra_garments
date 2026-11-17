@@ -6,9 +6,10 @@
     "author": "Pearlsoft Technologies",
     "category": "Manufacturing/Garment",
     "license": "OPL-1",
-    "depends": ["zyra_garment_sewing", "hr", "account"],
+    "depends": ["zyra_garment_base", "zyra_garment_theme", "zyra_garment_sewing", "hr", "account"],
     "data": [
         "security/ir.model.access.csv",
+        "security/wages_security.xml",
         "data/sequence.xml",
         "report/wage_slip.xml",
         "views/wage_views.xml",

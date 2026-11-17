@@ -6,4 +6,10 @@
         <field name="prefix">WS/%(year)s/</field>
         <field name="padding">4</field>
     </record>
+    <record id="seq_garment_rate_card" model="ir.sequence">
+        <field name="name">Rate Card</field>
+        <field name="code">garment.rate.card</field>
+        <field name="prefix">RC/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
 </odoo>

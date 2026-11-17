@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Screen 80: rate card -->
     <record id="view_garment_rate_card_list" model="ir.ui.view">
         <field name="name">garment.rate.card.list</field>
         <field name="model">garment.rate.card</field>
         <field name="arch" type="xml">
             <list>
+                <field name="code"/>
                 <field name="name"/>
                 <field name="minute_value"/>
                 <field name="hourly_full"/>
                 <field name="min_daily_wage"/>
-                <field name="incentive_threshold"/>
                 <field name="bulletin_count"/>
+                <field name="valid_from"/>
                 <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'"/>
             </list>
         </field>
     </record>
@@ -20,46 +23,102 @@
         <field name="model">garment.rate.card</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="action_apply_to_bulletins" type="object" string="Apply to Bulletins"
+                            invisible="state != 'active'"/>
+                    <button name="action_activate" type="object" string="Activate" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
                 <sheet>
-                    <h1><field name="name"/></h1>
+                    <div class="o_zyra_kpis">
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Value of a Standard Minute</span><span class="o_zyra_kpi_value"><field name="minute_value"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Hourly at 100%</span><span class="o_zyra_kpi_value"><field name="hourly_full"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Daily Minimum</span><span class="o_zyra_kpi_value"><field name="min_daily_wage"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Bulletins Priced</span><span class="o_zyra_kpi_value"><field name="bulletin_count"/></span></div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="code"/></div>
+                        <h1><field name="name" placeholder="e.g. Piece rates · standard minute value"/></h1>
+                    </div>
                     <group>
-                        <group>
+                        <group string="Rate">
+                            <field name="basis"/>
                             <field name="minute_value"/>
                             <field name="hourly_full"/>
-                            <field name="hours_per_day"/>
-                            <field name="min_daily_wage"/>
                         </group>
-                        <group>
-                            <field name="overtime_multiplier"/>
+                        <group string="Rules">
+                            <field name="min_daily_wage"/>
+                            <field name="topup_period"/>
+                            <label for="overtime_multiplier"/>
+                            <div class="o_row"><field name="overtime_multiplier" class="oe_inline"/> × hourly</div>
+                            <field name="valid_from"/>
+                            <field name="hours_per_day"/>
                             <field name="incentive_threshold"/>
                             <field name="incentive_percent"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
-                    <field name="bulletin_ids"/>
+                    <notebook>
+                        <page string="Priced Bulletins" name="bulletins">
+                            <field name="bulletin_ids">
+                                <list>
+                                    <field name="display_name" string="Bulletin"/>
+                                    <field name="style_id"/>
+                                    <field name="operation_count" string="Operations"/>
+                                    <field name="total_sam" string="Total SAM"/>
+                                    <field name="garment_rate_per_minute"/>
+                                    <field name="total_piece_rate" string="Piece Cost"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
+
+    <!-- Screen 77: wage sheets list -->
     <record id="view_garment_wage_sheet_list" model="ir.ui.view">
         <field name="name">garment.wage.sheet.list</field>
         <field name="model">garment.wage.sheet</field>
         <field name="arch" type="xml">
             <list>
-                <field name="name"/>
-                <field name="line_id"/>
-                <field name="date_from"/>
-                <field name="date_to"/>
+                <field name="name" string="Sheet"/>
+                <field name="period_label"/>
                 <field name="operator_count"/>
                 <field name="total_pieces"/>
-                <field name="total_net" sum="Total"/>
+                <field name="total_earnings"/>
+                <field name="total_topup"/>
+                <field name="total_overtime"/>
+                <field name="total_incentive"/>
+                <field name="total_net"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="state" widget="badge" decoration-success="state == 'posted'"
-                       decoration-info="state == 'computed'"/>
+                       decoration-info="state in ('computed', 'approved')" decoration-muted="state == 'cancel'"/>
             </list>
         </field>
     </record>
+    <record id="view_garment_wage_sheet_search" model="ir.ui.view">
+        <field name="name">garment.wage.sheet.search</field>
+        <field name="model">garment.wage.sheet</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="line_id"/>
+                <filter name="computed" string="Computed" domain="[('state', '=', 'computed')]"/>
+                <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Screen 78: wage sheet -->
     <record id="view_garment_wage_sheet_form" model="ir.ui.view">
         <field name="name">garment.wage.sheet.form</field>
         <field name="model">garment.wage.sheet</field>
@@ -68,71 +127,147 @@
                 <header>
                     <button name="action_compute" type="object" string="Compute from Scans" class="btn-primary"
                             invisible="state not in ('draft', 'computed')"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'computed'"/>
                     <button name="action_post" type="object" string="Post" class="btn-primary"
-                            invisible="state != 'computed'"/>
+                            invisible="state != 'approved'"/>
+                    <button name="action_print_slips" type="object" string="Print Wage Slips"
+                            invisible="state == 'draft'"/>
                     <button name="action_reset" type="object" string="Reset to Draft"
-                            invisible="state != 'computed'"/>
-                    <button name="%(zyra_garment_wages.action_report_wage_slip)d" type="action"
-                            string="Print Wage Slips" invisible="state == 'draft'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,computed,posted"/>
+                            invisible="state not in ('computed', 'approved')"/>
+                    <button name="action_cancel_posted" type="object" string="Cancel Posted Sheet"
+                            invisible="state != 'posted'"
+                            confirm="The journal entry will be reversed and the scans freed for a new sheet. Continue?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,computed,approved,posted"/>
                 </header>
                 <sheet>
-                    <h1><field name="name"/></h1>
-                    <div class="o_zyra_kpis">
-                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Operators</span><span class="o_zyra_kpi_value"><field name="operator_count"/></span></div>
-                        <div class="o_zyra_kpi o_zyra_kpi_good"><span class="o_zyra_kpi_label">Piece Earnings</span><span class="o_zyra_kpi_value"><field name="total_earnings"/></span></div>
-                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Top-up</span><span class="o_zyra_kpi_value"><field name="total_topup"/></span></div>
-                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Overtime</span><span class="o_zyra_kpi_value"><field name="total_overtime"/></span></div>
-                        <div class="o_zyra_kpi o_zyra_kpi_good"><span class="o_zyra_kpi_label">Net Payable</span><span class="o_zyra_kpi_value"><field name="total_net"/></span></div>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_scans" type="object" class="oe_stat_button" icon="fa-qrcode"
+                                invisible="scan_count == 0">
+                            <field name="scan_count" widget="statinfo" string="Scans Paid"/>
+                        </button>
+                        <button name="action_open_move" type="object" class="oe_stat_button" icon="fa-book"
+                                invisible="not move_id">
+                            <field name="move_count" widget="statinfo" string="Journal Entry"/>
+                        </button>
                     </div>
-                    <group>
-                        <group>
-                            <field name="line_id" readonly="state == 'posted'"/>
-                            <field name="rate_card_id" readonly="state == 'posted'"/>
-                            <field name="date_from" readonly="state == 'posted'"/>
-                            <field name="date_to" readonly="state == 'posted'"/>
-                        </group>
-                        <group>
-                            <field name="journal_id" readonly="state == 'posted'"/>
-                            <field name="expense_account_id" readonly="state == 'posted'"/>
-                            <field name="payable_account_id" readonly="state == 'posted'"/>
-                            <field name="move_id"/>
-                            <field name="currency_id" invisible="1"/>
-                        </group>
-                    </group>
-                    <field name="line_ids" readonly="state == 'posted'">
-                        <list editable="bottom" create="0">
-                            <field name="employee_id" readonly="1"/>
-                            <field name="pieces"/>
-                            <field name="minutes_earned"/>
-                            <field name="days"/>
-                            <field name="efficiency"/>
-                            <field name="piece_earnings"/>
-                            <field name="topup"/>
-                            <field name="overtime_hours"/>
-                            <field name="overtime_pay"/>
-                            <field name="incentive"/>
-                            <field name="deduction"/>
-                            <field name="net_payable" sum="Total"/>
-                            <field name="currency_id" column_invisible="1"/>
-                        </list>
-                    </field>
-                    <group class="oe_subtotal_footer">
-                        <field name="total_earnings"/>
-                        <field name="total_topup"/>
-                        <field name="total_overtime"/>
-                        <field name="total_incentive"/>
-                        <field name="total_net"/>
-                    </group>
+                    <div class="o_zyra_kpis">
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Operators Paid</span><span class="o_zyra_kpi_value"><field name="operator_count"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Piece Earnings</span><span class="o_zyra_kpi_value"><field name="total_earnings"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Minimum Top-up</span><span class="o_zyra_kpi_value"><field name="total_topup"/></span></div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn"><span class="o_zyra_kpi_label">Below Minimum</span><span class="o_zyra_kpi_value"><field name="below_minimum_count"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Overtime</span><span class="o_zyra_kpi_value"><field name="total_overtime"/></span></div>
+                        <div class="o_zyra_kpi"><span class="o_zyra_kpi_label">Net Payable</span><span class="o_zyra_kpi_value"><field name="total_net"/></span></div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name"/></div>
+                        <h1><field name="period_label"/></h1>
+                    </div>
+                    <notebook>
+                        <page string="Wage Lines" name="lines">
+                            <field name="line_ids" readonly="state not in ('draft', 'computed')">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="badge"/>
+                                    <field name="employee_id" readonly="1"/>
+                                    <field name="garment_line_id"/>
+                                    <field name="paid_by" widget="badge" decoration-info="paid_by == 'piece'"/>
+                                    <field name="pieces"/>
+                                    <field name="minutes_earned"/>
+                                    <field name="days"/>
+                                    <field name="efficiency_ratio" widget="percentage" options="{'digits': [16, 1]}"/>
+                                    <field name="piece_earnings"/>
+                                    <field name="topup"/>
+                                    <field name="overtime_hours" optional="hide"/>
+                                    <field name="overtime_pay"/>
+                                    <field name="incentive" optional="hide"/>
+                                    <field name="deduction" optional="hide"/>
+                                    <field name="net_payable" string="Net"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Approval &amp; Posting" name="posting">
+                            <group>
+                                <group string="Period">
+                                    <field name="line_id" placeholder="Whole floor" readonly="state not in ('draft', 'computed')"/>
+                                    <field name="rate_card_id" readonly="state not in ('draft', 'computed')"/>
+                                    <field name="date_from" readonly="state not in ('draft', 'computed')"/>
+                                    <field name="date_to" readonly="state not in ('draft', 'computed')"/>
+                                    <field name="approved_by_id"/>
+                                    <field name="approved_on"/>
+                                </group>
+                                <group string="Posting">
+                                    <field name="journal_id" readonly="state in ('posted', 'cancel')"/>
+                                    <field name="expense_account_id" readonly="state in ('posted', 'cancel')"/>
+                                    <field name="payable_account_id" readonly="state in ('posted', 'cancel')"/>
+                                    <field name="move_id"/>
+                                    <field name="total_incentive"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
                 </sheet>
                 <chatter/>
             </form>
         </field>
     </record>
+
+    <!-- Screen 79: wage sheet lines -->
+    <record id="view_garment_wage_sheet_line_list" model="ir.ui.view">
+        <field name="name">garment.wage.sheet.line.list</field>
+        <field name="model">garment.wage.sheet.line</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="badge"/>
+                <field name="employee_id"/>
+                <field name="garment_line_id"/>
+                <field name="paid_by" widget="badge" decoration-info="paid_by == 'piece'"/>
+                <field name="pieces"/>
+                <field name="minutes_earned"/>
+                <field name="days"/>
+                <field name="efficiency_ratio" widget="percentage" options="{'digits': [16, 1]}"/>
+                <field name="piece_earnings"/>
+                <field name="topup"/>
+                <field name="overtime_pay"/>
+                <field name="net_payable"/>
+                <field name="sheet_id" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_garment_wage_sheet_line_search" model="ir.ui.view">
+        <field name="name">garment.wage.sheet.line.search</field>
+        <field name="model">garment.wage.sheet.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="sheet_id"/>
+                <field name="employee_id"/>
+                <field name="badge"/>
+                <field name="garment_line_id"/>
+                <filter name="below_minimum" string="Below Minimum" domain="[('topup', '>', 0)]"/>
+                <filter name="time_rate" string="Time Rate" domain="[('paid_by', '=', 'time')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_sheet" string="Wage Sheet" context="{'group_by': 'sheet_id'}"/>
+                    <filter name="group_line" string="Line" context="{'group_by': 'garment_line_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_garment_wage_sheet" model="ir.actions.act_window">
         <field name="name">Wage Sheets</field>
         <field name="res_model">garment.wage.sheet</field>
         <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_garment_wage_sheet_line" model="ir.actions.act_window">
+        <field name="name">Wage Sheet Lines</field>
+        <field name="res_model">garment.wage.sheet.line</field>
+        <field name="view_mode">list</field>
     </record>
     <record id="action_garment_rate_card" model="ir.actions.act_window">
         <field name="name">Rate Cards</field>
@@ -141,6 +276,20 @@
     </record>
     <menuitem id="menu_garment_wage_sheet" parent="zyra_garment_base.menu_garment_wages"
               action="action_garment_wage_sheet" sequence="10"/>
+    <menuitem id="menu_garment_wage_sheet_line" parent="zyra_garment_base.menu_garment_wages"
+              action="action_garment_wage_sheet_line" sequence="15"/>
     <menuitem id="menu_garment_rate_card" parent="zyra_garment_base.menu_garment_wages"
               action="action_garment_rate_card" sequence="20"/>
+
+    <!-- Paid by on the employee (HR Settings tab) -->
+    <record id="view_employee_form_garment_wages" model="ir.ui.view">
+        <field name="name">hr.employee.form.garment.wages</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='barcode']" position="after">
+                <field name="garment_paid_by"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

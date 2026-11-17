@@ -1,17 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="demo_department_knit" model="hr.department">
+        <field name="name">Knit Tops</field>
+    </record>
+    <record id="demo_operator_meera" model="hr.employee">
+        <field name="name">Meera Thomas</field>
+        <field name="barcode">OP1018</field>
+        <field name="department_id" ref="demo_department_knit"/>
+    </record>
+    <record id="demo_operator_vineetha" model="hr.employee">
+        <field name="name">Vineetha P</field>
+        <field name="barcode">OP1019</field>
+        <field name="department_id" ref="demo_department_knit"/>
+    </record>
+    <record id="demo_operator_shaji" model="hr.employee">
+        <field name="name">Shaji T</field>
+        <field name="barcode">OP1030</field>
+        <field name="department_id" ref="demo_department_knit"/>
+    </record>
+    <record id="demo_operator_anu" model="hr.employee">
+        <field name="name">Anu Varghese</field>
+        <field name="barcode">OP1031</field>
+        <field name="department_id" ref="demo_department_knit"/>
+    </record>
+    <record id="demo_rate_card_old" model="garment.rate.card">
+        <field name="name">Piece rates · 2025 minimum</field>
+        <field name="minute_value">1.60</field>
+        <field name="min_daily_wage">480</field>
+        <field name="valid_from" eval="(DateTime.today() - relativedelta(months=11)).strftime('%Y-%m-%d')"/>
+        <field name="active" eval="False"/>
+    </record>
     <record id="demo_rate_card" model="garment.rate.card">
-        <field name="name">Standard Floor Card</field>
-        <field name="minute_value">1.8</field>
+        <field name="name">Piece rates · standard minute value</field>
+        <field name="minute_value">1.80</field>
         <field name="hours_per_day">8</field>
-        <field name="min_daily_wage">450</field>
+        <field name="min_daily_wage">550</field>
+        <field name="topup_period">weekly</field>
+        <field name="overtime_multiplier">2</field>
         <field name="incentive_threshold">80</field>
         <field name="incentive_percent">10</field>
+        <field name="valid_from" eval="(DateTime.today() - relativedelta(months=5)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
     </record>
-    <record id="demo_wage_sheet" model="garment.wage.sheet">
-        <field name="rate_card_id" ref="demo_rate_card"/>
-        <field name="date_from" eval="(DateTime.today() - relativedelta(days=30)).strftime('%Y-%m-%d')"/>
-        <field name="date_to" eval="DateTime.today().strftime('%Y-%m-%d')"/>
-    </record>
-    <function model="garment.wage.sheet" name="action_compute" eval="[[ref('demo_wage_sheet')]]"/>
+    <function model="garment.wage.sheet" name="_garment_load_demo"/>
 </odoo>
