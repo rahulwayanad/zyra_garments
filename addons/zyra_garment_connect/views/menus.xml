@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_connect" name="Connect" parent="zyra_garment_base.menu_garment_root"
+              sequence="150" groups="zyra_garment_base.group_garment_factory_manager"/>
+    <menuitem id="menu_garment_api_key" name="API Keys" parent="menu_garment_connect"
+              action="action_garment_api_key" sequence="10"/>
+    <menuitem id="menu_garment_webhook" name="Webhooks" parent="menu_garment_connect"
+              action="action_garment_webhook" sequence="20"/>
+    <menuitem id="menu_garment_import" name="CSV Imports" parent="menu_garment_connect"
+              action="action_garment_import" sequence="30"/>
+    <menuitem id="menu_garment_api_call" name="API Call Log" parent="menu_garment_connect"
+              action="action_garment_api_call" sequence="40"/>
+    <menuitem id="menu_garment_api_reference" name="API Reference" parent="menu_garment_connect"
+              action="action_garment_api_reference" sequence="50"/>
+</odoo>

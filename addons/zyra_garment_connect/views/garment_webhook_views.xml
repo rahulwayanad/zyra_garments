@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_garment_webhook_form" model="ir.ui.view">
+        <field name="name">garment.webhook.form</field>
+        <field name="model">garment.webhook</field>
+        <field name="arch" type="xml">
+            <form string="Webhook">
+                <header>
+                    <button name="action_send_test" string="Send Test" type="object"/>
+                    <button name="action_pause" string="Pause" type="object" invisible="state != 'active'"/>
+                    <button name="action_resume" string="Resume" type="object" invisible="state != 'paused'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Deliveries, 30 Days</span>
+                            <span class="o_zyra_kpi_value"><field name="deliveries_30d"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn">
+                            <span class="o_zyra_kpi_label">Failures</span>
+                            <span class="o_zyra_kpi_value"><field name="failures_30d"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn">
+                            <span class="o_zyra_kpi_label">Retrying</span>
+                            <span class="o_zyra_kpi_value"><field name="retrying_count"/></span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="reference" readonly="1"/></div>
+                        <h1><field name="name" placeholder="e.g. Buyer EDI"/></h1>
+                    </div>
+                    <group>
+                        <group string="Endpoint">
+                            <field name="url" widget="url"/>
+                            <field name="events" placeholder="order.confirmed, order.shipped"/>
+                            <field name="signing_label"/>
+                            <field name="secret" password="True"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Retries">
+                            <field name="max_attempts"/>
+                            <field name="backoff_label"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Deliveries" name="deliveries">
+                            <field name="delivery_ids" readonly="1">
+                                <list limit="20">
+                                    <field name="create_date"/>
+                                    <field name="event"/>
+                                    <field name="status_code"/>
+                                    <field name="duration_ms"/>
+                                    <field name="state" column_invisible="1"/>
+                                    <field name="result_label" widget="badge"
+                                           decoration-success="state == 'delivered'"
+                                           decoration-warning="state in ('retrying', 'pending')"
+                                           decoration-danger="state == 'failed'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_garment_webhook_list" model="ir.ui.view">
+        <field name="name">garment.webhook.list</field>
+        <field name="model">garment.webhook</field>
+        <field name="arch" type="xml">
+            <list string="Webhooks">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="url"/>
+                <field name="events"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'"
+                       decoration-muted="state == 'paused'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_garment_webhook" model="ir.actions.act_window">
+        <field name="name">Webhooks</field>
+        <field name="res_model">garment.webhook</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

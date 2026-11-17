@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="demo_api_key_webshop" model="garment.api.key">
+        <field name="name">Web shop integration</field>
+        <field name="read_scopes">styles, orders, rolls</field>
+        <field name="post_scopes">orders, rosters</field>
+        <field name="rate_limit">120</field>
+        <field name="expiry_date" eval="(DateTime.today() + relativedelta(days=212)).strftime('%Y-%m-%d')"/>
+        <field name="user_id" ref="base.user_admin"/>
+    </record>
+    <record id="demo_api_key_scanner" model="garment.api.key">
+        <field name="name">Floor scanner app</field>
+        <field name="read_scopes">bundles, scans</field>
+        <field name="post_scopes">scans</field>
+        <field name="rate_limit">600</field>
+        <field name="allowed_ips">10.20.0.0/16</field>
+        <field name="user_id" ref="base.user_admin"/>
+    </record>
+    <record id="demo_call_1" model="garment.api.call">
+        <field name="key_id" ref="demo_api_key_webshop"/>
+        <field name="method">GET</field><field name="path">/api/garment/v1/orders</field>
+        <field name="status">200</field><field name="duration_ms">42</field><field name="ip">203.0.113.14</field>
+    </record>
+    <record id="demo_call_2" model="garment.api.call">
+        <field name="key_id" ref="demo_api_key_webshop"/>
+        <field name="method">POST</field><field name="path">/api/garment/v1/rolls</field>
+        <field name="status">403</field><field name="duration_ms">3</field><field name="ip">203.0.113.14</field>
+        <field name="error">scope</field>
+    </record>
+    <record id="demo_call_3" model="garment.api.call">
+        <field name="key_id" ref="demo_api_key_webshop"/>
+        <field name="method">GET</field><field name="path">/api/garment/v1/styles</field>
+        <field name="status">200</field><field name="duration_ms">37</field><field name="ip">203.0.113.14</field>
+    </record>
+
+    <record id="demo_webhook_edi" model="garment.webhook">
+        <field name="name">Buyer EDI</field>
+        <field name="url">https://edi.buyer.example/in</field>
+        <field name="events">order.confirmed, order.shipped, bundle.scanned</field>
+        <field name="secret">demo-secret-change-me</field>
+    </record>
+    <record id="demo_delivery_1" model="garment.webhook.delivery">
+        <field name="webhook_id" ref="demo_webhook_edi"/>
+        <field name="event">order.confirmed</field>
+        <field name="payload">{"event": "order.confirmed", "data": {"order": "PO/2026/0001"}}</field>
+        <field name="state">delivered</field><field name="attempts">1</field>
+        <field name="status_code">200</field><field name="duration_ms">91</field>
+    </record>
+    <record id="demo_delivery_2" model="garment.webhook.delivery">
+        <field name="webhook_id" ref="demo_webhook_edi"/>
+        <field name="event">bundle.scanned</field>
+        <field name="payload">{"event": "bundle.scanned", "data": {"bundle": "BND/2026/0042"}}</field>
+        <field name="state">retrying</field><field name="attempts">2</field>
+        <field name="status_code">503</field>
+        <field name="next_attempt_at" eval="(DateTime.now() + relativedelta(days=3650)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+    <record id="demo_delivery_3" model="garment.webhook.delivery">
+        <field name="webhook_id" ref="demo_webhook_edi"/>
+        <field name="event">order.shipped</field>
+        <field name="payload">{"event": "order.shipped", "data": {"order": "PO/2026/0001"}}</field>
+        <field name="state">delivered</field><field name="attempts">1</field>
+        <field name="status_code">200</field><field name="duration_ms">84</field>
+    </record>
+
+    <record id="demo_import_roster" model="garment.import">
+        <field name="target">rosters</field>
+        <field name="filename">line7_roster.csv</field>
+        <field name="file">bmFtZSxqb2JfdGl0bGUKUHJpeWEgTmFpcixPcGVyYXRvcgpEZWVwYSBNZW5vbixDaGVja2VyCg==</field>
+    </record>
+</odoo>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_garment_api_key_company" model="ir.rule">
+        <field name="name">API key: own companies</field>
+        <field name="model_id" ref="model_garment_api_key"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_garment_api_call_company" model="ir.rule">
+        <field name="name">API call: own companies</field>
+        <field name="model_id" ref="model_garment_api_call"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_garment_webhook_company" model="ir.rule">
+        <field name="name">Webhook: own companies</field>
+        <field name="model_id" ref="model_garment_webhook"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_garment_webhook_delivery_company" model="ir.rule">
+        <field name="name">Webhook delivery: own companies</field>
+        <field name="model_id" ref="model_garment_webhook_delivery"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_garment_import_company" model="ir.rule">
+        <field name="name">CSV import: own companies</field>
+        <field name="model_id" ref="model_garment_import"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

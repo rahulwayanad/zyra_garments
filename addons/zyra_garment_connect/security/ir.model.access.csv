@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_garment_api_key_admin,garment.api.key admin,model_garment_api_key,zyra_garment_base.group_garment_admin,1,1,1,1
+access_garment_api_key_manager,garment.api.key manager,model_garment_api_key,zyra_garment_base.group_garment_factory_manager,1,0,0,0
+access_garment_api_call_admin,garment.api.call admin,model_garment_api_call,zyra_garment_base.group_garment_admin,1,0,0,1
+access_garment_api_call_manager,garment.api.call manager,model_garment_api_call,zyra_garment_base.group_garment_factory_manager,1,0,0,0
+access_garment_webhook_admin,garment.webhook admin,model_garment_webhook,zyra_garment_base.group_garment_admin,1,1,1,1
+access_garment_webhook_manager,garment.webhook manager,model_garment_webhook,zyra_garment_base.group_garment_factory_manager,1,0,0,0
+access_garment_webhook_delivery_admin,garment.webhook.delivery admin,model_garment_webhook_delivery,zyra_garment_base.group_garment_admin,1,1,0,1
+access_garment_webhook_delivery_manager,garment.webhook.delivery manager,model_garment_webhook_delivery,zyra_garment_base.group_garment_factory_manager,1,0,0,0
+access_garment_import_manager,garment.import manager,model_garment_import,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_garment_import_line_manager,garment.import.line manager,model_garment_import_line,zyra_garment_base.group_garment_factory_manager,1,1,1,1
