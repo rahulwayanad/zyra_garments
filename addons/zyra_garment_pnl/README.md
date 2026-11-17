@@ -95,7 +95,8 @@ paying the order's scans = making).
   running orders.
 
 ## Not done yet
-- Not opened in a browser (no browser tool in this run); views validated by install only.
+- Checked in headless Chrome (list, form, pivot) against screens 74-75; the chatter sits below the form at
+  1440 px (Odoo puts it aside only on wider screens), unlike screen 75.
 - Open demo orders show large making cost: the wages demo pays minimum top-ups over few pieces.
 - Trims consumed through an MO (finished goods "Post to Stock") are not read; issue them with
   `garment_pnl_order_id` or type them as other cost.
