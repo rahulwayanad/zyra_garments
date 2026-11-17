@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Buyer contact of Northwind Apparel Ltd with portal access (password = login, demo only). -->
+    <record id="partner_northwind_portal_contact" model="res.partner">
+        <field name="name">Nina Abbott</field>
+        <field name="parent_id" ref="zyra_garment_base.partner_buyer_northwind"/>
+        <field name="email">nina.abbott@northwind.example.com</field>
+    </record>
+    <record id="user_portal_buyer" model="res.users">
+        <field name="login">buyer.portal</field>
+        <field name="password">buyer.portal</field>
+        <field name="partner_id" ref="partner_northwind_portal_contact"/>
+        <field name="groups_id" eval="[Command.set([ref('base.group_portal')])]"/>
+    </record>
+    <!-- Contact of the embroidery job-work vendor with portal access. -->
+    <record id="partner_kerala_emb_portal_contact" model="res.partner">
+        <field name="name">Nikhil Anand</field>
+        <field name="parent_id" ref="zyra_garment_jobwork.demo_vendor_kerala_emb"/>
+        <field name="email">nikhil.anand@keralaemb.example.com</field>
+    </record>
+    <record id="user_portal_vendor" model="res.users">
+        <field name="login">vendor.portal</field>
+        <field name="password">vendor.portal</field>
+        <field name="partner_id" ref="partner_kerala_emb_portal_contact"/>
+        <field name="groups_id" eval="[Command.set([ref('base.group_portal')])]"/>
+    </record>
+    <!-- A second job with the embroidery vendor, linked to a buyer order, so screen 125 shows two rows. -->
+    <record id="demo_jw_kerala_print" model="garment.jobwork.order">
+        <field name="process">print</field>
+        <field name="vendor_id" ref="zyra_garment_jobwork.demo_vendor_kerala_emb"/>
+        <field name="production_order_id" ref="zyra_garment_merch.order_tee_confirmed"/>
+        <field name="note">front</field>
+        <field name="qty_sent">1440</field>
+        <field name="rate">3.0</field>
+        <field name="date_issue" eval="(DateTime.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+        <field name="date_expected" eval="(DateTime.today() + relativedelta(days=4)).strftime('%Y-%m-%d')"/>
+    </record>
+    <function model="garment.jobwork.order" name="action_send" eval="[[ref('demo_jw_kerala_print')]]"/>
+</odoo>
