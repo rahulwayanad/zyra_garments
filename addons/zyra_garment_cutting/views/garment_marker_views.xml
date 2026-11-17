@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_marker_view_list" model="ir.ui.view">
+        <field name="name">garment.marker.list</field>
+        <field name="model">garment.marker</field>
+        <field name="arch" type="xml">
+            <list string="Markers">
+                <field name="sequence" widget="handle"/>
+                <field name="name" string="Marker"/>
+                <field name="style_id"/>
+                <field name="colour_id" optional="show"/>
+                <field name="fabric_id" optional="show"/>
+                <field name="ratio_text" string="Size Ratio"/>
+                <field name="pieces_per_ply" string="Pieces / Ply"/>
+                <field name="length_m"/>
+                <field name="width_cm" optional="show"/>
+                <field name="efficiency_pct"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_marker_view_form" model="ir.ui.view">
+        <field name="name">garment.marker.form</field>
+        <field name="model">garment.marker</field>
+        <field name="arch" type="xml">
+            <form string="Marker">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. M-15/17"/></h1>
+                    </div>
+                    <group>
+                        <group string="Marker" name="marker">
+                            <field name="style_id" options="{'no_create': True}"/>
+                            <field name="size_range_id" invisible="1"/>
+                            <field name="colour_id" options="{'no_create': True}"/>
+                            <field name="fabric_id" options="{'no_create': True}"/>
+                            <field name="ratio_text" string="Size Ratio"/>
+                            <field name="pieces_per_ply"/>
+                        </group>
+                        <group string="Layout" name="layout">
+                            <field name="length_m"/>
+                            <field name="width_cm"/>
+                            <field name="efficiency_pct"/>
+                            <field name="note"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <list editable="bottom">
+                            <field name="size_id" domain="[('range_id', '=', parent.size_range_id)]"
+                                   options="{'no_create': True}"/>
+                            <field name="ratio"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_marker_view_search" model="ir.ui.view">
+        <field name="name">garment.marker.search</field>
+        <field name="model">garment.marker</field>
+        <field name="arch" type="xml">
+            <search string="Markers">
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="fabric_id"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_style" string="Style" context="{'group_by': 'style_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_garment_marker" model="ir.actions.act_window">
+        <field name="name">Markers</field>
+        <field name="res_model">garment.marker</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add the markers of a style</p>
+            <p>Enter each marker's size ratio, length and efficiency from the CAD system, or import them as CSV
+                from the cut plan builder.</p>
+        </field>
+    </record>
+</odoo>

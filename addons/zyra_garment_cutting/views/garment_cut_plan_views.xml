@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cut plans list (screen 46) -->
+    <record id="garment_cut_plan_view_list" model="ir.ui.view">
+        <field name="name">garment.cut.plan.list</field>
+        <field name="model">garment.cut.plan</field>
+        <field name="arch" type="xml">
+            <list string="Cut Plans" sample="1">
+                <field name="name" string="Plan"/>
+                <field name="order_id" string="Order"/>
+                <field name="colour_id" string="Colourway"/>
+                <field name="qty_to_cut" string="To Cut"/>
+                <field name="qty_planned" string="Planned"/>
+                <field name="planned_pct" string="Planned %" widget="progressbar"/>
+                <field name="fabric_to_lay" string="Fabric to Lay" widget="float" digits="[16, 1]"/>
+                <field name="lay_count" string="Lays"/>
+                <field name="state" string="State" widget="badge"
+                       decoration-info="state in ('approved', 'cutting')"
+                       decoration-success="state == 'done'"
+                       decoration-muted="state in ('draft', 'cancel')"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_cut_plan_view_search" model="ir.ui.view">
+        <field name="name">garment.cut.plan.search</field>
+        <field name="model">garment.cut.plan</field>
+        <field name="arch" type="xml">
+            <search string="Cut Plans">
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="style_id"/>
+                <field name="colour_id"/>
+                <field name="buyer_id"/>
+                <filter name="open" string="Open" domain="[('state', '!=', 'cancel')]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="running" string="Approved or Cutting" domain="[('state', 'in', ('approved', 'cutting'))]"/>
+                <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                <filter name="short" string="Short" domain="[('qty_short', '>', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Cut plan form (screen 47) -->
+    <record id="garment_cut_plan_view_form" model="ir.ui.view">
+        <field name="name">garment.cut.plan.form</field>
+        <field name="model">garment.cut.plan</field>
+        <field name="arch" type="xml">
+            <form string="Cut Plan">
+                <header>
+                    <button name="action_open_builder" type="object" string="Open Builder"
+                            invisible="state in ('done', 'cancel')"/>
+                    <button name="action_approve" type="object" string="Approve Plan"
+                            invisible="state != 'draft'" groups="zyra_garment_base.group_garment_cutting"/>
+                    <button name="action_done" type="object" string="Mark Done"
+                            invisible="state not in ('approved', 'cutting')"
+                            groups="zyra_garment_base.group_garment_cutting"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state not in ('draft', 'approved')"
+                            confirm="Cancel this cut plan and its lays that are not cut?"/>
+                    <button name="action_draft" type="object" string="Reset to Draft" invisible="state != 'cancel'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved,cutting,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_lays" type="object" class="oe_stat_button" icon="fa-th-large">
+                            <field name="lay_count" widget="statinfo" string="Lays"/>
+                        </button>
+                    </div>
+                    <field name="company_id" invisible="1"/>
+                    <field name="allowed_colour_ids" invisible="1"/>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi" name="kpi_to_cut">
+                            <span class="o_zyra_kpi_label">To cut</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_to_cut"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" name="kpi_planned" invisible="qty_short">
+                            <span class="o_zyra_kpi_label">Planned</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_planned"/> / <field name="qty_to_cut"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not qty_short">
+                            <span class="o_zyra_kpi_label">Planned</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_planned"/> / <field name="qty_to_cut"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" name="kpi_short" invisible="not qty_short">
+                            <span class="o_zyra_kpi_label">Short</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_short"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="qty_short">
+                            <span class="o_zyra_kpi_label">Short</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_short"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" name="kpi_overcut" invisible="qty_overcut">
+                            <span class="o_zyra_kpi_label">Overcut</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_overcut"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="not qty_overcut">
+                            <span class="o_zyra_kpi_label">Overcut</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_overcut"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" name="kpi_bundled"
+                             invisible="not lay_count or lays_bundled &lt; lay_count">
+                            <span class="o_zyra_kpi_label">Lays bundled</span>
+                            <span class="o_zyra_kpi_value"><field name="lays_bundled"/> / <field name="lay_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn" invisible="lay_count and lays_bundled &gt;= lay_count">
+                            <span class="o_zyra_kpi_label">Lays bundled</span>
+                            <span class="o_zyra_kpi_value"><field name="lays_bundled"/> / <field name="lay_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" name="kpi_fabric">
+                            <span class="o_zyra_kpi_label">Fabric to lay</span>
+                            <span class="o_zyra_kpi_value"><field name="fabric_to_lay" digits="[16, 1]"/> m</span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1>
+                            <field name="order_id" placeholder="Production order" class="w-100"
+                                   options="{'no_create': True}" readonly="state != 'draft'"/>
+                        </h1>
+                    </div>
+                    <group name="top">
+                        <group string="What is cut" name="what">
+                            <field name="colour_id" string="Colourway" options="{'no_create': True}"
+                                   domain="[('id', 'in', allowed_colour_ids)]" readonly="state != 'draft'"/>
+                            <field name="style_id"/>
+                            <field name="buyer_id"/>
+                            <field name="fabric_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Plan settings" name="settings">
+                            <field name="date_plan"/>
+                            <field name="planner_id"/>
+                            <field name="extra_cut_pct" readonly="state != 'draft'"/>
+                            <field name="max_plies" readonly="state in ('done', 'cancel')"/>
+                            <field name="end_allowance_m" readonly="state != 'draft'"/>
+                            <field name="bundle_size" readonly="state in ('done', 'cancel')"/>
+                        </group>
+                        <group string="Pieces" name="pieces">
+                            <field name="qty_ordered"/>
+                            <field name="qty_to_cut"/>
+                            <field name="qty_planned"/>
+                            <field name="qty_cut"/>
+                        </group>
+                        <group string="Fabric" name="fabric">
+                            <field name="fabric_to_lay"/>
+                            <label for="fabric_required"/>
+                            <div><field name="fabric_required" class="oe_inline"/> <field name="fabric_uom_name" class="oe_inline"/></div>
+                        </group>
+                    </group>
+                    <notebook name="plan_tabs">
+                        <page string="Proposed Lays" name="proposals">
+                            <field name="proposal_ids" nolabel="1" readonly="state in ('done', 'cancel')">
+                                <list editable="bottom" create="0">
+                                    <field name="sequence" column_invisible="1"/>
+                                    <field name="marker_id" string="Marker" readonly="lay_id"/>
+                                    <field name="ratio_short" string="Ratio"/>
+                                    <field name="plies" readonly="lay_id"/>
+                                    <field name="pieces"/>
+                                    <field name="lay_length" string="Lay Length (m)"/>
+                                    <field name="fabric" string="Fabric (m)"/>
+                                    <field name="lay_id" string="Lay"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Lays" name="lays">
+                            <field name="lay_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="marker_id"/>
+                                    <field name="plies_planned"/>
+                                    <field name="plies_actual"/>
+                                    <field name="pieces"/>
+                                    <field name="fabric_laid"/>
+                                    <field name="shades"/>
+                                    <field name="cut_date"/>
+                                    <field name="state" widget="badge" decoration-success="state == 'bundled'"
+                                           decoration-info="state in ('spread', 'cut')"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_cut_plan" model="ir.actions.act_window">
+        <field name="name">Cut Plans</field>
+        <field name="res_model">garment.cut.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Plan the cut of a production order</p>
+            <p>Use "Propose Cut Plan" on a confirmed production order: one plan per colourway, lays proposed from
+                the style's markers.</p>
+        </field>
+    </record>
+</odoo>

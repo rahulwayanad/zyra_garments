@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Screen 2: "Propose Cut Plan" header button and "Bundles" smart button on the production order. -->
+    <record id="garment_order_view_form_cutting" model="ir.ui.view">
+        <field name="name">garment.order.form.cutting</field>
+        <field name="model">garment.order</field>
+        <field name="inherit_id" ref="zyra_garment_merch.garment_order_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_confirm']" position="before">
+                <button name="action_propose_cut_plan" type="object" string="Propose Cut Plan"
+                        invisible="state not in ('confirmed', 'in_production', 'packed')"
+                        groups="zyra_garment_base.group_garment_cutting,zyra_garment_base.group_garment_merchandiser"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']/button[@name='action_view_sale_order']" position="after">
+                <button name="action_view_bundles" type="object" class="oe_stat_button" icon="fa-cubes"
+                        invisible="not bundle_count">
+                    <field name="bundle_count" widget="statinfo" string="Bundles"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

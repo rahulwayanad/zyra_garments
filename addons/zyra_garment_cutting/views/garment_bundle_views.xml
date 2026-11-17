@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bundles list (screen 50) -->
+    <record id="garment_bundle_view_list" model="ir.ui.view">
+        <field name="name">garment.bundle.list</field>
+        <field name="model">garment.bundle</field>
+        <field name="arch" type="xml">
+            <list string="Bundles" sample="1">
+                <field name="name" string="Bundle"/>
+                <field name="order_id" string="Order"/>
+                <field name="colour_id" string="Colourway"/>
+                <field name="size_id" string="Size"/>
+                <field name="lay_id" string="Cut"/>
+                <field name="shade" string="Shade"/>
+                <field name="pieces" string="Pieces" sum="Total"/>
+                <field name="line_id" string="Line"/>
+                <field name="stage" string="Stage" widget="badge"
+                       decoration-success="stage in ('sewn', 'finished')"
+                       decoration-info="stage in ('issued', 'in_sewing')"
+                       decoration-muted="stage == 'cut'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Bundles by stage (screen 51) -->
+    <record id="garment_bundle_view_kanban" model="ir.ui.view">
+        <field name="name">garment.bundle.kanban</field>
+        <field name="model">garment.bundle</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="board_column" group_create="0" group_delete="0" group_edit="0"
+                    quick_create="0" records_draggable="0" sample="1">
+                <field name="stage"/>
+                <templates>
+                    <t t-name="card">
+                        <main>
+                            <field name="name" class="text-primary small"/>
+                            <field name="title" class="fw-bold"/>
+                            <div class="text-muted small">
+                                <field name="pieces"/> pcs · cut <field name="lay_id"/> · shade <field name="shade"/>
+                            </div>
+                            <field name="progress_label" class="text-muted small"/>
+                        </main>
+                        <footer>
+                            <div/>
+                            <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="garment_bundle_view_search" model="ir.ui.view">
+        <field name="name">garment.bundle.search</field>
+        <field name="model">garment.bundle</field>
+        <field name="arch" type="xml">
+            <search string="Bundles">
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="lay_id"/>
+                <field name="colour_id"/>
+                <field name="size_id"/>
+                <field name="roll_id"/>
+                <field name="line_id"/>
+                <filter name="open" string="Open" domain="[('stage', '!=', 'finished')]"/>
+                <separator/>
+                <filter name="not_issued" string="Not Issued" domain="[('stage', '=', 'cut')]"/>
+                <filter name="on_line" string="On the Line" domain="[('stage', 'in', ('issued', 'in_sewing'))]"/>
+                <filter name="with_rejects" string="With Rejections" domain="[('rejected_qty', '>', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
+                    <filter name="group_lay" string="Lay" context="{'group_by': 'lay_id'}"/>
+                    <filter name="group_line" string="Line" context="{'group_by': 'line_id'}"/>
+                    <filter name="group_stage" string="Stage" context="{'group_by': 'stage'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Bundle form (screen 52) -->
+    <record id="garment_bundle_view_form" model="ir.ui.view">
+        <field name="name">garment.bundle.form</field>
+        <field name="model">garment.bundle</field>
+        <field name="arch" type="xml">
+            <form string="Bundle" create="0">
+                <header>
+                    <button name="action_print_ticket" type="object" string="Print Ticket"/>
+                    <button name="action_open_split_wizard" type="object" string="Split Bundle"
+                            invisible="stage not in ('cut', 'issued') or operations_scanned"/>
+                    <button name="action_open_issue_wizard" type="object" string="Issue to Line"
+                            invisible="stage != 'cut'"/>
+                    <button name="action_start_sewing" type="object" string="Start Sewing"
+                            invisible="stage != 'issued'"/>
+                    <button name="action_mark_sewn" type="object" string="Mark Sewn"
+                            invisible="stage != 'in_sewing' or operations_scanned &lt; operation_count"/>
+                    <button name="action_finish" type="object" string="Mark Finished" invisible="stage != 'sewn'"/>
+                    <field name="stage" widget="statusbar" statusbar_visible="cut,issued,in_sewing,sewn,finished"/>
+                </header>
+                <sheet>
+                    <field name="company_id" invisible="1"/>
+                    <field name="operation_count" invisible="1"/>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi o_zyra_kpi_good" name="kpi_good">
+                            <span class="o_zyra_kpi_label">Good pieces</span>
+                            <span class="o_zyra_kpi_value"><field name="good_pieces"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" name="kpi_rejected" invisible="rejected_qty">
+                            <span class="o_zyra_kpi_label">Rejected</span>
+                            <span class="o_zyra_kpi_value"><field name="rejected_qty"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not rejected_qty">
+                            <span class="o_zyra_kpi_label">Rejected</span>
+                            <span class="o_zyra_kpi_value"><field name="rejected_qty"/></span>
+                        </div>
+                        <div class="o_zyra_kpi" name="kpi_operations">
+                            <span class="o_zyra_kpi_label">Operations scanned</span>
+                            <span class="o_zyra_kpi_value"><field name="operations_scanned"/> / <field name="operation_count"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_text" name="kpi_line">
+                            <span class="o_zyra_kpi_label">Line</span>
+                            <span class="o_zyra_kpi_value"><field name="line_id" options="{'no_open': True}"/></span>
+                        </div>
+                    </div>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="title"/></h1>
+                    </div>
+                    <group name="top">
+                        <group string="Bundle" name="bundle">
+                            <field name="order_id"/>
+                            <field name="colour_id"/>
+                            <field name="size_id" readonly="1"/>
+                            <field name="lay_id" readonly="1"/>
+                        </group>
+                        <group string="Fabric" name="fabric">
+                            <field name="plies_label"/>
+                            <field name="roll_id" readonly="1"/>
+                            <field name="shade"/>
+                            <field name="line_id" string="Issued To" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook name="bundle_tabs">
+                        <page string="Scanned Operations" name="scanned">
+                            <field name="scanned_coupon_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="sequence"/>
+                                    <field name="name" string="Operation"/>
+                                    <field name="employee_id" string="Operator"/>
+                                    <field name="scanned_at" string="Scanned"/>
+                                    <field name="pieces" string="Pieces"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Rejections" name="rejections">
+                            <field name="rejected_coupon_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="sequence"/>
+                                    <field name="name" string="Operation"/>
+                                    <field name="employee_id" string="Operator"/>
+                                    <field name="scanned_at"/>
+                                    <field name="rejected_qty"/>
+                                    <field name="reject_reason"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Coupons" name="coupons">
+                            <field name="coupon_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="sequence"/>
+                                    <field name="name" string="Operation"/>
+                                    <field name="sam"/>
+                                    <field name="payload"/>
+                                    <field name="scanned"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_bundle" model="ir.actions.act_window">
+        <field name="name">Bundles</field>
+        <field name="res_model">garment.bundle</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No bundles yet</p>
+            <p>Bundles are created from a cut lay; each carries one coupon per sewing operation.</p>
+        </field>
+    </record>
+
+    <record id="action_garment_bundle_issue" model="ir.actions.act_window">
+        <field name="name">Issue to Line</field>
+        <field name="res_model">garment.bundle.issue</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_garment_bundle"/>
+        <field name="binding_view_types">list,kanban</field>
+        <field name="context">{'default_bundle_ids': active_ids}</field>
+    </record>
+</odoo>
