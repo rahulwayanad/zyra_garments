@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="garment_jobwork_receipt_wizard_view_form" model="ir.ui.view">
+        <field name="name">garment.jobwork.receipt.wizard.form</field>
+        <field name="model">garment.jobwork.receipt.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Receive Pieces">
+                <group>
+                    <field name="order_id" invisible="1"/>
+                    <field name="date"/>
+                    <field name="qty_good"/>
+                    <field name="qty_rejected"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_receipt" type="object" string="Receive" class="btn-primary"/>
+                    <button special="cancel" string="Discard"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_jobwork_receive" model="ir.actions.act_window">
+        <field name="name">Receive Pieces</field>
+        <field name="res_model">garment.jobwork.receipt.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_order_id': active_id}</field>
+    </record>
     <record id="garment_jobwork_order_view_kanban" model="ir.ui.view">
         <field name="name">garment.jobwork.order.kanban</field>
         <field name="model">garment.jobwork.order</field>
@@ -194,30 +220,4 @@
         <field name="context">{'search_default_open': 1}</field>
     </record>
 
-    <record id="garment_jobwork_receipt_wizard_view_form" model="ir.ui.view">
-        <field name="name">garment.jobwork.receipt.wizard.form</field>
-        <field name="model">garment.jobwork.receipt.wizard</field>
-        <field name="arch" type="xml">
-            <form string="Receive Pieces">
-                <group>
-                    <field name="order_id" invisible="1"/>
-                    <field name="date"/>
-                    <field name="qty_good"/>
-                    <field name="qty_rejected"/>
-                </group>
-                <footer>
-                    <button name="action_confirm_receipt" type="object" string="Receive" class="btn-primary"/>
-                    <button special="cancel" string="Discard"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
-    <record id="action_garment_jobwork_receive" model="ir.actions.act_window">
-        <field name="name">Receive Pieces</field>
-        <field name="res_model">garment.jobwork.receipt.wizard</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-        <field name="context">{'default_order_id': active_id}</field>
-    </record>
 </odoo>

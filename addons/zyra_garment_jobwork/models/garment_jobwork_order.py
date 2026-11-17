@@ -121,6 +121,7 @@ class GarmentJobworkOrder(models.Model):
             else:
                 rec.turnaround_days = 0
 
+    @api.depends("state", "date_expected")
     def _compute_is_overdue(self):
         today = fields.Date.context_today(self)
         for rec in self:
@@ -214,6 +215,11 @@ class GarmentJobworkOrder(models.Model):
             self._jobwork_move(qty_good + qty_rejected, vendor, stock, _("received back"))
         self._update_receipt_state(receipt.date)
         return receipt
+
+    def _demo_receive(self, qty_good, qty_rejected=0):
+        for rec in self:
+            rec._garment_receive(qty_good, qty_rejected)
+        return True
 
     def _update_receipt_state(self, date=None):
         for rec in self:

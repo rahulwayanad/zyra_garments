@@ -22,5 +22,8 @@
         "views/garment_jobwork_order_views.xml",
         "views/menus.xml",
     ],
+    "demo": [
+        "demo/jobwork_demo.xml",
+    ],
     "installable": True,
 }
