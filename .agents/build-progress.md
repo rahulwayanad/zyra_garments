@@ -159,3 +159,7 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   → every by-day group crashes (also standard Odoo). Needs `tzdata-legacy` on the server — noted in cockpit README.
   Cockpit 30/30; added to `zyra_garment_suite`. Gate on fresh DB `zyra_gate` via the suite: 15 modules + suite,
   426/426, clean. Merged. Not pushed. Left: shift split (Day/Night) not built.
+- 17 Nov 14:2x (Rahul: "only garments related demo data"): `tools/load_garment_demo.py` loads the demo of every
+  installed zyra_* module (dependency order, Odoo's own loader) into a DB created without demo — no Odoo sample
+  data. Proved on fresh `zyra_demo`: base demo off, 15 zyra modules with demo, 11 orders / 6 styles / 4 invented
+  buyers, 0 Odoo sample partners or demo users; a second run is refused. Usage in `tools/README.md`.
