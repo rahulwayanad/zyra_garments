@@ -56,6 +56,10 @@ class TestSewing(CuttingCase):
         self.assertEqual(bulletin.operation_count, 2)
         self.assertAlmostEqual(bulletin.total_sam, 1.2)
         self.assertEqual(bulletin.line_ids.sorted("sequence")[0].target_per_hour, 150)  # 60 / 0.4
+        self.assertEqual(bulletin.display_name, "%s · v1" % self.style.code)
+        bulletin.action_approve()
+        self.assertEqual(bulletin.state, "approved")
+        self.assertTrue(bulletin.rates_applied_on)
         wiz = self.env["garment.line.balancing"].create({"bulletin_id": bulletin.id, "operators": 2,
                                                          "line_id": self.sew_line.id})
         self.assertEqual(wiz.target_output, 100)  # 2 × 60 ÷ 1.2
@@ -64,6 +68,9 @@ class TestSewing(CuttingCase):
         self.assertEqual(len(wiz.station_ids), 2)
         wiz.action_apply()
         self.assertEqual(self.sew_line.current_bulletin_id, bulletin)
+        new = self.env["garment.bulletin"].browse(bulletin.action_new_version()["res_id"])
+        self.assertEqual((new.version, new.state, bulletin.active), (2, "draft", False))
+        self.assertEqual(new.operation_count, 2)
 
     # --- scans ------------------------------------------------------------------
     def test_scan_minutes_and_earnings_rule(self):
