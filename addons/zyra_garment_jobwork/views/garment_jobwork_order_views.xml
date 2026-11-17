@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_jobwork_order_view_kanban" model="ir.ui.view">
+        <field name="name">garment.jobwork.order.kanban</field>
+        <field name="model">garment.jobwork.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" group_create="false" group_delete="false" quick_create="false">
+                <field name="state"/>
+                <field name="is_overdue"/>
+                <t t-name="card">
+                    <main>
+                        <field name="name" class="text-primary small"/>
+                        <field name="display_name" class="fw-bold"/>
+                        <field name="vendor_id" class="text-muted"/>
+                        <div class="text-muted">
+                            Sent <field name="qty_sent"/> · pending <field name="qty_pending"/>
+                            <span t-if="record.is_overdue.raw_value" class="badge rounded-pill text-bg-danger ms-1">Overdue</span>
+                        </div>
+                    </main>
+                    <footer>
+                        <div class="ms-auto"><field name="user_id" widget="many2one_avatar_user"/></div>
+                    </footer>
+                </t>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="garment_jobwork_order_view_list" model="ir.ui.view">
+        <field name="name">garment.jobwork.order.list</field>
+        <field name="model">garment.jobwork.order</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_overdue">
+                <field name="name"/>
+                <field name="process"/>
+                <field name="production_order_id"/>
+                <field name="vendor_id"/>
+                <field name="date_issue"/>
+                <field name="date_expected"/>
+                <field name="qty_sent" sum="Sent"/>
+                <field name="qty_good" sum="Good"/>
+                <field name="qty_pending" sum="Pending"/>
+                <field name="process_loss_pct"/>
+                <field name="is_overdue" column_invisible="True"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="garment_jobwork_order_view_form" model="ir.ui.view">
+        <field name="name">garment.jobwork.order.form</field>
+        <field name="model">garment.jobwork.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_print_challan" type="object" string="Print Challan"/>
+                    <button name="action_send" type="object" string="Send" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="%(action_garment_jobwork_receive)d" type="action" string="Receive" class="btn-primary"
+                            invisible="state not in ('sent', 'partly_received')"/>
+                    <button name="action_close_short" type="object" string="Close Short"
+                            invisible="state not in ('sent', 'partly_received')"
+                            confirm="Pieces still pending will be written off as short. Continue?"/>
+                    <button name="action_bill" type="object" string="Raise Purchase Order" class="btn-primary"
+                            invisible="state != 'received'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,partly_received,received,billed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_purchases" type="object" class="oe_stat_button" icon="fa-shopping-cart"
+                                invisible="not purchase_count">
+                            <field name="purchase_count" widget="statinfo" string="Purchase Orders"/>
+                        </button>
+                    </div>
+                    <div class="o_zyra_kpis" name="kpi_strip">
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Sent</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_sent" readonly="1"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good">
+                            <span class="o_zyra_kpi_label">Good Back</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_good"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_warn">
+                            <span class="o_zyra_kpi_label">Rejected or Short</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_rejected_short"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good">
+                            <span class="o_zyra_kpi_label">Pending</span>
+                            <span class="o_zyra_kpi_value"><field name="qty_pending"/></span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_good" invisible="loss_over_allowance">
+                            <span class="o_zyra_kpi_label">Process Loss</span>
+                            <span class="o_zyra_kpi_value"><field name="process_loss_pct"/>%</span>
+                        </div>
+                        <div class="o_zyra_kpi o_zyra_kpi_bad" invisible="not loss_over_allowance">
+                            <span class="o_zyra_kpi_label">Process Loss</span>
+                            <span class="o_zyra_kpi_value"><field name="process_loss_pct"/>%</span>
+                        </div>
+                        <div class="o_zyra_kpi">
+                            <span class="o_zyra_kpi_label">Bill Due</span>
+                            <span class="o_zyra_kpi_value"><field name="bill_due"/></span>
+                        </div>
+                    </div>
+                    <field name="loss_over_allowance" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <div class="oe_title">
+                        <div class="text-muted"><field name="name" readonly="1"/></div>
+                        <h1><field name="title"/></h1>
+                    </div>
+                    <group>
+                        <group string="Order">
+                            <field name="process" readonly="state != 'draft'"/>
+                            <field name="production_order_id" readonly="state != 'draft'"/>
+                            <field name="style_id"/>
+                            <field name="buyer_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group string="Who Does It">
+                            <field name="in_house" readonly="state != 'draft'"/>
+                            <field name="vendor_id" invisible="in_house" readonly="state != 'draft'"
+                                   required="not in_house"/>
+                            <label for="rate"/>
+                            <div><field name="rate" class="oe_inline" readonly="state == 'billed'"/> per piece</div>
+                            <field name="allowance_pct"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="date_issue" readonly="state != 'draft'"/>
+                            <field name="date_expected"/>
+                            <field name="date_received"/>
+                            <field name="turnaround_days"/>
+                            <field name="is_overdue" invisible="not is_overdue" widget="boolean_toggle" readonly="1"/>
+                        </group>
+                        <group string="Reconciliation">
+                            <field name="qty_sent" string="Sent" readonly="state != 'draft' or bundle_ids"/>
+                            <field name="qty_good"/>
+                            <field name="qty_rejected"/>
+                            <field name="qty_short"/>
+                            <field name="qty_billable"/>
+                            <field name="jobwork_value"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Bundles" name="bundles">
+                            <field name="bundle_ids" readonly="state != 'draft'">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="colour_id"/>
+                                    <field name="size_id"/>
+                                    <field name="pieces"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Returns" name="returns">
+                            <field name="receipt_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="qty_good"/>
+                                    <field name="qty_rejected"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="garment_jobwork_order_view_search" model="ir.ui.view">
+        <field name="name">garment.jobwork.order.search</field>
+        <field name="model">garment.jobwork.order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <field name="production_order_id"/>
+                <filter name="open" string="Open" domain="[('state', 'not in', ('draft', 'cancel'))]"/>
+                <filter name="overdue" string="Overdue" domain="[('is_overdue', '=', True)]"/>
+                <separator/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_vendor" string="Subcontractor" context="{'group_by': 'vendor_id'}"/>
+                <filter name="group_process" string="Process" context="{'group_by': 'process'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_garment_jobwork_order" model="ir.actions.act_window">
+        <field name="name">Job Work Orders</field>
+        <field name="res_model">garment.jobwork.order</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="garment_jobwork_receipt_wizard_view_form" model="ir.ui.view">
+        <field name="name">garment.jobwork.receipt.wizard.form</field>
+        <field name="model">garment.jobwork.receipt.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Receive Pieces">
+                <group>
+                    <field name="order_id" invisible="1"/>
+                    <field name="date"/>
+                    <field name="qty_good"/>
+                    <field name="qty_rejected"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_receipt" type="object" string="Receive" class="btn-primary"/>
+                    <button special="cancel" string="Discard"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_garment_jobwork_receive" model="ir.actions.act_window">
+        <field name="name">Receive Pieces</field>
+        <field name="res_model">garment.jobwork.receipt.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_order_id': active_id}</field>
+    </record>
+</odoo>
