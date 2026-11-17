@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_garment_jobwork" name="Job Work" parent="zyra_garment_base.menu_garment_root" sequence="60"/>
+    <menuitem id="menu_garment_jobwork_orders" name="Job Work Orders" parent="menu_garment_jobwork"
+              action="action_garment_jobwork_order" sequence="10"/>
+</odoo>

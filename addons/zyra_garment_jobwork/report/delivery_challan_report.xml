@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_delivery_challan" model="ir.actions.report">
+        <field name="name">Delivery Challan</field>
+        <field name="model">garment.jobwork.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zyra_garment_jobwork.report_delivery_challan</field>
+        <field name="report_file">zyra_garment_jobwork.report_delivery_challan</field>
+        <field name="print_report_name">'Challan - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_garment_jobwork_order"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_delivery_challan">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Delivery Challan <span t-field="o.name"/></h2>
+                        <p>Goods sent for job work, not for sale. To be returned after processing.</p>
+                        <table class="table table-sm">
+                            <tr><th>Subcontractor</th><td><span t-field="o.vendor_id"/></td>
+                                <th>Issue date</th><td><span t-field="o.date_issue"/></td></tr>
+                            <tr><th>Process</th><td><span t-field="o.process"/></td>
+                                <th>Expected back</th><td><span t-field="o.date_expected"/></td></tr>
+                            <tr><th>Production order</th><td><span t-field="o.production_order_id"/></td>
+                                <th>Style</th><td><span t-field="o.style_id"/></td></tr>
+                        </table>
+                        <table class="table table-sm" t-if="o.bundle_ids">
+                            <thead><tr><th>Bundle</th><th>Colour</th><th>Size</th><th class="text-end">Pieces</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="o.bundle_ids" t-as="b">
+                                    <td><span t-field="b.name"/></td>
+                                    <td><span t-field="b.colour_id"/></td>
+                                    <td><span t-field="b.size_id"/></td>
+                                    <td class="text-end"><span t-field="b.pieces"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p><strong>Total pieces sent: <span t-field="o.qty_sent"/></strong>
+                            · Rate <span t-field="o.rate"/> per piece</p>
+                        <div class="row mt-5">
+                            <div class="col-6">Issued by: <span t-field="o.user_id"/></div>
+                            <div class="col-6 text-end">Received by (vendor signature)</div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

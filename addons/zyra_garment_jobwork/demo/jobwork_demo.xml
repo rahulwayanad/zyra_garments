@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="demo_vendor_printwell" model="res.partner">
+        <field name="name">Printwell Kochi</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_jobwork_vendor" eval="True"/>
+    </record>
+    <record id="demo_vendor_unity" model="res.partner">
+        <field name="name">Unity Sewing Works</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_jobwork_vendor" eval="True"/>
+    </record>
+    <record id="demo_vendor_kerala_emb" model="res.partner">
+        <field name="name">Kerala Embroideries</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_jobwork_vendor" eval="True"/>
+    </record>
+    <record id="demo_jw_print_sent" model="garment.jobwork.order">
+        <field name="process">print</field>
+        <field name="vendor_id" ref="demo_vendor_printwell"/>
+        <field name="qty_sent">1440</field>
+        <field name="rate">3.5</field>
+        <field name="date_issue" eval="(DateTime.today() - relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+        <field name="date_expected" eval="(DateTime.today() + relativedelta(days=5)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="demo_jw_emb_overdue" model="garment.jobwork.order">
+        <field name="process">embroidery</field>
+        <field name="vendor_id" ref="demo_vendor_kerala_emb"/>
+        <field name="qty_sent">620</field>
+        <field name="rate">6.0</field>
+        <field name="date_issue" eval="(DateTime.today() - relativedelta(days=12)).strftime('%Y-%m-%d')"/>
+        <field name="date_expected" eval="(DateTime.today() - relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="demo_jw_wash_partial" model="garment.jobwork.order">
+        <field name="process">wash</field>
+        <field name="vendor_id" ref="demo_vendor_printwell"/>
+        <field name="qty_sent">800</field>
+        <field name="rate">4.0</field>
+        <field name="date_expected" eval="(DateTime.today() + relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="demo_jw_sewing_billed" model="garment.jobwork.order">
+        <field name="process">sewing</field>
+        <field name="vendor_id" ref="demo_vendor_unity"/>
+        <field name="qty_sent">401</field>
+        <field name="rate">14.5</field>
+        <field name="allowance_pct">1.0</field>
+        <field name="date_issue" eval="(DateTime.today() - relativedelta(days=10)).strftime('%Y-%m-%d')"/>
+        <field name="date_expected" eval="(DateTime.today() - relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+    </record>
+    <function model="garment.jobwork.order" name="action_send"
+              eval="[[ref('demo_jw_print_sent'), ref('demo_jw_emb_overdue'), ref('demo_jw_wash_partial'), ref('demo_jw_sewing_billed')]]"/>
+    <function model="garment.jobwork.order" name="_demo_receive"
+              eval="[[ref('demo_jw_wash_partial')], 395, 5]"/>
+    <function model="garment.jobwork.order" name="_demo_receive"
+              eval="[[ref('demo_jw_sewing_billed')], 399, 2]"/>
+    <function model="garment.jobwork.order" name="action_bill"
+              eval="[[ref('demo_jw_sewing_billed')]]"/>
+</odoo>
