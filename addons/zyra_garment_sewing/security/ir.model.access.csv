@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_garment_line_user,garment.line user,model_garment_line,base.group_user,1,0,0,0
+access_garment_line_sup,garment.line supervisor,model_garment_line,zyra_garment_base.group_garment_line_supervisor,1,1,1,0
+access_garment_line_mgr,garment.line manager,model_garment_line,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_garment_bulletin_user,garment.bulletin user,model_garment_bulletin,base.group_user,1,0,0,0
+access_garment_bulletin_sup,garment.bulletin supervisor,model_garment_bulletin,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_bulletin_line_user,garment.bulletin.line user,model_garment_bulletin_line,base.group_user,1,0,0,0
+access_garment_bulletin_line_sup,garment.bulletin.line supervisor,model_garment_bulletin_line,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_scan_sup,garment.scan supervisor,model_garment_scan,zyra_garment_base.group_garment_line_supervisor,1,0,1,0
+access_garment_scan_wages,garment.scan wages,model_garment_scan,zyra_garment_base.group_garment_wages,1,0,0,0
+access_garment_scan_mgr,garment.scan manager,model_garment_scan,zyra_garment_base.group_garment_factory_manager,1,1,1,1
+access_garment_line_balancing,garment.line.balancing,model_garment_line_balancing,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_line_balancing_station,garment.line.balancing.station,model_garment_line_balancing_station,zyra_garment_base.group_garment_line_supervisor,1,1,1,1

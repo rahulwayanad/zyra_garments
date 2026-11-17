@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_bulletin_view_list" model="ir.ui.view">
+        <field name="name">garment.bulletin.list</field>
+        <field name="model">garment.bulletin</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="style_id"/>
+                <field name="operation_count"/>
+                <field name="total_sam"/>
+                <field name="total_piece_rate"/>
+            </list>
+        </field>
+    </record>
+    <record id="garment_bulletin_view_form" model="ir.ui.view">
+        <field name="name">garment.bulletin.form</field>
+        <field name="model">garment.bulletin</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_load_from_techpack" type="object" string="Load from Tech Pack"/>
+                    <button name="action_open_balancing" type="object" string="Balance Line" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="o_zyra_kpis">
+                        <div class="o_zyra_kpi"><span>Operations</span><field name="operation_count"/></div>
+                        <div class="o_zyra_kpi"><span>Total SAM</span><field name="total_sam"/></div>
+                        <div class="o_zyra_kpi"><span>Labour / Piece</span><field name="total_piece_rate"/></div>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="style_id"/>
+                            <field name="techpack_id"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="section"/>
+                            <field name="machine_type_id"/>
+                            <field name="sam" sum="Total"/>
+                            <field name="target_per_hour"/>
+                            <field name="piece_rate" sum="Total"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_garment_bulletin" model="ir.actions.act_window">
+        <field name="name">Operation Bulletins</field>
+        <field name="res_model">garment.bulletin</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

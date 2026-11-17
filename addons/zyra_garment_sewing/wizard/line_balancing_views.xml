@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="garment_line_balancing_view_form" model="ir.ui.view">
+        <field name="name">garment.line.balancing.form</field>
+        <field name="model">garment.line.balancing</field>
+        <field name="arch" type="xml">
+            <form>
+                <div class="o_zyra_kpis">
+                    <div class="o_zyra_kpi"><span>Pitch Time</span><field name="pitch_time"/></div>
+                    <div class="o_zyra_kpi o_zyra_kpi_good"><span>Target / Hour</span><field name="target_output"/></div>
+                    <div class="o_zyra_kpi"><span>Balanced / Hour</span><field name="balanced_output"/></div>
+                    <div class="o_zyra_kpi o_zyra_kpi_warn"><span>Balance Loss %</span><field name="balance_loss"/></div>
+                    <div class="o_zyra_kpi o_zyra_kpi_bad"><span>Bottleneck</span><field name="bottleneck"/></div>
+                </div>
+                <group>
+                    <group>
+                        <field name="bulletin_id"/>
+                        <field name="line_id"/>
+                    </group>
+                    <group>
+                        <field name="operators"/>
+                        <field name="operators_allocated"/>
+                        <field name="total_sam"/>
+                    </group>
+                </group>
+                <field name="station_ids">
+                    <list decoration-danger="is_bottleneck">
+                        <field name="name"/>
+                        <field name="sam"/>
+                        <field name="operators"/>
+                        <field name="cycle"/>
+                        <field name="output"/>
+                        <field name="is_bottleneck"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply to Line" class="btn-primary"/>
+                    <button special="cancel" string="Close"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
