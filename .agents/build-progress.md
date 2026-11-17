@@ -22,8 +22,8 @@ halfway" prompt.
 | 1 | zyra_garment_base | **merged** bc2f3ed — gate: 31/31 tests, clean install |
 | 2 | zyra_techpack, zyra_garment_costing, zyra_garment_merch | **merged** d58d49c — gate 156/156 tests, clean |
 | 3 | materials, cutting, quality, shipping | cutting, materials, shipping **merged** (gate 281/281); quality paused |
-| 4 | sewing, jobwork | jobwork **merged** (gate 292/292); sewing core on branch, floor screens left |
-| 5 | wages, pnl, cockpit, portal, connect | portal + connect running (15:02) |
+| 4 | sewing, jobwork | jobwork **merged**; sewing WIP 60a3710 (screen 55 + 58 extras left) |
+| 5 | wages, pnl, cockpit, portal, connect | portal **merged** (gate 298/298); connect done on branch, gate pending |
 
 ## Log
 - 16 Nov late: repo set up; odoo 18 + venv verified (theme installs clean, demo loads with `--without-demo=`).
@@ -92,3 +92,14 @@ fixed budget is used: measured ~4 agent-hours ≈ one full window → per segmen
   (floor screens 3/4/56/58, layouts 54/55); portal (wt-portal, feat/portal, DB zyra_portal, port 18107) and connect
   (wt-connect, feat/connect, DB zyra_connect, port 18108) started from main 41a76f0. Hard stop job 15:42 (ends 15:45).
   Wages may start only if sewing merges before the stop. Quality still paused.
+- 15:12 Rahul's usage 54% (from 35% at 15:01) → hard stop moved to 15:20.
+- 15:11 portal done (6/6 HttpCase) → merged 378a15b; gate 9 modules 298/298, clean. wt-portal removed.
+  Review for Rahul: vendor nav is Home / Job work (screen shows Orders / Styles), extra Approvals page not on any screen.
+- 15:14 sewing WIP 60a3710 (NOT merged, 14/14): screens 4 (offline scan station), 56 (TV board), 58 (daily summary,
+  garment.line.day), 3 (planning board, garment.line.plan), 54 (bulletin versions) built. Left: 55 as a saved LB/
+  record (fractional operators, draft/applied), 58 Defects tab + Print Hourly Report, browser check of 3/4/56.
+- 15:16 connect done on branch b9ca13c (28/28, clean), NOT merged: no time for the gate before the stop → gate+merge
+  first next segment. Left: bundle.cut/final.failed/shipment.left webhooks must be emitted by cutting/quality/shipping
+  (_garment_emit; request file still to write), cockpit line chart, screen 118 columns, AI reading 116–117 (optional).
+- 15:17 STOP: no agents, no odoo runs, no scheduled jobs. Wages not started. NO BUILD UNTIL RAHUL SAYS.
+  Next: gate+merge connect; finish sewing (55, 58 extras) → merge; quality (needs Rahul's OK); wages, pnl, cockpit.
