@@ -25,7 +25,7 @@ class GarmentShippingDemo(models.AbstractModel):
             sizes = order.line_ids.mapped("size_id").sorted("sequence")
             lines = []
             if kind != "solid":
-                ratio = ratio or [2 if i in (1, 2) else 1 for i in range(len(sizes))]
+                ratio = ratio or [8 if i in (1, 2) else 4 for i in range(len(sizes))]
                 lines = [fields.Command.create({"size_id": s.id, "qty": q}) for s, q in zip(sizes, ratio)]
             plan = self.env["garment.pack.plan"].create(dict({
                 "order_id": order.id, "pack_kind": kind, "ratio_line_ids": lines, "pieces_per_carton": ppc,
