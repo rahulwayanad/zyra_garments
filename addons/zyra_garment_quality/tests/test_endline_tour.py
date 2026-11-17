@@ -1,9 +1,14 @@
+import importlib.util
+import unittest
 from datetime import timedelta
 
 from odoo import Command, fields
 from odoo.tests import HttpCase, tagged
 
 
+# Browser tours need the websocket-client package (Chrome DevTools); without it Odoo logs a WARNING and skips.
+# Skip quietly instead so the install log stays clean on machines without it.
+@unittest.skipUnless(importlib.util.find_spec("websocket"), "websocket-client not installed: browser tour skipped")
 @tagged("post_install", "-at_install", "zyra")
 class TestEndlineTour(HttpCase):
 
