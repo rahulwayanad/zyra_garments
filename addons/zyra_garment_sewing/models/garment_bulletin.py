@@ -97,6 +97,7 @@ class GarmentBulletinDemo(models.Model):
         for line, bulletin in zip(lines, bulletins):
             line.current_bulletin_id = bulletin
         self._garment_load_demo_scans(lines[:1])
+        self.env["garment.line.plan"].garment_plan_orders()
         return True
 
     @api.model

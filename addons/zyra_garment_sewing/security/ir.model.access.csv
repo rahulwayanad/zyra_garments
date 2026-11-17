@@ -18,3 +18,6 @@ access_garment_line_day_hour_user,garment.line.day.hour user,model_garment_line_
 access_garment_line_day_hour_sup,garment.line.day.hour supervisor,model_garment_line_day_hour,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
 access_garment_line_day_downtime_user,garment.line.day.downtime user,model_garment_line_day_downtime,base.group_user,1,0,0,0
 access_garment_line_day_downtime_sup,garment.line.day.downtime supervisor,model_garment_line_day_downtime,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_line_plan_user,garment.line.plan user,model_garment_line_plan,base.group_user,1,0,0,0
+access_garment_line_plan_sup,garment.line.plan supervisor,model_garment_line_plan,zyra_garment_base.group_garment_line_supervisor,1,1,1,1
+access_garment_line_plan_merch,garment.line.plan merchandiser,model_garment_line_plan,zyra_garment_base.group_garment_merchandiser,1,1,1,1

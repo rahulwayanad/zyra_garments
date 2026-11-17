@@ -1,3 +1,6 @@
+import math
+from datetime import timedelta
+
 from odoo import Command, fields
 from odoo.exceptions import UserError
 from odoo.tests import tagged
@@ -15,6 +18,7 @@ class TestSewing(CuttingCase):
         cls.sew_line = cls.env["garment.line"].create({"name": "Sew Test Line", "code": "STL",
                                                         "operator_count": 10, "working_minutes": 480})
         cls.operator2 = cls.env["hr.employee"].create({"name": "Sew Test Operator Two"})
+        cls.line_id_other = cls.env["garment.line"].create({"name": "Sew Test Line B", "code": "STB"})
 
     def _bundle(self):
         plan = self.make_plan(bundle_size=40)
@@ -176,3 +180,36 @@ class TestSewing(CuttingCase):
         self.assertEqual(day.hour_ids[0].reason, "Late bundle issue")
         with self.assertRaises(UserError):
             day.action_refresh()
+
+    # --- planning board (screen 3) ------------------------------------------------
+    def test_planning_board_load_late_and_clash(self):
+        """Rule: days = minutes ÷ (capacity × target eff); bar after ex-factory is late; overlapping bars clash."""
+        Plan = self.env["garment.line.plan"]
+        today = fields.Date.context_today(Plan)
+        self.order.ex_factory_date = today + timedelta(days=3)
+        plan = Plan.create({"order_id": self.order.id, "line_id": self.sew_line.id, "date_start": today,
+                            "date_end": today + timedelta(days=9), "minutes": 1000})
+        self.assertTrue(plan.is_late)
+        self.assertFalse(plan.has_clash)
+        other = Plan.create({"order_id": self.order.id, "line_id": self.sew_line.id,
+                             "date_start": today + timedelta(days=5), "date_end": today + timedelta(days=6)})
+        plan.invalidate_recordset(["has_clash"])
+        self.assertTrue(plan.has_clash)
+        other.garment_move(self.line_id_other.id, fields.Date.to_string(today + timedelta(days=14)))
+        self.assertEqual(other.line_id, self.line_id_other)
+        self.assertEqual((other.date_end - other.date_start).days, 1)
+        board = Plan.garment_board()
+        self.assertEqual(len(board["weeks"]), 8)
+        row = next(r for r in board["lines"] if r["id"] == self.sew_line.id)
+        self.assertEqual(len(row["bars"]), 1)
+        self.assertGreaterEqual(board["late"], 1)
+
+    def test_plan_orders_uses_style_sam_and_capacity(self):
+        self.order.sewing_line_id = self.sew_line.workcenter_id
+        self.env["garment.line.plan"].search([]).unlink()
+        self.env["garment.line.plan"].garment_plan_orders()
+        plan = self.env["garment.line.plan"].search([("order_id", "=", self.order.id)])
+        self.assertEqual(plan.pieces, self.order.qty_ordered - self.order.qty_sewn)
+        self.assertAlmostEqual(plan.minutes, plan.pieces * 1.2)
+        per_day = 4800 * 0.65
+        self.assertEqual((plan.date_end - plan.date_start).days + 1, max(1, math.ceil(plan.minutes / per_day)))

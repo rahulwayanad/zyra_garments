@@ -12,4 +12,6 @@
               parent="zyra_garment_base.menu_garment_sewing" action="action_garment_line_tv_board" sequence="6"/>
     <menuitem id="menu_garment_sewing_line_days" name="Line Days"
               parent="zyra_garment_base.menu_garment_sewing" action="action_garment_line_day" sequence="15"/>
+    <menuitem id="menu_garment_sewing_planning_board" name="Line Planning Board"
+              parent="zyra_garment_base.menu_garment_sewing" action="action_garment_line_planning_board" sequence="1"/>
 </odoo>
