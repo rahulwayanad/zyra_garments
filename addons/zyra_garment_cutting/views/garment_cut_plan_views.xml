@@ -61,8 +61,9 @@
                     <button name="action_done" type="object" string="Mark Done"
                             invisible="state not in ('approved', 'cutting')"
                             groups="zyra_garment_base.group_garment_cutting"/>
+                    <!-- a Done plan can still be cancelled while none of its lays is cut (refused otherwise) -->
                     <button name="action_cancel" type="object" string="Cancel"
-                            invisible="state not in ('draft', 'approved')"
+                            invisible="state not in ('draft', 'approved', 'done')"
                             confirm="Cancel this cut plan and its lays that are not cut?"/>
                     <button name="action_draft" type="object" string="Reset to Draft" invisible="state != 'cancel'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,approved,cutting,done"/>

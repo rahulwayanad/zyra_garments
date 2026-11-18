@@ -1,5 +1,18 @@
 # Tools
 
+## `install_garment_demo.sh` — one command: new DB with the garment demo only
+
+```bash
+tools/install_garment_demo.sh garments_demo            # refuses if the DB exists
+tools/install_garment_demo.sh garments_demo --drop     # drop it (and its filestore) first
+tools/install_garment_demo.sh garments_demo --tz Asia/Dubai
+```
+
+Creates the DB without any demo, installs `zyra_garment_suite`, runs `load_garment_demo.py` (below), then sets the
+admin timezone (default `Asia/Kolkata`) so the browser cannot store the legacy alias `Asia/Calcutta`, which
+PostgreSQL without `tzdata-legacy` rejects in by-day groupings. Odoo is found at `$ODOO_PATH`, else `<repo>/odoo18`,
+else `<repo>/../odoo-18`; config `$ODOO_CONF` (default `$ODOO_PATH/odoo.conf`). Refuses the shared `garments` DB.
+
 ## `load_garment_demo.py` — garment demo only
 
 Fills a database with the Zyra garment demo (invented buyers, styles, orders, rolls, bundles, wages, the full-sale

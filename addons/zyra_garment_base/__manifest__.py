@@ -14,6 +14,7 @@
         "data/garment_machine_type_data.xml",
         "data/garment_type_data.xml",
         "data/garment_operation_data.xml",
+        "data/stock_settings_data.xml",
         "views/garment_season_views.xml",
         "views/garment_type_views.xml",
         "views/garment_size_views.xml",

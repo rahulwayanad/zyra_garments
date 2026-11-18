@@ -157,8 +157,16 @@ class GarmentSample(models.Model):
                 raise UserError(_("Only a requested or rejected sample can go into the sample room."))
             s.state = "in_progress"
 
+    def _can_decide(self):
+        """Rule: a sample is decided (approved / rejected) once it is with the buyer, or, when it has no buyer
+        (in-house proto or development sample), straight from the sample room."""
+        self.ensure_one()
+        return self.state == "with_buyer" or (self.state == "in_progress" and not self.buyer_id)
+
     def action_send_to_buyer(self):
         for s in self:
+            if not s.buyer_id:
+                raise UserError(_("Sample %s has no buyer: approve or reject it from the sample room.", s.name))
             if s.state not in ("requested", "in_progress"):
                 raise UserError(_("Only a sample in the sample room can be sent to the buyer."))
             s.write({"state": "with_buyer", "sent_date": s.sent_date or fields.Date.context_today(s)})
@@ -178,8 +186,9 @@ class GarmentSample(models.Model):
 
     def action_approve(self):
         for s in self:
-            if s.state != "with_buyer":
-                raise UserError(_("Only a sample with the buyer can be approved."))
+            if not s._can_decide():
+                raise UserError(_("Only a sample with the buyer, or a sample without a buyer in the sample room, "
+                                  "can be approved."))
             s.decision_date = s.decision_date or fields.Date.context_today(s)
             s._log_round("approved")
             s.state = "approved"
@@ -189,8 +198,9 @@ class GarmentSample(models.Model):
 
     def action_reject(self):
         for s in self:
-            if s.state != "with_buyer":
-                raise UserError(_("Only a sample with the buyer can be rejected."))
+            if not s._can_decide():
+                raise UserError(_("Only a sample with the buyer, or a sample without a buyer in the sample room, "
+                                  "can be rejected."))
             s.decision_date = s.decision_date or fields.Date.context_today(s)
             s._log_round("rejected")
             s.state = "rejected"

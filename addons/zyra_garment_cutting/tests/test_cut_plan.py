@@ -171,6 +171,31 @@ class TestCutPlan(CuttingCase):
         with self.assertRaises(UserError):
             order.action_propose_cut_plan()
 
+    def test_plan_with_nothing_cut_cannot_be_closed_only_cancelled(self):
+        plan = self.make_plan()
+        plan.action_propose()
+        plan.action_approve()
+        with self.assertRaisesRegex(UserError, "Nothing is cut"):
+            plan.action_done()
+        self.assertEqual(plan.state, "approved")
+
+    def test_closed_plan_with_nothing_cut_can_be_cancelled_and_planned_again(self):
+        plan = self.make_plan()
+        plan.action_propose()
+        plan.action_approve()
+        plan.state = "done"  # closed before this rule existed
+        lay = plan.lay_ids[:1]
+        lay.state = "planned"
+        with self.assertRaisesRegex(UserError, "is closed"):
+            lay.action_cut()
+        plan.action_cancel()
+        self.assertEqual(plan.state, "cancel")
+        plan.action_draft()
+        plan.action_propose()
+        plan.action_approve()
+        self.assertEqual(plan.state, "approved")
+        self.assertTrue(plan.lay_ids)
+
     def test_cancelled_plan_frees_the_colourway_and_resets_to_draft(self):
         plan = self.make_plan()
         plan.action_propose()

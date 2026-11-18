@@ -65,3 +65,10 @@ class TestFabricRoll(TransactionCase):
         lot = self.env["stock.lot"].create({"name": "TEST-PLAIN", "product_id": self.fabric.id})
         with self.assertRaises(UserError):
             lot.action_roll_approve()
+
+    def test_internal_users_see_lots_so_rolls_can_be_received(self):
+        """Rule: fabric rolls are stock lots, so every internal user has Lots & Serial Numbers, even on a
+        database created without demo data."""
+        self.assertIn(self.env.ref("stock.group_production_lot"), self.env.ref("base.group_user").implied_ids)
+        user = self.env["res.users"].create({"name": "Roll Receiver", "login": "roll_receiver"})
+        self.assertTrue(user.has_group("stock.group_production_lot"))

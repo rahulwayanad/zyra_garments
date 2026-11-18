@@ -278,6 +278,8 @@ class GarmentCutPlan(models.Model):
 
     def action_done(self):
         for plan in self:
+            if not plan.lay_ids.filtered(lambda l: l.state in ("cut", "bundled")):
+                raise UserError(_("Nothing is cut on cut plan %s yet: cancel it instead of closing it.", plan.name))
             if plan.lay_ids.filtered(lambda l: l.state in ("spread", "cut")):
                 raise UserError(_("Bundle or cancel the lays on the table before closing cut plan %s.",
                                   plan.name))
@@ -288,7 +290,7 @@ class GarmentCutPlan(models.Model):
     def action_cancel(self):
         for plan in self:
             if plan.lay_ids.filtered(lambda l: l.state in ("cut", "bundled")):
-                raise UserError(_("Cut plan %s already has cut lays; close it with Done instead.", plan.name))
+                raise UserError(_("Cut plan %s already has cut lays, so it cannot be cancelled.", plan.name))
             plan.lay_ids.write({"state": "cancel"})
             plan.state = "cancel"
         return True

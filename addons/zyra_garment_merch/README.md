@@ -103,6 +103,8 @@ amending. Ex-factory changes reschedule the open template milestones and log it.
 `points_out`, `is_overdue` (searchable). Methods: `action_start`, `action_send_to_buyer`, `action_approve`,
 `action_reject`, `action_remake` (round + 1), `action_load_spec` (graded spec of the size measured from the tech
 pack, via `zyra.techpack.get_graded_chart()`), `action_invoice_cost` (draft customer invoice, once).
+**No buyer (in-house proto / development sample):** "Send to Buyer" is hidden and refused; the sample is
+approved or rejected straight from the sample room (`_can_decide`). With a buyer it must go through `with_buyer`.
 
 `garment.sample.measurement`: `round`, `pom_id`, `size_id`, `spec`, `tol_plus`, `tol_minus`, `measured`,
 `deviation` (= measured − spec), `result` (`pending` when nothing measured, `pass`, `fail`).

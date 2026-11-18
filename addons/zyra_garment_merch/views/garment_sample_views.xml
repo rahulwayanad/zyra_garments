@@ -105,10 +105,12 @@
                     <button name="action_remake" type="object" string="Remake (Next Round)" class="btn-primary"
                             invisible="state != 'rejected'"/>
                     <button name="action_send_to_buyer" type="object" string="Send to Buyer" class="btn-primary"
-                            invisible="state not in ('requested', 'in_progress')"/>
+                            invisible="state not in ('requested', 'in_progress') or not buyer_id"/>
+                    <!-- no buyer (in-house sample): decided straight from the sample room -->
                     <button name="action_approve" type="object" string="Approved" class="btn-primary"
-                            invisible="state != 'with_buyer'"/>
-                    <button name="action_reject" type="object" string="Rejected" invisible="state != 'with_buyer'"/>
+                            invisible="state != 'with_buyer' and (state != 'in_progress' or buyer_id)"/>
+                    <button name="action_reject" type="object" string="Rejected"
+                            invisible="state != 'with_buyer' and (state != 'in_progress' or buyer_id)"/>
                     <field name="state" widget="statusbar" statusbar_visible="requested,in_progress,with_buyer,approved"/>
                 </header>
                 <sheet>

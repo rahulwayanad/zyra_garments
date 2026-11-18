@@ -203,6 +203,9 @@ class GarmentLay(models.Model):
         for lay in self:
             if lay.state not in ("planned", "spread"):
                 raise UserError(_("Lay %s is already cut.", lay.name))
+            if lay.plan_id.state in ("done", "cancel"):
+                raise UserError(_("Cut plan %s is closed. Cancel it, reset it to draft and approve it again to cut "
+                                  "this lay.", lay.plan_id.name))
             if lay.plan_id.state not in ("approved", "cutting"):
                 raise UserError(_("Approve cut plan %s before cutting its lays.", lay.plan_id.name))
             lay.marker_id._garment_check_usable()

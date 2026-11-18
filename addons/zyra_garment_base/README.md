@@ -209,3 +209,8 @@ reason, rejected cannot be approved, only FM releases a rejected roll, chatter t
 ## Not done yet
 - Nothing from the kit prompt is open. Browser check done for Factory Setup, Fabric Rolls list and Settings
   (headless screenshots); other config lists not visually reviewed.
+
+## Settings switched on at install
+- **Lots & Serial Numbers** (`stock.group_production_lot` implied on Internal User, `data/stock_settings_data.xml`):
+  fabric rolls are stock lots, so receipts must show the lot column. Odoo's stock demo used to switch it on, so
+  databases created without demo (production) could not receive rolls before this.

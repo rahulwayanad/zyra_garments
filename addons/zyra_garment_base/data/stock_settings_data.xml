@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inventory setting "Lots & Serial Numbers": fabric rolls are stock lots, so receipts must show the lot
+         column. Implying the group on Internal User is what ticking the setting does (existing users get it too).
+         Odoo's own stock demo switches it on, so only databases created without demo (production) missed it. -->
+    <function
+        model="res.groups"
+        name="write"
+        eval="[[ref('base.group_user')], {'implied_ids': [Command.link(ref('stock.group_production_lot'))]}]"
+    />
+</odoo>

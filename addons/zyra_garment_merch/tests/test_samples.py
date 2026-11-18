@@ -86,6 +86,33 @@ class TestSamples(MerchCase):
         with self.assertRaises(UserError):
             sample.action_approve()
 
+    def test_sample_without_buyer_is_approved_in_house_from_the_sample_room(self):
+        self.style.buyer_id = False
+        sample = self._sample()
+        self.assertFalse(sample.buyer_id)
+        with self.assertRaises(UserError):
+            sample.action_send_to_buyer()
+        sample.action_start()
+        sample.action_approve()
+        self.assertEqual(sample.state, "approved")
+        self.assertEqual(sample.round_ids.decision, "approved")
+
+    def test_sample_without_buyer_is_rejected_in_house_and_remade(self):
+        self.style.buyer_id = False
+        sample = self._sample()
+        sample.action_start()
+        sample.action_reject()
+        self.assertEqual(sample.state, "rejected")
+        sample.action_remake()
+        self.assertEqual((sample.state, sample.round), ("in_progress", 2))
+
+    def test_sample_with_a_buyer_cannot_skip_the_buyer(self):
+        sample = self._sample()
+        self.assertTrue(sample.buyer_id)
+        sample.action_start()
+        with self.assertRaises(UserError):
+            sample.action_approve()
+
     def test_sample_past_required_date_and_not_sent_is_overdue(self):
         sample = self._sample(required_date=self.today - timedelta(days=1))
         self.assertTrue(sample.is_overdue)

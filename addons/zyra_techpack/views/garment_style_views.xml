@@ -246,7 +246,7 @@
                             <field name="size_range_id"/>
                             <field name="size_names"/>
                             <field name="base_size_id"/>
-                            <field name="colour_ids" widget="many2many_tags" options="{'color_field': False}"/>
+                            <field name="colour_ids" widget="many2many_tags"/>
                             <field name="product_tmpl_id" string="Product" readonly="1"/>
                             <field name="bom_id"/>
                         </group>
